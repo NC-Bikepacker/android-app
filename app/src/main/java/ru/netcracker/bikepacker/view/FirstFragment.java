@@ -1,4 +1,4 @@
-package ru.netcracker.bikepacker;
+package ru.netcracker.bikepacker.view;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -9,6 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.fragment.NavHostFragment;
 
+import ru.netcracker.bikepacker.R;
 import ru.netcracker.bikepacker.databinding.FragmentFirstBinding;
 
 public class FirstFragment extends Fragment {
