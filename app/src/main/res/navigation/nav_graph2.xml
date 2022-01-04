@@ -37,6 +37,9 @@
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@anim/slide_in_left"
             app:popExitAnim="@anim/slide_out_right" />
+        <action
+            android:id="@+id/action_signInFragment_to_mapPage"
+            app:destination="@id/mapPage" />
     </fragment>
     <fragment
         android:id="@+id/signUpFragment"
@@ -50,6 +53,13 @@
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@anim/slide_in_left"
             app:popExitAnim="@anim/slide_out_right"/>
+        <action
+            android:id="@+id/action_signUpFragment_to_mapPage"
+            app:destination="@id/mapPage" />
     </fragment>
+    <activity
+        android:id="@+id/mapPage"
+        android:name="ru.netcracker.bikepacker.MapPage"
+        android:label="MapPage" />
 
 </navigation>
