@@ -2,27 +2,54 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/nav_graph"
-    app:startDestination="@id/FirstFragment">
+    android:id="@+id/navigation"
+    app:startDestination="@id/logInFragment">
 
     <fragment
-        android:id="@+id/FirstFragment"
-        android:name="ru.netcracker.bikepacker.view.FirstFragment"
-        android:label="@string/first_fragment_label"
-        tools:layout="@layout/fragment_first">
-
+        android:id="@+id/logInFragment"
+        android:name="ru.netcracker.bikepacker.view.LogIn"
+        android:label=""
+        tools:layout="@layout/fragment_log_in">
         <action
-            android:id="@+id/action_FirstFragment_to_SecondFragment"
-            app:destination="@id/SecondFragment" />
+            android:id="@+id/action_logInFragment_to_signUpFragment"
+            app:destination="@id/signUpFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+        <action
+            android:id="@+id/action_logInFragment_to_userAccountInfo"
+            app:destination="@id/userAccountInfo" />
     </fragment>
     <fragment
-        android:id="@+id/SecondFragment"
-        android:name="ru.netcracker.bikepacker.view.SecondFragment"
-        android:label="@string/second_fragment_label"
-        tools:layout="@layout/fragment_second">
-
+        android:id="@+id/signUpFragment"
+        android:name="ru.netcracker.bikepacker.view.SignUp"
+        android:label=""
+        tools:layout="@layout/fragment_sign_up">
         <action
-            android:id="@+id/action_SecondFragment_to_FirstFragment"
-            app:destination="@id/FirstFragment" />
+            android:id="@+id/action_signUpFragment_to_logInFragment"
+            app:destination="@id/logInFragment"
+            app:enterAnim="@anim/slide_in_left"
+            app:exitAnim="@anim/slide_out_right"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"/>
+        <action
+            android:id="@+id/action_signUpFragment_to_userAccountInfo"
+            app:destination="@id/userAccountInfo" />
     </fragment>
+    <fragment
+        android:id="@+id/userAccountInfo"
+        android:name="ru.netcracker.bikepacker.view.UserAccountInfo"
+        android:label="fragment_user_account_info"
+        tools:layout="@layout/fragment_user_account_info" >
+        <action
+            android:id="@+id/action_userAccountInfo_to_editUserProfile"
+            app:destination="@id/editUserProfile" />
+    </fragment>
+    <fragment
+        android:id="@+id/editUserProfile"
+        android:name="ru.netcracker.bikepacker.view.EditUserProfile"
+        android:label="EditUserProfile" />
+
+
 </navigation>
