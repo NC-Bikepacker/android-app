@@ -65,19 +65,6 @@ public class MapPage extends AppCompatActivity {
         IMapController mapController = map.getController();
         mapController.setZoom(9.5);
 
-//        LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-//
-//        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-//            // TODO: Consider calling
-//            //    ActivityCompat#requestPermissions
-//            // here to request the missing permissions, and then overriding
-//            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-//            //                                          int[] grantResults)
-//            // to handle the case where the user grants the permission. See the documentation
-//            // for ActivityCompat#requestPermissions for more details.
-//            return;
-//        }
-//        GeoPoint startPoint = new GeoPoint(locationManager.getLastKnownLocation(String.valueOf(gpsMyLocationProvider)));
         GeoPoint startPoint;
         if(MyLocationListener.imHere == null)
             startPoint = new GeoPoint(51.67204, 39.1843);
