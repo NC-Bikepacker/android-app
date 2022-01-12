@@ -25,9 +25,8 @@ import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
 import java.util.ArrayList;
 
-public class MapPage extends AppCompatActivity {
-    private static final int REQUEST_PERMISSIONS_REQUEST_CODE = 1;
-    private static final double START_ZOOM = 9.5;
+public class MainNavigationActivity extends AppCompatActivity {
+    private final int REQUEST_PERMISSIONS_REQUEST_CODE = 1;
     private MapView map = null;
     private MyLocationNewOverlay mLocationOverlay;
     private GeoPoint userLocation;
@@ -45,6 +44,8 @@ public class MapPage extends AppCompatActivity {
         GpsMyLocationProvider gpsMyLocationProvider = new GpsMyLocationProvider(ctx);
 
         setContentView(R.layout.activity_map_page);
+        //inflate and create the map
+        setContentView(R.layout.activity_main_navigation);
 
         map = findViewById(R.id.map);
         map.setTileSource(TileSourceFactory.MAPNIK);
