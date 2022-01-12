@@ -13,4 +13,12 @@
     <string name="sign_up">Sign up</string>
     <string name="enter_your_email_address">Enter your email address</string>
     <string name="enter_your_password">Enter your password</string>
+
+    <string name="home_icon">home</string>
+    <string name="compass_icon">map</string>
+    <string name="record_icon">record</string>
+    <string name="personal_account">account</string>
+    <string name="settings_icon">settings</string>
+<!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
