@@ -10,34 +10,31 @@ import android.os.Bundle;
 
 import androidx.core.app.ActivityCompat;
 
-class MyLocationListener implements LocationListener {
+class SimpleLocationListener implements LocationListener {
 
-    static Location imHere; // здесь будет всегда доступна самая последняя информация о местоположении пользователя.
+    private Location imHere; // здесь будет всегда доступна самая последняя информация о местоположении пользователя.
+    private static final int MIN_TIME_MS = 5000;
+    private static final int MIN_DISTANCE = 10;
 
-    public static void SetUpLocationListener(Context context) // это нужно запустить в самом начале работы программы
+    public SimpleLocationListener(Context context) // это нужно запустить в самом начале работы программы
     {
         LocationManager locationManager = (LocationManager)
                 context.getSystemService(Context.LOCATION_SERVICE);
 
-        LocationListener locationListener = new MyLocationListener();
-
         if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
             return;
         }
         locationManager.requestLocationUpdates(
                 LocationManager.GPS_PROVIDER,
-                5000,
-                10,
-                locationListener); // здесь можно указать другие более подходящие вам параметры
+                MIN_TIME_MS,
+                MIN_DISTANCE,
+                this); // здесь можно указать другие более подходящие вам параметры
 
         imHere = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+    }
+
+    public Location getLastKnownLocation() {
+        return imHere;
     }
 
     @Override
