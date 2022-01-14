@@ -3,10 +3,13 @@ package ru.netcracker.bikepacker;
 import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.util.Log;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -15,6 +18,7 @@ import org.osmdroid.api.IMapController;
 import org.osmdroid.config.Configuration;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.util.GeoPoint;
+import org.osmdroid.views.CustomZoomButtonsController;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
@@ -26,18 +30,24 @@ public class MapPage extends AppCompatActivity {
     private static final double START_ZOOM = 9.5;
     private MapView map = null;
     private MyLocationNewOverlay mLocationOverlay;
+    private GeoPoint userLocation;
+    private Context ctx;
+    private LocationManager locationManager;
+    private Location imHere; // здесь будет всегда доступна самая последняя информация о местоположении пользователя.
+    private static final int MIN_TIME_MS = 5000;
+    private static final int MIN_DISTANCE = 10;
+    private static final GeoPoint DEFAULT_POINT = new GeoPoint(51.672, 39.1843);
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Context ctx = getApplicationContext();
+        ctx = getApplicationContext();
         Configuration.getInstance().load(ctx, PreferenceManager.getDefaultSharedPreferences(ctx));
         GpsMyLocationProvider gpsMyLocationProvider = new GpsMyLocationProvider(ctx);
-        SimpleLocationListener simpleLocationListener = new SimpleLocationListener(ctx);
 
         setContentView(R.layout.activity_map_page);
 
-        map = (MapView) findViewById(R.id.map);
+        map = findViewById(R.id.map);
         map.setTileSource(TileSourceFactory.MAPNIK);
 
         requestPermissionsIfNecessary(new String[]{
@@ -46,16 +56,31 @@ public class MapPage extends AppCompatActivity {
                 Manifest.permission.WRITE_EXTERNAL_STORAGE
         });
 
-        map.setBuiltInZoomControls(true);
+        map.getZoomController().setVisibility(CustomZoomButtonsController.Visibility.SHOW_AND_FADEOUT);
         map.setMultiTouchControls(true);
 
         IMapController mapController = map.getController();
         mapController.setZoom(START_ZOOM);
 
-        GeoPoint startPoint = simpleLocationListener.getLastKnownLocation() != null ? new GeoPoint(simpleLocationListener.getLastKnownLocation()) : new GeoPoint(51.672, 39.1843);
-        mapController.setCenter(startPoint);
+        locationManager = (LocationManager) ctx.getSystemService(Context.LOCATION_SERVICE);
 
-        this.mLocationOverlay = new MyLocationNewOverlay(gpsMyLocationProvider,map);
+        if (ActivityCompat.checkSelfPermission(ctx, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(ctx, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            //TODO:возвращение на экран с авторизацией
+            return;
+        }
+        locationManager.requestLocationUpdates(
+                LocationManager.GPS_PROVIDER,
+                MIN_TIME_MS,
+                MIN_DISTANCE,
+                location -> imHere = location);
+
+        imHere = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+
+        userLocation = imHere != null ? new GeoPoint(imHere) : DEFAULT_POINT;
+
+        mapController.setCenter(userLocation);
+
+        this.mLocationOverlay = new MyLocationNewOverlay(gpsMyLocationProvider, map);
         this.mLocationOverlay.enableMyLocation();
         map.getOverlays().add(this.mLocationOverlay);
     }
@@ -73,7 +98,7 @@ public class MapPage extends AppCompatActivity {
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         String[] permissionsToRequest = permissions.clone();
         if (permissionsToRequest.length > 0) {
@@ -82,6 +107,12 @@ public class MapPage extends AppCompatActivity {
                     permissionsToRequest,
                     REQUEST_PERMISSIONS_REQUEST_CODE);
         }
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            //TODO:возвращение на экран с авторизацией
+            return;
+        }
+        userLocation = new GeoPoint(locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER));
+        map.getController().setCenter(userLocation);
     }
 
     private void requestPermissionsIfNecessary(String[] permissions) {
