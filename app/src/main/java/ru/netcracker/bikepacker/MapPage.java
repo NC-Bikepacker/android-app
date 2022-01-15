@@ -33,7 +33,6 @@ public class MapPage extends AppCompatActivity {
     private GeoPoint userLocation;
     private Context ctx;
     private LocationManager locationManager;
-    private Location imHere; // здесь будет всегда доступна самая последняя информация о местоположении пользователя.
     private static final int MIN_TIME_MS = 5000;
     private static final int MIN_DISTANCE = 10;
     private static final GeoPoint DEFAULT_POINT = new GeoPoint(51.672, 39.1843);
@@ -68,13 +67,8 @@ public class MapPage extends AppCompatActivity {
             //TODO:возвращение на экран с авторизацией
             return;
         }
-        locationManager.requestLocationUpdates(
-                LocationManager.GPS_PROVIDER,
-                MIN_TIME_MS,
-                MIN_DISTANCE,
-                location -> imHere = location);
 
-        imHere = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        Location imHere = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 
         userLocation = imHere != null ? new GeoPoint(imHere) : DEFAULT_POINT;
 
