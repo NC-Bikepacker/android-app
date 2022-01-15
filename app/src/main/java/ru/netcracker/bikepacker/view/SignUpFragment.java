@@ -7,7 +7,9 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.fragment.NavHostFragment;
 
+import ru.netcracker.bikepacker.R;
 import ru.netcracker.bikepacker.databinding.FragmentSignInBinding;
 import ru.netcracker.bikepacker.databinding.FragmentSignUpBinding;
 
@@ -32,6 +34,8 @@ public class SignUpFragment extends Fragment {
             @Override
             public void onClick(View view) {
 //                TODO: Handle click
+                NavHostFragment.findNavController(SignUpFragment.this)
+                        .navigate(R.id.action_signUpFragment_to_mapPage);
             }
         });
     }
