@@ -4,7 +4,6 @@ import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.location.Location;
-import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -25,7 +24,7 @@ import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
 import java.util.ArrayList;
 
-public class MapPage extends AppCompatActivity {
+public class MainNavigationActivity extends AppCompatActivity {
     private static final int REQUEST_PERMISSIONS_REQUEST_CODE = 1;
     private static final double START_ZOOM = 9.5;
     private MapView map = null;
@@ -44,7 +43,7 @@ public class MapPage extends AppCompatActivity {
         Configuration.getInstance().load(ctx, PreferenceManager.getDefaultSharedPreferences(ctx));
         GpsMyLocationProvider gpsMyLocationProvider = new GpsMyLocationProvider(ctx);
 
-        setContentView(R.layout.activity_map_page);
+        setContentView(R.layout.activity_main_navigation);
 
         map = findViewById(R.id.map);
         map.setTileSource(TileSourceFactory.MAPNIK);
