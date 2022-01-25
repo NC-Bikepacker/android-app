@@ -4,15 +4,8 @@ package ru.netcracker.bikepacker;
 import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
-import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
-import android.location.Location;
-import android.location.LocationManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.util.Log;
-import android.view.MenuItem;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -21,16 +14,8 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.android.material.navigation.NavigationBarView;
 
-import org.osmdroid.api.IMapController;
 import org.osmdroid.config.Configuration;
-import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
-import org.osmdroid.util.GeoPoint;
-import org.osmdroid.views.CustomZoomButtonsController;
-import org.osmdroid.views.MapView;
-import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider;
-import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
 import java.util.ArrayList;
 
@@ -53,18 +38,21 @@ public class MainNavigationActivity extends AppCompatActivity {
         BottomNavigationView bottomNav = findViewById(R.id.bottom_nav_view);
         bottomNav.setOnItemSelectedListener(item -> {
 
-            Fragment selectedFragment;
+
+            Fragment centerFragment;
             if (item.getItemId() == R.id.navigation_map) {
-                selectedFragment = new MapFragment();
+                centerFragment = new MapFragment();
             } else if(item.getItemId() == R.id.navigation_settings) {
-                selectedFragment = new SettingsFragment();
+                centerFragment = new SettingsFragment();
+            } else if(item.getItemId() == R.id.navigation_home) {
+                centerFragment = new HomeFragment();
             } else {
                 //TODO: New fragments
-                selectedFragment = new SettingsFragment();
+                centerFragment = new SettingsFragment();
             }
             getSupportFragmentManager()
                     .beginTransaction()
-                    .replace(R.id.fragment_container, selectedFragment)
+                    .replace(R.id.center_fragment_container, centerFragment)
                     .commit();
             return true;
         });
@@ -75,7 +63,7 @@ public class MainNavigationActivity extends AppCompatActivity {
                 Manifest.permission.WRITE_EXTERNAL_STORAGE
         });
         //setting initial fragment in fragment container
-        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, INITIAL_FRAGMENT).commit();
+        getSupportFragmentManager().beginTransaction().replace(R.id.center_fragment_container, INITIAL_FRAGMENT).commit();
     }
 
     @Override
@@ -116,4 +104,5 @@ public class MainNavigationActivity extends AppCompatActivity {
                     REQUEST_PERMISSIONS_REQUEST_CODE);
         }
     }
+
 }
