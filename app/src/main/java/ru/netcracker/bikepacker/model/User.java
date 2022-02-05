@@ -1,14 +1,32 @@
 package ru.netcracker.bikepacker.model;
 
-public class FindFriendEntity {
+import com.google.gson.annotations.*;
 
-    int id;
+public class User {
+
+    @SerializedName("id")
+    @Expose
+    Long id;
+
+    @SerializedName("firstname")
+    @Expose
     private String firstName;
-    private String lastName;
-    private String nickName;
-    private String userPic_url;
 
-    public FindFriendEntity(int id, String firstName, String lastName, String nickName, String userPic_url) {
+    @SerializedName("lastname")
+    @Expose
+    private String lastName;
+
+    @SerializedName("nickname")
+    @Expose
+    private String nickName;
+
+    @SerializedName("avatarImageUrl")
+    @Expose
+    private String userPic_url;
+    
+    
+
+    public User(Long id, String firstName, String lastName, String nickName, String userPic_url) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -16,11 +34,11 @@ public class FindFriendEntity {
         this.userPic_url = userPic_url;
     }
 
-    public int getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -55,4 +73,5 @@ public class FindFriendEntity {
     public void setUserPic_url(String userPic_url) {
         this.userPic_url = userPic_url;
     }
+
 }
