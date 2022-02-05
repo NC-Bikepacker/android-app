@@ -29,16 +29,30 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintVertical_bias="0.0" />
 
-            <SearchView
+            <EditText
+                android:id="@+id/findFriendsPlaneText"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_marginStart="1dp"
-                android:layout_marginTop="3dp"
-                android:layout_marginEnd="5dp"
+                android:layout_marginStart="5dp"
+                android:ems="10"
+                android:inputType="textPersonName"
+                android:text="Введите никнейм"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/imageView"
+                app:layout_constraintStart_toEndOf="@+id/searchFriendButton"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageButton
+                android:id="@+id/searchFriendButton"
+                style="@style/TextAppearance.AppCompat.Widget.Button.Borderless.Colored"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_search_icon"
+                android:contentDescription="search button"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
+
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.recyclerview.widget.RecyclerView
@@ -46,4 +60,5 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
     </LinearLayout>
+
 </FrameLayout>
