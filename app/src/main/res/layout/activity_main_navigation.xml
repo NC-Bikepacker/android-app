@@ -8,29 +8,28 @@
     tools:context=".MainNavigationActivity">
 
 
+    <FrameLayout
+        android:id="@+id/center_fragment_container"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/bottom_nav_view"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"></FrameLayout>
+
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_nav_view"
-        android:layout_width="410dp"
-        android:layout_height="97dp"
-        android:padding="28dp"
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:padding="10dp"
         android:pointerIcon="context_menu"
         android:scrollbarAlwaysDrawHorizontalTrack="true"
         app:labelVisibilityMode="selected"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:menu="@menu/bottom_menu" />
-
-    <FrameLayout
-        android:id="@+id/fragment_container"
-        android:layout_width="409dp"
-        android:layout_height="632dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-    </FrameLayout>
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>
