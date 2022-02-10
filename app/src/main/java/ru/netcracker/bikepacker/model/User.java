@@ -7,7 +7,6 @@ public class User {
     @SerializedName("id")
     @Expose
     Long id;
-
     @SerializedName("firstname")
     @Expose
     private String firstName;
@@ -16,7 +15,7 @@ public class User {
     @Expose
     private String lastName;
 
-    @SerializedName("nickname")
+    @SerializedName("username")
     @Expose
     private String nickName;
 
@@ -32,6 +31,10 @@ public class User {
         this.lastName = lastName;
         this.nickName = nickName;
         this.userPic_url = userPic_url;
+    }
+
+    public User(Long id) {
+        this.id = id;
     }
 
     public Long getId() {

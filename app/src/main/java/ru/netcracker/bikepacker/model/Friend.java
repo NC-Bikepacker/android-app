@@ -1,10 +1,10 @@
 package ru.netcracker.bikepacker.model;
 
-public class Friends {
+public class Friend {
     String userId;
     String friendId;
 
-    public Friends(String userId, String friendId) {
+    public Friend(String userId, String friendId) {
         this.userId = userId;
         this.friendId = friendId;
     }

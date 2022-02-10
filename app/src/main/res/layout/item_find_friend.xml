@@ -80,13 +80,39 @@
 
         </LinearLayout>
 
-        <ImageButton
-            android:id="@+id/findFriendAddButton"
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="80dp"
-            android:contentDescription="add fiend"
-            android:theme="@style/PurpleButton"
-            app:srcCompat="@drawable/ic_add_user_svgrepo_com" />
+            android:layout_height="80dp">
+
+            <ImageButton
+                android:id="@+id/findFriendAddButton"
+                android:layout_width="match_parent"
+                android:layout_height="80dp"
+                android:contentDescription="add fiend"
+                android:theme="@style/PurpleButton"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_add_user_svgrepo_com" />
+
+            <ImageButton
+                android:id="@+id/deleteFriendButton"
+                android:layout_width="match_parent"
+                android:layout_height="80dp"
+                android:layout_weight="1"
+                android:contentDescription="add fiend"
+                android:theme="@style/deleteButton"
+                android:visibility="invisible"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_delete" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

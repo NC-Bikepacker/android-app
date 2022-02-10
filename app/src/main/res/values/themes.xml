@@ -28,4 +28,13 @@
         <item name="colorButtonNormal">@color/purple_500</item>
         <item name="colorControlHighlight">@color/purple_700</item>
     </style>
+
+    <style name="deleteButton" parent="@style/Widget.AppCompat.Button.Borderless.Colored">
+        <item name="colorButtonNormal">@color/red_off</item>
+        <item name="colorControlHighlight">@color/red_on</item>
+    </style>
+
+    <style name="whiteAndPurpleButton" parent="@style/Widget.AppCompat.Button.Borderless.Colored">
+        <item name="colorControlHighlight">@color/purple_700</item>
+    </style>
 </resources>

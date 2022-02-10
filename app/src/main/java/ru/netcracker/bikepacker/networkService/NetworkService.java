@@ -1,22 +1,24 @@
 package ru.netcracker.bikepacker.networkService;
 
-import android.content.Context;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
-import ru.netcracker.bikepacker.R;
 
 public class NetworkService {
-    private Context context;
     private static NetworkService mInstance;
     private static final String BASE_URL = "http://192.168.2.2:8085";
-    //private static final String BASE_URL = String.valueOf(R.string.server_ip);
     private Retrofit mRetrofit;
 
     private NetworkService() {
+        Gson gson = new GsonBuilder()
+                .setLenient()
+                .create();
+
         mRetrofit = new Retrofit.Builder()
                 .baseUrl(BASE_URL)
-                .addConverterFactory(GsonConverterFactory.create())
+                .addConverterFactory(GsonConverterFactory.create(gson))
                 .build();
     }
 
