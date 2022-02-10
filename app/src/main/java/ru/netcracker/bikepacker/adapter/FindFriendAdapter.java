@@ -7,7 +7,6 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -16,28 +15,23 @@ import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
-import okhttp3.RequestBody;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 import ru.netcracker.bikepacker.R;
 import ru.netcracker.bikepacker.listholder.MyFriendsList;
-import ru.netcracker.bikepacker.model.Friends;
 import ru.netcracker.bikepacker.model.User;
-import ru.netcracker.bikepacker.networkService.NetworkService;
 
 public class FindFriendAdapter extends RecyclerView.Adapter<FindFriendAdapter.FindFriendViewHolder> {
 
     Context context;
     List<User> findFriends;
 
-    public interface OnStateClickListener{
-        void onStateClick(User user, int position);
+    public interface OnFriendClickListener{
+        void addFriendClick(User user, int position);
+        void deleteFriendClick(User user, int position);
     }
 
-    private final OnStateClickListener onClickListener;
+    private final OnFriendClickListener onClickListener;
 
-    public FindFriendAdapter(Context context, List<User> findFriends, OnStateClickListener onClickListener) {
+    public FindFriendAdapter(Context context, List<User> findFriends, OnFriendClickListener onClickListener) {
         this.context = context;
         this.findFriends = findFriends;
         this.onClickListener = onClickListener;
@@ -65,13 +59,19 @@ public class FindFriendAdapter extends RecyclerView.Adapter<FindFriendAdapter.Fi
                    .error(R.drawable.ic_userpic)
                    .into(holder.findFriend_pic);
 
-           //обработчик кнопки
-           holder.addFriendButton.setOnClickListener(new View.OnClickListener() {
-               @Override
-               public void onClick(View view) {
-                   onClickListener.onStateClick(user, position);
-               }
-           });
+        //обработчик кнопки
+        holder.addFriendButton.setOnClickListener(view -> onClickListener.addFriendClick(user, position));
+        holder.deleteFriendButtton.setOnClickListener(view -> onClickListener.deleteFriendClick(user, position));
+
+        //меняем кнопку на нужную, в зависимости от того, пользователь добавлен или удален
+           if(MyFriendsList.getInstance().containsFriend(user.getId())){
+               holder.addFriendButton.setVisibility(View.INVISIBLE);
+               holder.deleteFriendButtton.setVisibility(View.VISIBLE);
+           }
+           else {
+               holder.addFriendButton.setVisibility(View.VISIBLE);
+               holder.deleteFriendButtton.setVisibility(View.INVISIBLE);
+           }
     }
 
     //устанавливаем размер RecycleView исходя из размера коллкекции findFriends
@@ -85,7 +85,7 @@ public class FindFriendAdapter extends RecyclerView.Adapter<FindFriendAdapter.Fi
 
         ImageView findFriend_pic;
         TextView firstName, lastName, nickName;
-        ImageButton addFriendButton;
+        ImageButton addFriendButton,deleteFriendButtton;
 
         public FindFriendViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -95,7 +95,7 @@ public class FindFriendAdapter extends RecyclerView.Adapter<FindFriendAdapter.Fi
             lastName = itemView.findViewById(R.id.findFriend_lastName);
             nickName = itemView.findViewById(R.id.findFriend_nickName);
             addFriendButton = itemView.findViewById(R.id.findFriendAddButton);
-
+            deleteFriendButtton = itemView.findViewById(R.id.deleteFriendButton);
         }
     }
 }
