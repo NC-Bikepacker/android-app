@@ -43,7 +43,7 @@ public class FindFriendFragment extends Fragment {
     ImageButton searchFriendButton;
     View viewFindFriendFragment;
     //Юзер из под которого подключаемся
-    User iAmUser = new User(1L,"","","ComeBak","");
+    User iAmUser = new User(5L,"","","ComeBak","");
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
