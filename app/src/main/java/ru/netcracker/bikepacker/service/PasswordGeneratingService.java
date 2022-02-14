@@ -1,4 +1,4 @@
-package ru.netcracker.bikepacker.model;
+package ru.netcracker.bikepacker.service;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
@@ -20,7 +20,7 @@ import javax.crypto.spec.PBEKeySpec;
  * still considered robust.
  * The hashed value has 256 bits.
  */
-public abstract class Password {
+public abstract class PasswordGeneratingService {
 
     private static final Random RANDOM = new SecureRandom();
     private static final int ITERATIONS = 65536;
@@ -29,7 +29,7 @@ public abstract class Password {
     /**
      * static utility class
      */
-    private Password() {
+    private PasswordGeneratingService() {
     }
 
     /**

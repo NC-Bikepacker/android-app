@@ -1,5 +1,6 @@
 package ru.netcracker.bikepacker.view;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,9 +15,11 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.fragment.NavHostFragment;
 
 import ru.netcracker.bikepacker.R;
+import ru.netcracker.bikepacker.controller.AuthRequest;
 import ru.netcracker.bikepacker.databinding.FragmentLogInBinding;
-import ru.netcracker.bikepacker.model.Email;
-import ru.netcracker.bikepacker.model.Password;
+import ru.netcracker.bikepacker.manager.SessionManager;
+import ru.netcracker.bikepacker.model.AuthModel;
+import ru.netcracker.bikepacker.service.EmailValidationService;
 
 public class LogIn extends Fragment {
 
@@ -28,18 +31,21 @@ public class LogIn extends Fragment {
     Button submitFormButton;
     TextView signUpLink;
 
+    Context context;
+
     @Override
     public View onCreateView(
             LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState
     ) {
-
         fragmentLogInBinding = FragmentLogInBinding.inflate(inflater, container, false);
         return fragmentLogInBinding.getRoot();
     }
 
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        context = getActivity().getApplicationContext();
 
         emailField = fragmentLogInBinding.layoutSigninEmailFieldTextField;
         passwordField = fragmentLogInBinding.layoutSigninPasswordFieldTextField;
@@ -64,35 +70,37 @@ public class LogIn extends Fragment {
                 boolean emailIsValid = false;
 
                 if (email.equals("") || password.equals("")) {
-                    Toast errorToast = Toast.makeText(getActivity().getApplicationContext(), "All field are required.", Toast.LENGTH_SHORT);
+                    Toast errorToast = Toast.makeText(context, "All field are required.", Toast.LENGTH_SHORT);
                     errorToast.show();
                 } else {
                     fieldsAreNotEmpty = true;
 
-                    if (Email.isEmailValid(email)) {
+                    if (EmailValidationService.isEmailValid(email)) {
                         emailIsValid = true;
-
-                        if (password.length() >= 8 && Password.isValidPassword(password)) {
+//                      TODO: Enable email validation
+//                        if (password.length() >= 8 && PasswordGeneratingService.isValidPassword(password)) {
+                        if (true) {
                             passwordIsValid = true;
 
                         } else {
-                            Toast errorToast = Toast.makeText(getActivity().getApplicationContext(), "This password is invalid or less then 8 characters.", Toast.LENGTH_SHORT);
+                            Toast errorToast = Toast.makeText(context, "This password is invalid or less then 8 characters.", Toast.LENGTH_SHORT);
                             errorToast.show();
                         }
                     } else {
-                        Toast errorToast = Toast.makeText(getActivity().getApplicationContext(), "Email is not valid.", Toast.LENGTH_SHORT);
+                        Toast errorToast = Toast.makeText(context, "Email is not valid.", Toast.LENGTH_SHORT);
                         errorToast.show();
                     }
                 }
 
                 if (fieldsAreNotEmpty && passwordIsValid && emailIsValid) {
-//                    TODO: Send POST request
 
+                    AuthModel authModel = new AuthModel(email, password);
+                    AuthRequest.authReq(context, authModel);
 
+                    SessionManager sessionManager = new SessionManager(context);
 
+                    System.out.println(sessionManager.getSessionUserEmail());
 
-                    NavHostFragment.findNavController(LogIn.this)
-                            .navigate(R.id.action_logInFragment_to_userAccountInfo);
                 }
             }
         });

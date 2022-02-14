@@ -1,6 +1,6 @@
-package ru.netcracker.bikepacker.model;
+package ru.netcracker.bikepacker.service;
 
-public abstract class Email {
+public abstract class EmailValidationService {
 
     private static String regexPattern = "^(?=.{1,64}@)[A-Za-z0-9_-]+(\\.[A-Za-z0-9_-]+)*@"
             + "[^-][A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*(\\.[A-Za-z]{2,})$";

@@ -17,8 +17,8 @@ import org.apache.commons.lang3.StringUtils;
 
 import ru.netcracker.bikepacker.R;
 import ru.netcracker.bikepacker.databinding.FragmentSignUpBinding;
-import ru.netcracker.bikepacker.model.Email;
-import ru.netcracker.bikepacker.model.Password;
+import ru.netcracker.bikepacker.service.EmailValidationService;
+import ru.netcracker.bikepacker.service.PasswordGeneratingService;
 
 public class SignUp extends Fragment {
 
@@ -84,10 +84,10 @@ public class SignUp extends Fragment {
                 } else {
                     fieldsAreNotEmpty = true;
 
-                    if (Email.isEmailValid(email)) {
+                    if (EmailValidationService.isEmailValid(email)) {
                         emailIsValid = true;
 
-                        if (pass.length() >= 8 && Password.isValidPassword(pass)) {
+                        if (pass.length() >= 8 && PasswordGeneratingService.isValidPassword(pass)) {
                             passwordIsValid = true;
 
                             if (pass.equals(passConfirmation)) {

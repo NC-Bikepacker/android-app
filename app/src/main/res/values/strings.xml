@@ -30,6 +30,8 @@
     <string name="confirm_password">Confirm password</string>
     <string name="email">Email</string>
     <string name="edit">Edit</string>
+    <string name="logout">Log out</string>
+    <string name="backend_server_url">http://192.168.1.60:8085/</string>
     <string name="large_text">
         "Material is the metaphor.\n\n"
 

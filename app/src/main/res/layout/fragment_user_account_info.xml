@@ -57,22 +57,36 @@
                 android:text="TextView"
                 android:textColor="@color/black"
                 android:textSize="14sp" />
+
+            <Button
+                android:id="@+id/fragment_user_account_info_button_logout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="16dp"
+                android:elegantTextHeight="false"
+                android:fontFamily="@font/proxima_nova_semibold"
+                android:letterSpacing="0"
+                android:minHeight="60dp"
+                android:text="@string/logout"
+                android:textAlignment="center"
+                android:textAllCaps="false"
+                android:textSize="18sp" />
+
+            <Button
+                android:id="@+id/fragment_user_account_info_button_edit_profile"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:elegantTextHeight="false"
+                android:fontFamily="@font/proxima_nova_semibold"
+                android:letterSpacing="0"
+                android:minHeight="60dp"
+                android:text="@string/edit"
+                android:textAlignment="center"
+                android:textAllCaps="false"
+                android:textSize="18sp" />
         </LinearLayout>
 
-        <Button
-            android:id="@+id/fragment_user_account_info_button_edit_profile"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="16dp"
-            android:elegantTextHeight="false"
-            android:fontFamily="@font/proxima_nova_semibold"
-            android:letterSpacing="0"
-            android:minHeight="60dp"
-            android:text="@string/edit"
-            android:textAlignment="center"
-            android:textAllCaps="false"
-            android:textSize="18sp" />
     </RelativeLayout>
 </FrameLayout>
