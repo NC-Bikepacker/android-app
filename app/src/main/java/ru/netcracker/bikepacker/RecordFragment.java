@@ -13,29 +13,20 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.Polyline;
 
-import io.jenetics.jpx.GPX;
 import ru.netcracker.bikepacker.tracks.GpxUtil;
 import ru.netcracker.bikepacker.tracks.TrackRecorder;
+import ru.netcracker.bikepacker.tracks.listeners.OnGpxCreatedListener;
+import ru.netcracker.bikepacker.tracks.listeners.OnRecordingEventsListener;
 
 
 public class RecordFragment extends Fragment {
-    private MapView map;
     private TrackRecorder trackRecorder;
     private Context ctx;
     private boolean recording = false;
     private OnGpxCreatedListener onGpxCreatedListener;
-    //    private StartRecordingFragment startRecordingFragment = new StartRecordingFragment();
     private static final String TAG_START = "start";
-
-    //    public RecordFragment(MapView map) {
-//        this.map = map;
-//    }
-    public interface OnGpxCreatedListener {
-        void onGpxCreated(GPX gpx);
-    }
 
     public void setOnGpxCreatedListener(OnGpxCreatedListener onGpxCreatedListener) {
         this.onGpxCreatedListener = onGpxCreatedListener;
@@ -44,21 +35,13 @@ public class RecordFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-    }
 
-//    private void setupFragments() {
-//        requireActivity().getSupportFragmentManager().beginTransaction()
-//                .add(R.id.record_fragment,startRecordingFragment,TAG_START).hide(startRecordingFragment).commit();
-//    }
+    }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-//        Log.d("context",requireContext().toString());
-//        Animation animation = AnimationUtils.loadAnimation(requireContext(), R.anim.popinlayout);
-//        LayoutAnimationController layoutAnimationController = new LayoutAnimationController(animation);
-//        container.setLayoutAnimation(layoutAnimationController);
         return inflater.inflate(R.layout.fragment_record, container, false);
     }
 
@@ -66,13 +49,12 @@ public class RecordFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         ctx = requireContext();
-//        setupFragments();
 
         ImageButton recordButton = view.findViewById(R.id.record);
         LocationManager locationManager = (LocationManager) ctx.getSystemService(Context.LOCATION_SERVICE);
         trackRecorder = new TrackRecorder(ctx, locationManager);
         trackRecorder.setOnRecordingListener(
-                new TrackRecorder.OnRecordingEventsListener() {
+                new OnRecordingEventsListener() {
 
                     @Override
                     public void onStartRecording() {

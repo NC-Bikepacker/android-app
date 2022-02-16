@@ -6,6 +6,7 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -27,6 +28,7 @@ import retrofit2.Response;
 import ru.netcracker.bikepacker.network.NetworkService;
 import ru.netcracker.bikepacker.network.pojos.TrackDTO;
 import ru.netcracker.bikepacker.network.pojos.UserDTO;
+import ru.netcracker.bikepacker.tracks.listeners.OnRecordingEventsListener;
 
 
 public class TrackRecorder {
@@ -54,11 +56,7 @@ public class TrackRecorder {
         this.onRecordingEventsListener = onRecordingEventsListener;
     }
 
-    public interface OnRecordingEventsListener {
-        void onStartRecording();
 
-        void onFinishRecording();
-    }
 
     public TrackRecorder(Context ctx, LocationManager locationManager) {
         this.ctx = ctx;
@@ -99,12 +97,16 @@ public class TrackRecorder {
         UserDTO user = new UserDTO(1L);
         TrackDTO trackToPost = new TrackDTO(2, 3, user, GpxUtil.gpxToString(getGpx()));
 
-        NetworkService.getInstance().getJsonBackendAPI().postTrack(trackToPost).enqueue(new Callback<ResponseBody>() {
+        NetworkService.getInstance(ctx).getJsonBackendAPI().postTrack(trackToPost).enqueue(new Callback<ResponseBody>() {
             @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {}
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                Log.d("Track sending callback","SENDED");
+            }
 
             @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {}
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Log.d("Track sending callback","NOT SENDED");
+            }
         });
         onRecordingEventsListener.onFinishRecording();
     }

@@ -11,6 +11,7 @@ import io.jenetics.jpx.GPX
 import org.osmdroid.config.Configuration
 import ru.netcracker.bikepacker.tracks.UserTrack
 import ru.netcracker.bikepacker.tracks.GpxUtil
+import ru.netcracker.bikepacker.tracks.listeners.OnGpxCreatedListener
 import java.util.stream.Collectors
 
 class MainNavigationActivity : AppCompatActivity() {
@@ -46,7 +47,7 @@ class MainNavigationActivity : AppCompatActivity() {
         else {
             val initialFr = RecordFragment()
             initialFr.setOnGpxCreatedListener(
-                object : RecordFragment.OnGpxCreatedListener {
+                object : OnGpxCreatedListener {
                     override fun onGpxCreated(gpx: GPX?) {
                         val map = mapFragment.map
                         val userTrack: UserTrack = UserTrack.newInstance(
@@ -78,6 +79,7 @@ class MainNavigationActivity : AppCompatActivity() {
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         ctx = applicationContext
+
         //android preferences setting
         Configuration.getInstance().load(ctx, PreferenceManager.getDefaultSharedPreferences(ctx))
         setContentView(R.layout.activity_main_navigation)
