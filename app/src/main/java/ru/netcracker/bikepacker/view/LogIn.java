@@ -2,6 +2,7 @@ package ru.netcracker.bikepacker.view;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,12 +15,18 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.fragment.NavHostFragment;
 
+import java.io.InvalidObjectException;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 import ru.netcracker.bikepacker.R;
-import ru.netcracker.bikepacker.controller.AuthRequest;
 import ru.netcracker.bikepacker.databinding.FragmentLogInBinding;
 import ru.netcracker.bikepacker.manager.SessionManager;
 import ru.netcracker.bikepacker.model.AuthModel;
+import ru.netcracker.bikepacker.model.UserModel;
 import ru.netcracker.bikepacker.service.EmailValidationService;
+import ru.netcracker.bikepacker.service.NetworkService;
 
 public class LogIn extends Fragment {
 
@@ -94,13 +101,42 @@ public class LogIn extends Fragment {
 
                 if (fieldsAreNotEmpty && passwordIsValid && emailIsValid) {
 
-                    AuthModel authModel = new AuthModel(email, password);
-                    AuthRequest.authReq(context, authModel);
-
                     SessionManager sessionManager = new SessionManager(context);
+                    authRequest(context, new AuthModel(email, password));
+                }
+            }
+        });
+    }
 
-                    System.out.println(sessionManager.getSessionUserEmail());
+    public void authRequest(Context context, AuthModel authModel) {
+        NetworkService.getInstance().getJSONApi().login(authModel).enqueue(new Callback<UserModel>() {
 
+            @Override
+            public void onFailure(@NonNull Call<UserModel> call, @NonNull Throwable t) {
+                Log.e("Error. Authenticated was failed. ", t.getMessage());
+                Toast errorToast = Toast.makeText(context, "Error. Authenticated was failed.", Toast.LENGTH_LONG);
+                errorToast.show();
+            }
+
+            @Override
+            public void onResponse(@NonNull Call<UserModel> call, @NonNull Response<UserModel> response) {
+                if (response.isSuccessful()) {
+                    Log.d("Message", "Successfully authenticated. Response " + response.code());
+                    String sessionId = response.headers().get("Set-Cookie").split("; ")[0].replace("JSESSIONID=", "");
+                    SessionManager sessionManager = new SessionManager(context);
+                    sessionManager.setSessionId(sessionId);
+
+                    if (null != response.body()) {
+                        sessionManager.setSessionUser(response.body());
+                    } else {
+                        try {
+                            throw new InvalidObjectException("Response body is empty");
+                        } catch (InvalidObjectException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                } else {
+                    Log.d("Message", "Error. Authenticated was failed. Response " + response.code());
                 }
             }
         });

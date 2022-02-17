@@ -1,6 +1,7 @@
 package ru.netcracker.bikepacker.view;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,9 +16,15 @@ import androidx.navigation.fragment.NavHostFragment;
 
 import org.apache.commons.lang3.StringUtils;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 import ru.netcracker.bikepacker.R;
 import ru.netcracker.bikepacker.databinding.FragmentSignUpBinding;
+import ru.netcracker.bikepacker.model.RoleEntity;
+import ru.netcracker.bikepacker.model.SignUpModel;
 import ru.netcracker.bikepacker.service.EmailValidationService;
+import ru.netcracker.bikepacker.service.NetworkService;
 import ru.netcracker.bikepacker.service.PasswordGeneratingService;
 
 public class SignUp extends Fragment {
@@ -25,10 +32,10 @@ public class SignUp extends Fragment {
     private @NonNull
     FragmentSignUpBinding fragmentSignUpBinding;
 
-    EditText firstName;
-    EditText lastName;
-    EditText userName;
-    EditText email;
+    EditText firstNameField;
+    EditText lastNameField;
+    EditText userNameField;
+    EditText emailField;
     EditText passwordField;
     EditText confirmPasswordField;
     Button submitFormButton;
@@ -46,10 +53,10 @@ public class SignUp extends Fragment {
 
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        firstName = fragmentSignUpBinding.layoutSignupFirstnameFieldTextField;
-        lastName = fragmentSignUpBinding.layoutSignupLastnameFieldTextField;
-        userName = fragmentSignUpBinding.layoutSignupUsernameFieldTextField;
-        email = fragmentSignUpBinding.layoutSignupEmailFieldTextField;
+        firstNameField = fragmentSignUpBinding.layoutSignupFirstnameFieldTextField;
+        lastNameField = fragmentSignUpBinding.layoutSignupLastnameFieldTextField;
+        userNameField = fragmentSignUpBinding.layoutSignupUsernameFieldTextField;
+        emailField = fragmentSignUpBinding.layoutSignupEmailFieldTextField;
         passwordField = fragmentSignUpBinding.layoutSignupPasswordFieldTextField;
         confirmPasswordField = fragmentSignUpBinding.layoutSignupConfirmPasswordFieldTextview;
         submitFormButton = fragmentSignUpBinding.fragmentSignUpButtonSignUp;
@@ -66,10 +73,10 @@ public class SignUp extends Fragment {
         submitFormButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String firstname = StringUtils.capitalize(firstName.getText().toString().trim().toLowerCase());
-                String lastname = StringUtils.capitalize(lastName.getText().toString().trim().toLowerCase());
-                String username = userName.getText().toString().trim().toLowerCase();
-                String email = firstName.getText().toString().trim();
+                String firstname = StringUtils.capitalize(firstNameField.getText().toString().trim().toLowerCase());
+                String lastname = StringUtils.capitalize(lastNameField.getText().toString().trim().toLowerCase());
+                String username = userNameField.getText().toString().trim().toLowerCase();
+                String email = emailField.getText().toString().trim();
                 String pass = passwordField.getText().toString();
                 String passConfirmation = confirmPasswordField.getText().toString();
 
@@ -108,12 +115,38 @@ public class SignUp extends Fragment {
                 }
 
                 if (fieldsAreNotEmpty && emailIsValid && passwordIsValid && passwordIsConfirmed) {
-//                  TODO: Send POST request
-                    Toast errorToast = Toast.makeText(getActivity().getApplicationContext(), "Все поля прошли проверку успешно", Toast.LENGTH_SHORT);
+                    Toast errorToast = Toast.makeText(getActivity().getApplicationContext(), "You was successfully registered.", Toast.LENGTH_SHORT);
                     errorToast.show();
 
-                    NavHostFragment.findNavController(SignUp.this)
-                            .navigate(R.id.action_signUpFragment_to_userAccountInfo);
+                    SignUpModel signUpModel = new SignUpModel();
+                    signUpModel.setEmail(email);
+                    signUpModel.setFirstname(firstname);
+                    signUpModel.setLastname(lastname);
+                    signUpModel.setUsername(username);
+                    signUpModel.setPassword(pass);
+                    signUpModel.setRoles(new RoleEntity(2L, "ROLE_USER"));
+                    signUpModel.setAvatarImageUrl("");
+
+                    NetworkService.getInstance().getJSONApi().signUp(signUpModel).enqueue(new Callback<Void>() {
+
+                        @Override
+                        public void onResponse(Call<Void> call, Response<Void> response) {
+                            if (response.isSuccessful()) {
+                                NavHostFragment.findNavController(SignUp.this)
+                                        .navigate(R.id.action_signUpFragment_to_logInFragment);
+                            } else {
+                                Toast errorToast = Toast.makeText(getActivity().getApplicationContext(), "Signing up was failed. Error code " + response.code(), Toast.LENGTH_SHORT);
+                                errorToast.show();
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<Void> call, Throwable t) {
+                            Log.d("Error", "Signing up was failed. Error:" + t.getMessage());
+                            Toast errorToast = Toast.makeText(getActivity().getApplicationContext(), "Signing up was failed. Error:" + t.getMessage(), Toast.LENGTH_SHORT);
+                            errorToast.show();
+                        }
+                    });
                 }
             }
         });

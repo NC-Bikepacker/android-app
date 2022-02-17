@@ -1,11 +1,8 @@
 package ru.netcracker.bikepacker.service;
 
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.spec.InvalidKeySpecException;
-import java.security.spec.KeySpec;
 import java.util.Arrays;
 import java.util.Random;
 import java.util.regex.Matcher;
@@ -119,5 +116,4 @@ public abstract class PasswordGeneratingService {
         matcher = pattern.matcher(password);
         return matcher.matches();
     }
-
 }

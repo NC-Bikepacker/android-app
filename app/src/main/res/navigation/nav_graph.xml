@@ -17,9 +17,6 @@
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@anim/slide_in_left"
             app:popExitAnim="@anim/slide_out_right" />
-        <action
-            android:id="@+id/action_logInFragment_to_userAccountInfo"
-            app:destination="@id/userAccountInfo" />
     </fragment>
     <fragment
         android:id="@+id/signUpFragment"
@@ -33,23 +30,7 @@
             app:exitAnim="@anim/slide_out_right"
             app:popEnterAnim="@anim/slide_in_left"
             app:popExitAnim="@anim/slide_out_right"/>
-        <action
-            android:id="@+id/action_signUpFragment_to_userAccountInfo"
-            app:destination="@id/userAccountInfo" />
     </fragment>
-    <fragment
-        android:id="@+id/userAccountInfo"
-        android:name="ru.netcracker.bikepacker.view.UserAccountInfo"
-        android:label="fragment_user_account_info"
-        tools:layout="@layout/fragment_user_account_info" >
-        <action
-            android:id="@+id/action_userAccountInfo_to_editUserProfile"
-            app:destination="@id/editUserProfile" />
-    </fragment>
-    <fragment
-        android:id="@+id/editUserProfile"
-        android:name="ru.netcracker.bikepacker.view.EditUserProfile"
-        android:label="EditUserProfile" />
 
 
 </navigation>
