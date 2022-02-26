@@ -46,6 +46,8 @@ public class MainNavigationActivity extends AppCompatActivity {
                 centerFragment = new SettingsFragment();
             } else if(item.getItemId() == R.id.navigation_home) {
                 centerFragment = new HomeFragment();
+            } else if(item.getItemId() == R.id.navigation_account) {
+                centerFragment = new UserMenuFragment();
             } else {
                 //TODO: New fragments
                 centerFragment = new SettingsFragment();

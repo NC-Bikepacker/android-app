@@ -94,7 +94,7 @@ public class FindFriendFragment extends Fragment {
     }
 
     private void displayMyFriend(View view){
-            NetworkService.getInstance()
+            NetworkService.getInstance(getContext())
                     .getJSONApi()
                     .getMyFriends(iAmUser.getNickName())
                     .enqueue(new Callback<List<User>>() {
@@ -122,7 +122,7 @@ public class FindFriendFragment extends Fragment {
     }
 
     private void displayFindFriend(View view, String nickName){
-        NetworkService.getInstance()
+        NetworkService.getInstance(getContext())
                 .getJSONApi()
                 .getFriendWithNickName(nickName)
                 .enqueue(new Callback<User>() {
@@ -154,7 +154,7 @@ public class FindFriendFragment extends Fragment {
             @Override
             public void addFriendClick(User user, int position) {
                 friends = new Friend(String.valueOf(iAmUser.getId()), String.valueOf(user.getId()));
-                NetworkService.getInstance()
+                NetworkService.getInstance(getContext())
                         .getJSONApi()
                         .postRequestFriend(friends)
                         .enqueue(new Callback<ResponseBody>() {
@@ -176,7 +176,7 @@ public class FindFriendFragment extends Fragment {
             @Override
             public void deleteFriendClick(User user, int position) {
                 friends = new Friend(String.valueOf(iAmUser.getId()), String.valueOf(user.getId()));
-                NetworkService.getInstance()
+                NetworkService.getInstance(getContext())
                                 .getJSONApi()
                                 .deleteFriend(friends)
                                 .enqueue(new Callback<ResponseBody>() {
