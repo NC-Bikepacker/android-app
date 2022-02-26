@@ -18,8 +18,18 @@ public class SessionManager {
     private final String SESSION_USER_PIC_LINK = "session_user_link";
 
     public SessionManager(Context context) {
-        sharedPreferences = context.getSharedPreferences(SHARED_PREF, Context.MODE_PRIVATE);
-        editor = sharedPreferences.edit();
+        if (sharedPreferences == null) {
+            sharedPreferences = getSharedPreferences(context);
+            editor = getSharedPreferencesEditor();
+        }
+    }
+
+    private SharedPreferences getSharedPreferences(Context context) {
+        return context.getSharedPreferences(SHARED_PREF, Context.MODE_PRIVATE);
+    }
+
+    private SharedPreferences.Editor getSharedPreferencesEditor() {
+        return sharedPreferences.edit();
     }
 
     public void setSessionId(String sessionId) {
@@ -34,6 +44,17 @@ public class SessionManager {
                 .putString(SESSION_USER_EMAIL, userModel.getEmail())
                 .putString(SESSION_USER_PIC_LINK, userModel.getUserPicLink())
                 .commit();
+    }
+
+    public UserModel getSessionUser() {
+        UserModel userModel = new UserModel();
+        userModel.setEmail(getSessionUserEmail());
+        userModel.setLastname(getSessionUserLastname());
+        userModel.setFirstname(getSessionUserFirstname());
+        userModel.setUserPicLink(getSessionUserPicUrl());
+        userModel.setUsername(getSessionUsername());
+        userModel.setId(getSessionUserId());
+        return userModel;
     }
 
     public String getSessionId() {
@@ -97,5 +118,13 @@ public class SessionManager {
                 .putString(SESSION_USER_PIC_LINK, null)
                 .putString(SESSION_ID, null)
                 .commit();
+    }
+
+    public boolean isEmpty() {
+        if (sharedPreferences == null || getSessionId() == null) {
+            return true;
+        }
+
+        return false;
     }
 }

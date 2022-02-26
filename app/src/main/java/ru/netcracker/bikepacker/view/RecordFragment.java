@@ -1,4 +1,4 @@
-package ru.netcracker.bikepacker;
+package ru.netcracker.bikepacker.view;
 
 import android.content.Context;
 import android.location.LocationManager;
@@ -15,6 +15,7 @@ import androidx.fragment.app.Fragment;
 
 import org.osmdroid.views.overlay.Polyline;
 
+import ru.netcracker.bikepacker.R;
 import ru.netcracker.bikepacker.tracks.GpxUtil;
 import ru.netcracker.bikepacker.tracks.TrackRecorder;
 import ru.netcracker.bikepacker.tracks.listeners.OnGpxCreatedListener;

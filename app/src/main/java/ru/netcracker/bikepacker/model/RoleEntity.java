@@ -13,12 +13,12 @@ public class RoleEntity {
     @Expose
     private String roleName;
 
-    public RoleEntity() {
-    }
-
     public RoleEntity(Long roleId, String roleName) {
         this.roleId = roleId;
         this.roleName = roleName;
+    }
+
+    public RoleEntity() {
     }
 
     public Long getRoleId() {

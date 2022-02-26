@@ -8,6 +8,7 @@
     android:background="@color/white">
 
     <LinearLayout
+        android:id="@+id/linearLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/white"
@@ -25,6 +26,7 @@
             android:id="@+id/layout_signup_layout_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="48dp"
             android:layout_marginBottom="32dp"
             android:fontFamily="@font/proxima_nova_semibold"
             android:letterSpacing="0"
@@ -59,11 +61,11 @@
                     android:minHeight="50dp"
                     android:paddingHorizontal="16dp"
                     android:paddingVertical="16dp"
+                    android:singleLine="true"
                     android:textColor="@color/black"
                     android:textColorHighlight="@color/purple_opacity_25"
                     android:textColorHint="@color/grey_main"
-                    android:textSize="14sp"
-                    android:singleLine="true"/>
+                    android:textSize="14sp" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
@@ -86,11 +88,11 @@
                     android:minHeight="50dp"
                     android:paddingHorizontal="16dp"
                     android:paddingVertical="16dp"
+                    android:singleLine="true"
                     android:textColor="@color/black"
                     android:textColorHighlight="@color/purple_opacity_25"
                     android:textColorHint="@color/grey_main"
-                    android:textSize="14sp"
-                    android:singleLine="true"/>
+                    android:textSize="14sp" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
@@ -113,11 +115,11 @@
                     android:minHeight="50dp"
                     android:paddingHorizontal="16dp"
                     android:paddingVertical="16dp"
+                    android:singleLine="true"
                     android:textColor="@color/black"
                     android:textColorHighlight="@color/purple_opacity_25"
                     android:textColorHint="@color/grey_main"
-                    android:textSize="14sp"
-                    android:singleLine="true"/>
+                    android:textSize="14sp" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
@@ -140,18 +142,18 @@
                     android:minHeight="50dp"
                     android:paddingHorizontal="16dp"
                     android:paddingVertical="16dp"
+                    android:singleLine="true"
                     android:textColor="@color/black"
                     android:textColorHighlight="@color/purple_opacity_25"
                     android:textColorHint="@color/grey_main"
-                    android:textSize="14sp"
-                    android:singleLine="true"/>
+                    android:textSize="14sp" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                app:passwordToggleEnabled="true"
-                app:passwordToggleDrawable="@drawable/show_password_selector">
+                app:passwordToggleDrawable="@drawable/show_password_selector"
+                app:passwordToggleEnabled="true">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/layout_signup_password_field_textField"
@@ -174,14 +176,14 @@
                     android:textColorHint="@color/grey_main"
                     android:textSize="14sp"
                     app:passwordToggleEnabled="true"
-                    app:passwordToggleTint="@color/purple_main"/>
+                    app:passwordToggleTint="@color/purple_main" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                app:passwordToggleEnabled="true"
-                app:passwordToggleDrawable="@drawable/show_password_selector">
+                app:passwordToggleDrawable="@drawable/show_password_selector"
+                app:passwordToggleEnabled="true">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/layout_signup_confirm_password_field_textview"

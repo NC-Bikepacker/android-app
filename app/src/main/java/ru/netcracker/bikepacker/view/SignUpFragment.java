@@ -1,5 +1,6 @@
 package ru.netcracker.bikepacker.view;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -23,14 +24,15 @@ import ru.netcracker.bikepacker.R;
 import ru.netcracker.bikepacker.databinding.FragmentSignUpBinding;
 import ru.netcracker.bikepacker.model.RoleEntity;
 import ru.netcracker.bikepacker.model.SignUpModel;
+import ru.netcracker.bikepacker.manager.RetrofitManager;
 import ru.netcracker.bikepacker.service.EmailValidationService;
-import ru.netcracker.bikepacker.service.NetworkService;
 import ru.netcracker.bikepacker.service.PasswordGeneratingService;
 
-public class SignUp extends Fragment {
+public class SignUpFragment extends Fragment {
 
     private @NonNull
     FragmentSignUpBinding fragmentSignUpBinding;
+    Context context;
 
     EditText firstNameField;
     EditText lastNameField;
@@ -46,8 +48,8 @@ public class SignUp extends Fragment {
             LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState
     ) {
-
         fragmentSignUpBinding = FragmentSignUpBinding.inflate(inflater, container, false);
+        context = getContext();
         return fragmentSignUpBinding.getRoot();
     }
 
@@ -65,7 +67,7 @@ public class SignUp extends Fragment {
         logInLink.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                NavHostFragment.findNavController(SignUp.this)
+                NavHostFragment.findNavController(SignUpFragment.this)
                         .navigate(R.id.action_signUpFragment_to_logInFragment);
             }
         });
@@ -127,12 +129,12 @@ public class SignUp extends Fragment {
                     signUpModel.setRoles(new RoleEntity(2L, "ROLE_USER"));
                     signUpModel.setAvatarImageUrl("");
 
-                    NetworkService.getInstance().getJSONApi().signUp(signUpModel).enqueue(new Callback<Void>() {
+                    RetrofitManager.getInstance(context).getJSONApi().signUp(signUpModel).enqueue(new Callback<Void>() {
 
                         @Override
                         public void onResponse(Call<Void> call, Response<Void> response) {
                             if (response.isSuccessful()) {
-                                NavHostFragment.findNavController(SignUp.this)
+                                NavHostFragment.findNavController(SignUpFragment.this)
                                         .navigate(R.id.action_signUpFragment_to_logInFragment);
                             } else {
                                 Toast errorToast = Toast.makeText(getActivity().getApplicationContext(), "Signing up was failed. Error code " + response.code(), Toast.LENGTH_SHORT);

@@ -1,4 +1,4 @@
-package ru.netcracker.bikepacker;
+package ru.netcracker.bikepacker.view;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
@@ -27,6 +27,8 @@ import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
 import java.util.ArrayList;
+
+import ru.netcracker.bikepacker.R;
 
 
 public class MapFragment extends Fragment {

@@ -25,10 +25,10 @@ import ru.netcracker.bikepacker.databinding.FragmentLogInBinding;
 import ru.netcracker.bikepacker.manager.SessionManager;
 import ru.netcracker.bikepacker.model.AuthModel;
 import ru.netcracker.bikepacker.model.UserModel;
+import ru.netcracker.bikepacker.manager.RetrofitManager;
 import ru.netcracker.bikepacker.service.EmailValidationService;
-import ru.netcracker.bikepacker.service.NetworkService;
 
-public class LogIn extends Fragment {
+public class LogInFragment extends Fragment {
 
     private @NonNull
     FragmentLogInBinding fragmentLogInBinding;
@@ -62,7 +62,7 @@ public class LogIn extends Fragment {
         signUpLink.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                NavHostFragment.findNavController(LogIn.this)
+                NavHostFragment.findNavController(LogInFragment.this)
                         .navigate(R.id.action_logInFragment_to_signUpFragment);
             }
         });
@@ -109,7 +109,7 @@ public class LogIn extends Fragment {
     }
 
     public void authRequest(Context context, AuthModel authModel) {
-        NetworkService.getInstance().getJSONApi().login(authModel).enqueue(new Callback<UserModel>() {
+        RetrofitManager.getInstance(context).getJSONApi().login(authModel).enqueue(new Callback<UserModel>() {
 
             @Override
             public void onFailure(@NonNull Call<UserModel> call, @NonNull Throwable t) {
@@ -128,6 +128,8 @@ public class LogIn extends Fragment {
 
                     if (null != response.body()) {
                         sessionManager.setSessionUser(response.body());
+                        NavHostFragment.findNavController(LogInFragment.this)
+                                .navigate(R.id.action_logInFragment_to_mainNavigationActivity);
                     } else {
                         try {
                             throw new InvalidObjectException("Response body is empty");

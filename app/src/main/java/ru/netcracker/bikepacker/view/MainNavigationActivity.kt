@@ -1,4 +1,4 @@
-package ru.netcracker.bikepacker
+package ru.netcracker.bikepacker.view
 
 import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
@@ -9,9 +9,11 @@ import androidx.fragment.app.Fragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import io.jenetics.jpx.GPX
 import org.osmdroid.config.Configuration
+import ru.netcracker.bikepacker.R
 import ru.netcracker.bikepacker.tracks.UserTrack
 import ru.netcracker.bikepacker.tracks.GpxUtil
 import ru.netcracker.bikepacker.tracks.listeners.OnGpxCreatedListener
+import ru.netcracker.bikepacker.view.SettingsFragment
 import java.util.stream.Collectors
 
 class MainNavigationActivity : AppCompatActivity() {
@@ -35,11 +37,13 @@ class MainNavigationActivity : AppCompatActivity() {
         if (fr != null) fr as MapFragment
         else MapFragment()
     }
+
     private val settingsFragment: SettingsFragment by lazy {
         val fr = supportFragmentManager.findFragmentByTag(TAG_SETTINGS)
         if (fr != null) fr as SettingsFragment
         else SettingsFragment()
     }
+
     private val recordFragment: RecordFragment by lazy {
         val fr = supportFragmentManager.findFragmentByTag(TAG_RECORD)
 
@@ -113,7 +117,6 @@ class MainNavigationActivity : AppCompatActivity() {
         bottomNav.setOnItemSelectedListener {
             setFragment(it.itemId)
         }
-
     }
 
     private fun setFragment(itemId: Int): Boolean {

@@ -25,6 +25,7 @@
             android:id="@+id/layout_signin_layout_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="48dp"
             android:fontFamily="@font/proxima_nova_semibold"
             android:letterSpacing="0"
             android:text="@string/log_in"
