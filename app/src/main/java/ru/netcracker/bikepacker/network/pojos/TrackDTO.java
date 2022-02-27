@@ -5,6 +5,8 @@ import com.google.gson.annotations.SerializedName;
 
 public class TrackDTO {
 
+    //    TODO: rename and move
+
     @SerializedName("track_id")
     @Expose
     private long trackId;

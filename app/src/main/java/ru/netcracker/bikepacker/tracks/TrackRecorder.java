@@ -25,7 +25,7 @@ import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import ru.netcracker.bikepacker.network.NetworkService;
+import ru.netcracker.bikepacker.manager.RetrofitManager;
 import ru.netcracker.bikepacker.network.pojos.TrackDTO;
 import ru.netcracker.bikepacker.network.pojos.UserDTO;
 import ru.netcracker.bikepacker.tracks.listeners.OnRecordingEventsListener;
@@ -97,7 +97,7 @@ public class TrackRecorder {
         UserDTO user = new UserDTO(1L);
         TrackDTO trackToPost = new TrackDTO(2, 3, user, GpxUtil.gpxToString(getGpx()));
 
-        NetworkService.getInstance(ctx).getJsonBackendAPI().postTrack(trackToPost).enqueue(new Callback<ResponseBody>() {
+        RetrofitManager.getInstance(ctx).getJSONApi().postTrack(trackToPost).enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 Log.d("Track sending callback","SENDED");
