@@ -20,7 +20,7 @@ public final class SessionManager {
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor editor;
 
-    public static synchronized SessionManager getInstance(Context context) {
+    public static SessionManager getInstance(Context context) {
         SessionManager localInstance = sessionManagerInstance;
 
         if (localInstance == null) {
@@ -43,19 +43,19 @@ public final class SessionManager {
         }
     }
 
-    private SharedPreferences getSharedPreferences(Context context) {
+    private synchronized SharedPreferences getSharedPreferences(Context context) {
         return context.getSharedPreferences(SHARED_PREF, Context.MODE_PRIVATE);
     }
 
-    private SharedPreferences.Editor getSharedPreferencesEditor() {
+    private synchronized SharedPreferences.Editor getSharedPreferencesEditor() {
         return sharedPreferences.edit();
     }
 
-    public void setSessionId(String sessionId) {
+    public synchronized void setSessionId(String sessionId) {
         editor.putString(SESSION_ID, sessionId).commit();
     }
 
-    public void setSessionUser(UserModel userModel) {
+    public synchronized void setSessionUser(UserModel userModel) {
         editor.putString(SESSION_USER_ID, Long.toString(userModel.getId()))
                 .putString(SESSION_USERNAME, userModel.getUsername())
                 .putString(SESSION_USER_FIRSTNAME, userModel.getFirstname())
@@ -65,7 +65,7 @@ public final class SessionManager {
                 .commit();
     }
 
-    public UserModel getSessionUser() {
+    public synchronized UserModel getSessionUser() {
         UserModel userModel = new UserModel();
         userModel.setEmail(getSessionUserEmail());
         userModel.setLastname(getSessionUserLastname());
@@ -76,59 +76,59 @@ public final class SessionManager {
         return userModel;
     }
 
-    public String getSessionId() {
+    public synchronized String getSessionId() {
         return sharedPreferences.getString(SESSION_ID, null);
     }
 
-    public void setSessionUsername(String username) {
+    public synchronized void setSessionUsername(String username) {
         editor.putString(SESSION_USERNAME, username).commit();
     }
 
-    public String getSessionUsername() {
+    public synchronized String getSessionUsername() {
         return sharedPreferences.getString(SESSION_USERNAME, null);
     }
 
-    public void setSessionUserFirstname(String firstname) {
+    public synchronized void setSessionUserFirstname(String firstname) {
         editor.putString(SESSION_USER_FIRSTNAME, firstname).commit();
     }
 
-    public String getSessionUserFirstname() {
+    public synchronized String getSessionUserFirstname() {
         return sharedPreferences.getString(SESSION_USER_FIRSTNAME, null);
     }
 
-    public void setSessionUserLastname(String lastname) {
+    public synchronized void setSessionUserLastname(String lastname) {
         editor.putString(SESSION_USER_LASTNAME, lastname).commit();
     }
 
-    public String getSessionUserLastname() {
+    public synchronized String getSessionUserLastname() {
         return sharedPreferences.getString(SESSION_USER_LASTNAME, null);
     }
 
-    public void setSessionUserEmail(String email) {
+    public synchronized void setSessionUserEmail(String email) {
         editor.putString(SESSION_USER_EMAIL, email).commit();
     }
 
-    public String getSessionUserEmail() {
+    public synchronized String getSessionUserEmail() {
         return sharedPreferences.getString(SESSION_USER_EMAIL, null);
     }
 
-    public void setSessionUserPicUrl(String userPicUrl) {
+    public synchronized void setSessionUserPicUrl(String userPicUrl) {
         editor.putString(SESSION_USER_PIC_LINK, userPicUrl).commit();
     }
 
-    public String getSessionUserPicUrl() {
+    public synchronized String getSessionUserPicUrl() {
         return sharedPreferences.getString(SESSION_USER_PIC_LINK, null);
     }
 
-    public void setSessionUserId(Long id) {
+    public synchronized void setSessionUserId(Long id) {
         editor.putLong(SESSION_USER_ID, id).commit();
     }
 
-    public Long getSessionUserId() {
+    public synchronized Long getSessionUserId() {
         return sharedPreferences.getLong(SESSION_USER_ID, -1);
     }
 
-    public void removeSession() {
+    public synchronized void removeSession() {
         editor.putLong(SESSION_USER_ID, -1)
                 .putString(SESSION_USERNAME, null)
                 .putString(SESSION_USER_FIRSTNAME, null)
@@ -139,7 +139,7 @@ public final class SessionManager {
                 .commit();
     }
 
-    public boolean isEmpty() {
+    public synchronized boolean isEmpty() {
         if (sharedPreferences == null || getSessionId() == null) {
             return true;
         }
