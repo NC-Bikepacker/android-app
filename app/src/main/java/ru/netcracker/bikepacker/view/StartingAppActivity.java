@@ -30,9 +30,9 @@ public class StartingAppActivity extends AppCompatActivity {
     private AppBarConfiguration appBarConfiguration;
     private ActivityMainBinding binding;
     private static int TIME_OUT = 1500;
-    private static SessionManager sessionManager;
-    private static Context context;
-    private static NavController navController;
+    private SessionManager sessionManager;
+    private Context context;
+    private NavController navController;
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
@@ -45,7 +45,7 @@ public class StartingAppActivity extends AppCompatActivity {
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
         context = getApplicationContext();
-        sessionManager = new SessionManager(context);
+        sessionManager = SessionManager.getInstance(context);
 
         if (sessionManager.isEmpty()) {
             navController.navigate(R.id.action_fragmentLoadingScreen_to_logInFragment);

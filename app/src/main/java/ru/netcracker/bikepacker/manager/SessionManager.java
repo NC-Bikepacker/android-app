@@ -5,19 +5,30 @@ import android.content.SharedPreferences;
 
 import ru.netcracker.bikepacker.model.UserModel;
 
-public class SessionManager {
-    private static SharedPreferences sharedPreferences;
-    private static SharedPreferences.Editor editor;
-    private final String SHARED_PREF = "session";
-    private final String SESSION_ID = "SESSIONID";
-    private final String SESSION_USER_ID = "session_user_id";
-    private final String SESSION_USERNAME = "session_username";
-    private final String SESSION_USER_FIRSTNAME = "session_user_firstname";
-    private final String SESSION_USER_LASTNAME = "session_user_lastname";
-    private final String SESSION_USER_EMAIL = "session_user_email";
-    private final String SESSION_USER_PIC_LINK = "session_user_link";
+public final class SessionManager {
+    private final static String SHARED_PREF = "session";
+    private final static String SESSION_ID = "SESSIONID";
+    private final static String SESSION_USER_ID = "session_user_id";
+    private final static String SESSION_USERNAME = "session_username";
+    private final static String SESSION_USER_FIRSTNAME = "session_user_firstname";
+    private final static String SESSION_USER_LASTNAME = "session_user_lastname";
+    private final static String SESSION_USER_EMAIL = "session_user_email";
+    private final static String SESSION_USER_PIC_LINK = "session_user_link";
 
-    public SessionManager(Context context) {
+    private static volatile SessionManager sessionManagerInstance;
+
+    private SharedPreferences sharedPreferences;
+    private SharedPreferences.Editor editor;
+
+    public static synchronized SessionManager getInstance(Context context) {
+        if (sessionManagerInstance == null) {
+            sessionManagerInstance = new SessionManager(context);
+        }
+
+        return sessionManagerInstance;
+    }
+
+    private SessionManager(Context context) {
         if (sharedPreferences == null) {
             sharedPreferences = getSharedPreferences(context);
             editor = getSharedPreferencesEditor();

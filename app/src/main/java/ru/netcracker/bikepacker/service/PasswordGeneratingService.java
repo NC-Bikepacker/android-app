@@ -17,7 +17,7 @@ import javax.crypto.spec.PBEKeySpec;
  * still considered robust.
  * The hashed value has 256 bits.
  */
-public abstract class PasswordGeneratingService {
+public final class PasswordGeneratingService {
 
     private static final Random RANDOM = new SecureRandom();
     private static final int ITERATIONS = 65536;

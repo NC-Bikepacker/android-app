@@ -14,8 +14,8 @@ public class RetrofitManager {
     private static RetrofitManager mInstance;
     private final Retrofit mRetrofit;
 
-    private static String BASE_URL;
-    private static Gson gson = new GsonBuilder().setLenient().create();
+    private String BASE_URL;
+    private Gson gson = new GsonBuilder().setLenient().create();
 
     private RetrofitManager(Context ctx) {
         BASE_URL = ctx.getResources().getString(R.string.ip);

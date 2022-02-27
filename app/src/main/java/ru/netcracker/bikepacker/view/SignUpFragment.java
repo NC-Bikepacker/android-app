@@ -32,16 +32,16 @@ public class SignUpFragment extends Fragment {
 
     private @NonNull
     FragmentSignUpBinding fragmentSignUpBinding;
-    Context context;
+    private Context context;
 
-    EditText firstNameField;
-    EditText lastNameField;
-    EditText userNameField;
-    EditText emailField;
-    EditText passwordField;
-    EditText confirmPasswordField;
-    Button submitFormButton;
-    TextView logInLink;
+    private EditText firstNameField;
+    private EditText lastNameField;
+    private EditText userNameField;
+    private EditText emailField;
+    private EditText passwordField;
+    private EditText confirmPasswordField;
+    private Button submitFormButton;
+    private TextView logInLink;
 
     @Override
     public View onCreateView(
@@ -93,8 +93,7 @@ public class SignUpFragment extends Fragment {
                 } else {
                     fieldsAreNotEmpty = true;
 
-                    if (EmailValidationService.isEmailValid(email)) {
-                        emailIsValid = true;
+                    if (emailIsValid = EmailValidationService.isEmailValid(email)) {
 
                         if (pass.length() >= 8 && PasswordGeneratingService.isValidPassword(pass)) {
                             passwordIsValid = true;

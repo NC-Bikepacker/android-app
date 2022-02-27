@@ -33,12 +33,12 @@ public class LogInFragment extends Fragment {
     private @NonNull
     FragmentLogInBinding fragmentLogInBinding;
 
-    EditText emailField;
-    EditText passwordField;
-    Button submitFormButton;
-    TextView signUpLink;
+    private EditText emailField;
+    private EditText passwordField;
+    private Button submitFormButton;
+    private TextView signUpLink;
 
-    Context context;
+    private Context context;
 
     @Override
     public View onCreateView(
@@ -82,8 +82,7 @@ public class LogInFragment extends Fragment {
                 } else {
                     fieldsAreNotEmpty = true;
 
-                    if (EmailValidationService.isEmailValid(email)) {
-                        emailIsValid = true;
+                    if (emailIsValid = EmailValidationService.isEmailValid(email)) {
 //                      TODO: Enable email validation
 //                        if (password.length() >= 8 && PasswordGeneratingService.isValidPassword(password)) {
                         if (true) {
@@ -100,8 +99,6 @@ public class LogInFragment extends Fragment {
                 }
 
                 if (fieldsAreNotEmpty && passwordIsValid && emailIsValid) {
-
-                    SessionManager sessionManager = new SessionManager(context);
                     authRequest(context, new AuthModel(email, password));
                 }
             }
@@ -123,7 +120,7 @@ public class LogInFragment extends Fragment {
                 if (response.isSuccessful()) {
                     Log.d("Message", "Successfully authenticated. Response " + response.code());
                     String sessionId = response.headers().get("Set-Cookie").split("; ")[0].replace("JSESSIONID=", "");
-                    SessionManager sessionManager = new SessionManager(context);
+                    SessionManager sessionManager = SessionManager.getInstance(context);
                     sessionManager.setSessionId(sessionId);
 
                     if (null != response.body()) {
@@ -132,8 +129,9 @@ public class LogInFragment extends Fragment {
                                 .navigate(R.id.action_logInFragment_to_mainNavigationActivity);
                     } else {
                         try {
-                            throw new InvalidObjectException("Response body is empty");
+                            throw new InvalidObjectException("Log in response body is empty");
                         } catch (InvalidObjectException e) {
+                            Log.d("Error", "Log in response body is empty");
                             e.printStackTrace();
                         }
                     }
