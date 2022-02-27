@@ -11,29 +11,37 @@ import ru.netcracker.bikepacker.R;
 import ru.netcracker.bikepacker.service.ApiService;
 
 public class RetrofitManager {
-    private static RetrofitManager mInstance;
-    private final Retrofit mRetrofit;
+    private static volatile RetrofitManager retrofitManager;
+    private final Retrofit retrofit;
 
     private String BASE_URL;
     private Gson gson = new GsonBuilder().setLenient().create();
 
     private RetrofitManager(Context ctx) {
         BASE_URL = ctx.getResources().getString(R.string.ip);
-        mRetrofit = new Retrofit.Builder()
+        retrofit = new Retrofit.Builder()
                 .baseUrl(BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .build();
     }
 
     public static RetrofitManager getInstance(Context ctx) {
-        if (mInstance == null) {
-            mInstance = new RetrofitManager(ctx);
+        RetrofitManager localInstance = retrofitManager;
+
+        if (localInstance == null) {
+            synchronized (RetrofitManager.class) {
+                localInstance = retrofitManager;
+
+                if(localInstance == null) {
+                    retrofitManager = localInstance = new RetrofitManager(ctx);
+                }
+            }
         }
-        return mInstance;
+
+        return retrofitManager;
     }
 
     public ApiService getJSONApi(){
-        return mRetrofit.create(ApiService.class);
+        return retrofit.create(ApiService.class);
     }
-
 }

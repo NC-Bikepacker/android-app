@@ -17,6 +17,8 @@ import androidx.navigation.fragment.NavHostFragment;
 
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.Optional;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -75,33 +77,38 @@ public class SignUpFragment extends Fragment {
         submitFormButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String firstname = StringUtils.capitalize(firstNameField.getText().toString().trim().toLowerCase());
-                String lastname = StringUtils.capitalize(lastNameField.getText().toString().trim().toLowerCase());
-                String username = userNameField.getText().toString().trim().toLowerCase();
-                String email = emailField.getText().toString().trim();
-                String pass = passwordField.getText().toString();
-                String passConfirmation = confirmPasswordField.getText().toString();
+                Optional firstnameFieldOpt = Optional.ofNullable(firstNameField.getText());
+                Optional lastNameFieldOpt = Optional.ofNullable(lastNameField.getText());
+                Optional usernameFieldOpt = Optional.ofNullable(userNameField.getText());
+                Optional emailFieldOpt = Optional.ofNullable(emailField.getText());
+                Optional passwordFieldOpt = Optional.ofNullable(passwordField.getText());
+                Optional passConfirmationOpt = Optional.ofNullable(confirmPasswordField.getText());
 
-                boolean fieldsAreNotEmpty = false;
+                String firstname = StringUtils.capitalize(firstnameFieldOpt.orElseGet(() -> "").toString().trim().toLowerCase());
+                String lastname = StringUtils.capitalize(lastNameFieldOpt.orElseGet(() -> "").toString().trim().toLowerCase());
+                String username = usernameFieldOpt.orElseGet(() -> "").toString().trim().toLowerCase();
+                String email = emailFieldOpt.orElseGet(() -> "").toString().trim();
+                String pass = passwordFieldOpt.orElseGet(() -> "").toString();
+                String passConfirmation = passConfirmationOpt.orElseGet(() -> "").toString();
+
                 boolean emailIsValid = false;
                 boolean passwordIsValid = false;
                 boolean passwordIsConfirmed = false;
+                boolean fieldsAreEmpty = firstname.equals("") || lastname.equals("") || username.equals("") || email.equals("") || pass.equals("") || passConfirmation.equals("");
 
-                if (firstname.equals("") || lastname.equals("") || username.equals("") || email.equals("") || pass.equals("") || passConfirmation.equals("")) {
+                if (fieldsAreEmpty) {
                     Toast errorToast = Toast.makeText(getActivity().getApplicationContext(), "All field are required.", Toast.LENGTH_SHORT);
                     errorToast.show();
                 } else {
-                    fieldsAreNotEmpty = true;
+                    emailIsValid = EmailValidationService.isEmailValid(email);
 
-                    if (emailIsValid = EmailValidationService.isEmailValid(email)) {
+                    if (emailIsValid) {
+                        passwordIsValid = pass.length() >= 8 && PasswordGeneratingService.isValidPassword(pass);
 
-                        if (pass.length() >= 8 && PasswordGeneratingService.isValidPassword(pass)) {
-                            passwordIsValid = true;
+                        if (passwordIsValid) {
+                            passwordIsConfirmed = pass.equals(passConfirmation);
 
-                            if (pass.equals(passConfirmation)) {
-                                passwordIsConfirmed = true;
-
-                            } else {
+                            if (!passwordIsConfirmed) {
                                 Toast errorToast = Toast.makeText(getActivity().getApplicationContext(), "Password are not equal.", Toast.LENGTH_SHORT);
                                 errorToast.show();
                             }
@@ -115,7 +122,7 @@ public class SignUpFragment extends Fragment {
                     }
                 }
 
-                if (fieldsAreNotEmpty && emailIsValid && passwordIsValid && passwordIsConfirmed) {
+                if (!fieldsAreEmpty && emailIsValid && passwordIsValid && passwordIsConfirmed) {
                     Toast errorToast = Toast.makeText(getActivity().getApplicationContext(), "You was successfully registered.", Toast.LENGTH_SHORT);
                     errorToast.show();
 
@@ -136,6 +143,7 @@ public class SignUpFragment extends Fragment {
                                 NavHostFragment.findNavController(SignUpFragment.this)
                                         .navigate(R.id.action_signUpFragment_to_logInFragment);
                             } else {
+                                Log.d("Error", "Signing up was failed. Error code " + response.code());
                                 Toast errorToast = Toast.makeText(getActivity().getApplicationContext(), "Signing up was failed. Error code " + response.code(), Toast.LENGTH_SHORT);
                                 errorToast.show();
                             }

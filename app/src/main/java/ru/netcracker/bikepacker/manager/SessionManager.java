@@ -21,8 +21,16 @@ public final class SessionManager {
     private SharedPreferences.Editor editor;
 
     public static synchronized SessionManager getInstance(Context context) {
-        if (sessionManagerInstance == null) {
-            sessionManagerInstance = new SessionManager(context);
+        SessionManager localInstance = sessionManagerInstance;
+
+        if (localInstance == null) {
+            synchronized (SessionManager.class) {
+                localInstance = sessionManagerInstance;
+
+                if (localInstance == null) {
+                    sessionManagerInstance = localInstance = new SessionManager(context);
+                }
+            }
         }
 
         return sessionManagerInstance;
