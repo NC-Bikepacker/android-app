@@ -14,7 +14,7 @@ public class NetworkService {
     private final Retrofit mRetrofit;
 
     private NetworkService(Context ctx) {
-        String baseUrl = ctx.getResources().getString(R.string.ip);
+        String baseUrl = ctx.getResources().getString(R.string.server_ip);
         Gson gson = new GsonBuilder()
                 .setLenient()
                 .create();

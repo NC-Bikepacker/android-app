@@ -10,7 +10,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.view.Gravity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,7 +18,6 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,22 +27,22 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import ru.netcracker.bikepacker.adapter.FindFriendAdapter;
 import ru.netcracker.bikepacker.listholder.MyFriendsList;
-import ru.netcracker.bikepacker.model.Friend;
-import ru.netcracker.bikepacker.model.User;
-import ru.netcracker.bikepacker.networkService.NetworkService;
+import ru.netcracker.bikepacker.network.pojos.FriendDTO;
+import ru.netcracker.bikepacker.network.NetworkService;
+import ru.netcracker.bikepacker.network.pojos.UserDTO;
 
 
 public class FindFriendFragment extends Fragment {
 
-    Context context;
-    List<User> findFriendsList = new ArrayList<>();
-    RecyclerView friendsRecyclerView;
-    FindFriendAdapter friendAdapter;
-    EditText findFriendSearchPlane;
-    ImageButton searchFriendButton;
-    View viewFindFriendFragment;
+    private Context context;
+    private List<UserDTO> findFriendsList = new ArrayList<>();
+    private RecyclerView friendsRecyclerView;
+    private FindFriendAdapter friendAdapter;
+    private EditText findFriendSearchPlane;
+    private ImageButton searchFriendButton;
+    private View viewFindFriendFragment;
     //Юзер из под которого подключаемся
-    User iAmUser = new User(5L,"","","ComeBak","");
+    private UserDTO iAmUser = new UserDTO(5L,"","","ComeBak","");
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -83,7 +82,7 @@ public class FindFriendFragment extends Fragment {
     }
 
 
-    private void setFindFragmentRecycler(List<User> findFriendsList, View view) {
+    private void setFindFragmentRecycler(List<UserDTO> findFriendsList, View view) {
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
 
         friendsRecyclerView = view.findViewById(R.id.findFriendRecycler);
@@ -94,14 +93,14 @@ public class FindFriendFragment extends Fragment {
     }
 
     private void displayMyFriend(View view){
-            NetworkService.getInstance()
-                    .getJSONApi()
-                    .getMyFriends(iAmUser.getNickName())
-                    .enqueue(new Callback<List<User>>() {
+            NetworkService.getInstance(getContext())
+                    .getJsonBackendAPI()
+                    .getMyFriends(iAmUser.getUsername())
+                    .enqueue(new Callback<List<UserDTO>>() {
                         @RequiresApi(api = Build.VERSION_CODES.N)
                         @Override
-                        public void onResponse(Call<List<User>> call, Response<List<User>> response) {
-                            List<User> friends = response.body();
+                        public void onResponse(Call<List<UserDTO>> call, Response<List<UserDTO>> response) {
+                            List<UserDTO> friends = response.body();
                             if(friends.isEmpty()){
                                 Toast.makeText(context, "у вас еще нет друзей", Toast.LENGTH_SHORT).show();
                             }
@@ -114,21 +113,21 @@ public class FindFriendFragment extends Fragment {
                         }
 
                         @Override
-                        public void onFailure(Call<List<User>> call, Throwable t) {
-                            Toast.makeText(context, "Error occurred while getting request!", Toast.LENGTH_SHORT).show();
-                            t.printStackTrace();
+                        public void onFailure(Call<List<UserDTO>> call, Throwable t) {
+                            Toast.makeText(context, "Нет соединения с сервером!", Toast.LENGTH_SHORT).show();
+                            Log.d(t.getMessage(), "Error occurred while getting request!");
                         }
                     });
     }
 
     private void displayFindFriend(View view, String nickName){
-        NetworkService.getInstance()
-                .getJSONApi()
+        NetworkService.getInstance(getContext())
+                .getJsonBackendAPI()
                 .getFriendWithNickName(nickName)
-                .enqueue(new Callback<User>() {
+                .enqueue(new Callback<UserDTO>() {
                     @Override
-                    public void onResponse(Call<User> call, Response<User> response) {
-                        User friend = response.body();
+                    public void onResponse(Call<UserDTO> call, Response<UserDTO> response) {
+                        UserDTO friend = response.body();
                         findFriendsList.clear();
                         if(friend == null){
                             Toast.makeText(getContext(), "Пользователи не найдены",Toast.LENGTH_SHORT).show();
@@ -140,8 +139,9 @@ public class FindFriendFragment extends Fragment {
                     }
 
                     @Override
-                    public void onFailure(Call<User> call, Throwable t) {
+                    public void onFailure(Call<UserDTO> call, Throwable t) {
                         Toast.makeText(getContext(), "Ошибка поиска пользователя",Toast.LENGTH_SHORT).show();
+                        Log.d(t.getMessage(), "Ошибка поиска пользователя");
                     }
                 });
 
@@ -150,41 +150,39 @@ public class FindFriendFragment extends Fragment {
     private FindFriendAdapter.OnFriendClickListener clickListener(){
         /* определяем слушателя нажатия элемента в списке */
         FindFriendAdapter.OnFriendClickListener friendClickListener = new FindFriendAdapter.OnFriendClickListener() {
-            Friend friends;
+            FriendDTO friends;
             @Override
-            public void addFriendClick(User user, int position) {
-                friends = new Friend(String.valueOf(iAmUser.getId()), String.valueOf(user.getId()));
-                NetworkService.getInstance()
-                        .getJSONApi()
+            public void addFriendClick(UserDTO user, int position) {
+                friends = new FriendDTO(String.valueOf(iAmUser.getId()), String.valueOf(user.getId()));
+                NetworkService.getInstance(getContext())
+                        .getJsonBackendAPI()
                         .postRequestFriend(friends)
                         .enqueue(new Callback<ResponseBody>() {
                             @Override
                             public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
-                                Toast.makeText(getContext(), "Заяка пользователю " + user.getFirstName() + " отправлена", Toast.LENGTH_SHORT).show();
-                                displayFindFriend(viewFindFriendFragment, user.getNickName());
-                                System.out.println(findFriendsList.get(position).getNickName());
+                                Toast.makeText(getContext(), "Заяка пользователю " + user.getFirstname() + " отправлена", Toast.LENGTH_SHORT).show();
+                                displayFindFriend(viewFindFriendFragment, user.getUsername());
                             }
                             @Override
                             public void onFailure(Call<ResponseBody> call, Throwable t) {
                                 Toast.makeText(context, "Ошибка добавления пользователя", Toast.LENGTH_SHORT).show();
-                                System.out.println("Ошибка: " + t.getMessage());
-                                displayFindFriend(viewFindFriendFragment, findFriendsList.get(position).getNickName());
+                                displayFindFriend(viewFindFriendFragment, findFriendsList.get(position).getUsername());
+                                Log.d(t.getMessage(), "Ошибка добавления пользователя");
                             }
                         });
             }
 
             @Override
-            public void deleteFriendClick(User user, int position) {
-                friends = new Friend(String.valueOf(iAmUser.getId()), String.valueOf(user.getId()));
-                NetworkService.getInstance()
-                                .getJSONApi()
+            public void deleteFriendClick(UserDTO user, int position) {
+                friends = new FriendDTO(String.valueOf(iAmUser.getId()), String.valueOf(user.getId()));
+                NetworkService.getInstance(getContext())
+                                .getJsonBackendAPI()
                                 .deleteFriend(friends)
                                 .enqueue(new Callback<ResponseBody>() {
                                     @Override
                                     public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                                        Toast.makeText(getContext(), "Пользователь " + user.getFirstName() + " удален", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(getContext(), "Пользователь " + user.getFirstname() + " удален", Toast.LENGTH_SHORT).show();
                                         MyFriendsList.getInstance().deleteFriend(user);
-                                        System.out.println(response.message());
                                         displayMyFriend(viewFindFriendFragment);
                                     }
 
@@ -192,7 +190,7 @@ public class FindFriendFragment extends Fragment {
                                     public void onFailure(Call<ResponseBody> call, Throwable t) {
                                         Toast.makeText(getContext(), "Ошибка удаления", Toast.LENGTH_SHORT).show();
                                         displayMyFriend(viewFindFriendFragment);
-                                        System.out.println("Ошибка: " + t.getMessage());
+                                        Log.d(t.getMessage(), "Ошибка удаления друга");
                                     }
                                 });
             }

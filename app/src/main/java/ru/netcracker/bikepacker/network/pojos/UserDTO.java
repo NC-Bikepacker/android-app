@@ -35,6 +35,16 @@ public class UserDTO {
     @Expose
     private String email;
 
+
+    //временное решение, необходимо пофиксить!!!!
+    public UserDTO(long id, String firstname, String lastname, String username, String email) {
+        this.id = id;
+        this.firstname = firstname;
+        this.lastname = lastname;
+        this.username = username;
+        this.email = email;
+    }
+
     public long getId() {
         return id;
     }
