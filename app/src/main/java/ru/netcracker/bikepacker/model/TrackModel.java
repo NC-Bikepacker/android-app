@@ -1,9 +1,10 @@
-package ru.netcracker.bikepacker.network.pojos;
+package ru.netcracker.bikepacker.model;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class TrackDTO {
+
+public class TrackModel {
 
     //    TODO: rename and move
 
@@ -18,12 +19,12 @@ public class TrackDTO {
     private long trackComplexity;
     @SerializedName("user")
     @Expose
-    private UserDTO user;
+    private UserModel user;
     @SerializedName("gpx")
     @Expose
     private String gpx;
 
-    public TrackDTO(long travelTime, long trackComplexity, UserDTO user, String gpx) {
+    public TrackModel(long travelTime, long trackComplexity, UserModel user, String gpx) {
         this.travelTime = travelTime;
         this.trackComplexity = trackComplexity;
         this.user = user;
@@ -54,11 +55,11 @@ public class TrackDTO {
         this.trackComplexity = trackComplexity;
     }
 
-    public UserDTO getUser() {
+    public UserModel getUser() {
         return user;
     }
 
-    public void setUser(UserDTO user) {
+    public void setUser(UserModel user) {
         this.user = user;
     }
 

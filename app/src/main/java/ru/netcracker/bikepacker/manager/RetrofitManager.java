@@ -18,7 +18,7 @@ public class RetrofitManager {
     private Gson gson = new GsonBuilder().setLenient().create();
 
     private RetrofitManager(Context ctx) {
-        BASE_URL = ctx.getResources().getString(R.string.ip);
+        BASE_URL = ctx.getResources().getString(R.string.server_ip);
         retrofit = new Retrofit.Builder()
                 .baseUrl(BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create(gson))

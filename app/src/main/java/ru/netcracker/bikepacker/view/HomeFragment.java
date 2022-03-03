@@ -1,4 +1,4 @@
-package ru.netcracker.bikepacker;
+package ru.netcracker.bikepacker.view;
 
 import android.os.Bundle;
 
@@ -9,7 +9,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
-import android.widget.Toast;
+
+import ru.netcracker.bikepacker.R;
 
 public class HomeFragment extends Fragment {
 
@@ -18,7 +19,6 @@ public class HomeFragment extends Fragment {
     private FragmentManager fragmentManager;
 
     public HomeFragment() {
-
     }
 
     @Override
@@ -32,18 +32,6 @@ public class HomeFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home, container,false);
         findFriends = view.findViewById(R.id.findFriendsButton);
-
-        findFriends.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                fragment = new FindFriendFragment();
-                fragmentManager = getActivity().getSupportFragmentManager();
-                        fragmentManager
-                        .beginTransaction()
-                        .replace(R.id.center_fragment_container, fragment)
-                        .commit();
-            }
-        });
         return view;
     }
 }

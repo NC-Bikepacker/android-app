@@ -17,21 +17,21 @@ import java.util.List;
 
 import ru.netcracker.bikepacker.R;
 import ru.netcracker.bikepacker.listholder.MyFriendsList;
-import ru.netcracker.bikepacker.network.pojos.UserDTO;
+import ru.netcracker.bikepacker.model.UserModel;
 
 public class FindFriendAdapter extends RecyclerView.Adapter<FindFriendAdapter.FindFriendViewHolder> {
 
     private Context context;
-    private List<UserDTO> findFriends;
+    private List<UserModel> findFriends;
 
     public interface OnFriendClickListener{
-        void addFriendClick(UserDTO user, int position);
-        void deleteFriendClick(UserDTO user, int position);
+        void addFriendClick(UserModel user, int position);
+        void deleteFriendClick(UserModel user, int position);
     }
 
     private final OnFriendClickListener onClickListener;
 
-    public FindFriendAdapter(Context context, List<UserDTO> findFriends, OnFriendClickListener onClickListener) {
+    public FindFriendAdapter(Context context, List<UserModel> findFriends, OnFriendClickListener onClickListener) {
         this.context = context;
         this.findFriends = findFriends;
         this.onClickListener = onClickListener;
@@ -48,13 +48,13 @@ public class FindFriendAdapter extends RecyclerView.Adapter<FindFriendAdapter.Fi
     //устанавливаем значения полей для конкретного объекта в списке
     @Override
     public void onBindViewHolder(@NonNull FindFriendViewHolder holder, int position) {
-           UserDTO user = findFriends.get(position);
+           UserModel user = findFriends.get(position);
            holder.firstName.setText(findFriends.get(position).getFirstname());
            holder.lastName.setText(findFriends.get(position).getLastname());
            holder.nickName.setText(findFriends.get(position).getUsername());
 
            Picasso.get()
-                   .load(findFriends.get(holder.getAdapterPosition()).getAvatarImageUrl())
+                   .load(findFriends.get(holder.getAdapterPosition()).getUserPicLink())
                    .placeholder(R.drawable.ic_userpic)
                    .error(R.drawable.ic_userpic)
                    .into(holder.findFriend_pic);

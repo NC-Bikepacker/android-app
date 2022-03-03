@@ -1,4 +1,4 @@
-package ru.netcracker.bikepacker;
+package ru.netcracker.bikepacker.view;
 
 import android.content.Context;
 import android.os.Build;
@@ -25,24 +25,25 @@ import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import ru.netcracker.bikepacker.R;
 import ru.netcracker.bikepacker.adapter.FindFriendAdapter;
 import ru.netcracker.bikepacker.listholder.MyFriendsList;
-import ru.netcracker.bikepacker.network.pojos.FriendDTO;
-import ru.netcracker.bikepacker.network.NetworkService;
-import ru.netcracker.bikepacker.network.pojos.UserDTO;
+import ru.netcracker.bikepacker.manager.RetrofitManager;
+import ru.netcracker.bikepacker.model.FriendModel;
+import ru.netcracker.bikepacker.model.UserModel;
 
 
 public class FindFriendFragment extends Fragment {
 
     private Context context;
-    private List<UserDTO> findFriendsList = new ArrayList<>();
+    private List<UserModel> findFriendsList = new ArrayList<>();
     private RecyclerView friendsRecyclerView;
     private FindFriendAdapter friendAdapter;
     private EditText findFriendSearchPlane;
     private ImageButton searchFriendButton;
     private View viewFindFriendFragment;
     //Юзер из под которого подключаемся
-    private UserDTO iAmUser = new UserDTO(5L,"","","ComeBak","");
+    private UserModel iAmUser = new UserModel(5L,"","","ComeBak");
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -82,7 +83,7 @@ public class FindFriendFragment extends Fragment {
     }
 
 
-    private void setFindFragmentRecycler(List<UserDTO> findFriendsList, View view) {
+    private void setFindFragmentRecycler(List<UserModel> findFriendsList, View view) {
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
 
         friendsRecyclerView = view.findViewById(R.id.findFriendRecycler);
@@ -92,15 +93,15 @@ public class FindFriendFragment extends Fragment {
         friendsRecyclerView.setAdapter(friendAdapter);
     }
 
-    private void displayMyFriend(View view){
-            NetworkService.getInstance(getContext())
-                    .getJsonBackendAPI()
+    public void displayMyFriend(View view){
+            RetrofitManager.getInstance(getContext())
+                    .getJSONApi()
                     .getMyFriends(iAmUser.getUsername())
-                    .enqueue(new Callback<List<UserDTO>>() {
+                    .enqueue(new Callback<List<UserModel>>() {
                         @RequiresApi(api = Build.VERSION_CODES.N)
                         @Override
-                        public void onResponse(Call<List<UserDTO>> call, Response<List<UserDTO>> response) {
-                            List<UserDTO> friends = response.body();
+                        public void onResponse(Call<List<UserModel>> call, Response<List<UserModel>> response) {
+                            List<UserModel> friends = response.body();
                             if(friends.isEmpty()){
                                 Toast.makeText(context, "у вас еще нет друзей", Toast.LENGTH_SHORT).show();
                             }
@@ -113,7 +114,7 @@ public class FindFriendFragment extends Fragment {
                         }
 
                         @Override
-                        public void onFailure(Call<List<UserDTO>> call, Throwable t) {
+                        public void onFailure(Call<List<UserModel>> call, Throwable t) {
                             Toast.makeText(context, "Нет соединения с сервером!", Toast.LENGTH_SHORT).show();
                             Log.d(t.getMessage(), "Error occurred while getting request!");
                         }
@@ -121,13 +122,13 @@ public class FindFriendFragment extends Fragment {
     }
 
     private void displayFindFriend(View view, String nickName){
-        NetworkService.getInstance(getContext())
-                .getJsonBackendAPI()
+        RetrofitManager.getInstance(getContext())
+                .getJSONApi()
                 .getFriendWithNickName(nickName)
-                .enqueue(new Callback<UserDTO>() {
+                .enqueue(new Callback<UserModel>() {
                     @Override
-                    public void onResponse(Call<UserDTO> call, Response<UserDTO> response) {
-                        UserDTO friend = response.body();
+                    public void onResponse(Call<UserModel> call, Response<UserModel> response) {
+                        UserModel friend = response.body();
                         findFriendsList.clear();
                         if(friend == null){
                             Toast.makeText(getContext(), "Пользователи не найдены",Toast.LENGTH_SHORT).show();
@@ -139,7 +140,7 @@ public class FindFriendFragment extends Fragment {
                     }
 
                     @Override
-                    public void onFailure(Call<UserDTO> call, Throwable t) {
+                    public void onFailure(Call<UserModel> call, Throwable t) {
                         Toast.makeText(getContext(), "Ошибка поиска пользователя",Toast.LENGTH_SHORT).show();
                         Log.d(t.getMessage(), "Ошибка поиска пользователя");
                     }
@@ -150,12 +151,12 @@ public class FindFriendFragment extends Fragment {
     private FindFriendAdapter.OnFriendClickListener clickListener(){
         /* определяем слушателя нажатия элемента в списке */
         FindFriendAdapter.OnFriendClickListener friendClickListener = new FindFriendAdapter.OnFriendClickListener() {
-            FriendDTO friends;
+            FriendModel friends;
             @Override
-            public void addFriendClick(UserDTO user, int position) {
-                friends = new FriendDTO(String.valueOf(iAmUser.getId()), String.valueOf(user.getId()));
-                NetworkService.getInstance(getContext())
-                        .getJsonBackendAPI()
+            public void addFriendClick(UserModel user, int position) {
+                friends = new FriendModel(String.valueOf(iAmUser.getId()), String.valueOf(user.getId()));
+                RetrofitManager.getInstance(getContext())
+                        .getJSONApi()
                         .postRequestFriend(friends)
                         .enqueue(new Callback<ResponseBody>() {
                             @Override
@@ -173,10 +174,10 @@ public class FindFriendFragment extends Fragment {
             }
 
             @Override
-            public void deleteFriendClick(UserDTO user, int position) {
-                friends = new FriendDTO(String.valueOf(iAmUser.getId()), String.valueOf(user.getId()));
-                NetworkService.getInstance(getContext())
-                                .getJsonBackendAPI()
+            public void deleteFriendClick(UserModel user, int position) {
+                friends = new FriendModel(String.valueOf(iAmUser.getId()), String.valueOf(user.getId()));
+                RetrofitManager.getInstance(getContext())
+                                .getJSONApi()
                                 .deleteFriend(friends)
                                 .enqueue(new Callback<ResponseBody>() {
                                     @Override
@@ -199,4 +200,9 @@ public class FindFriendFragment extends Fragment {
 
         return friendClickListener;
     }
+
+    public void disp(){
+        displayMyFriend(viewFindFriendFragment);
+    }
+
 }

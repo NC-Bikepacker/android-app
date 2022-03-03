@@ -1,10 +1,10 @@
-package ru.netcracker.bikepacker.network.pojos;
+package ru.netcracker.bikepacker.model;
 
-public class FriendDTO {
+public class FriendModel {
     private String userId;
     private String friendId;
 
-    public FriendDTO(String userId, String friendId) {
+    public FriendModel(String userId, String friendId) {
         this.userId = userId;
         this.friendId = friendId;
     }

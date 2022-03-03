@@ -27,6 +27,13 @@ public class UserModel implements Serializable {
     @Expose
     private Long id;
 
+    public UserModel(Long id, String firstname, String lastname, String username) {
+        this.firstname = firstname;
+        this.lastname = lastname;
+        this.username = username;
+        this.id = id;
+    }
+
     public UserModel() {
     }
 

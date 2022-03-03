@@ -4,6 +4,9 @@ import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.preference.PreferenceManager
+import android.view.View
+import android.widget.Button
+import android.widget.ImageButton
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -13,7 +16,6 @@ import ru.netcracker.bikepacker.R
 import ru.netcracker.bikepacker.tracks.UserTrack
 import ru.netcracker.bikepacker.tracks.GpxUtil
 import ru.netcracker.bikepacker.tracks.listeners.OnGpxCreatedListener
-import ru.netcracker.bikepacker.view.SettingsFragment
 import java.util.stream.Collectors
 
 class MainNavigationActivity : AppCompatActivity() {
@@ -29,6 +31,9 @@ class MainNavigationActivity : AppCompatActivity() {
         const val TAG_MAP = "map"
         const val TAG_SETTINGS = "settings"
         const val TAG_RECORD = "record"
+        const val TAG_HOME = "home"
+        const val TAG_FINDFRIEND = "findFriend"
+
     }
 
     //fragments
@@ -43,6 +48,23 @@ class MainNavigationActivity : AppCompatActivity() {
         if (fr != null) fr as SettingsFragment
         else SettingsFragment()
     }
+
+    private val homeFragment: HomeFragment by lazy {
+        val fr = supportFragmentManager.findFragmentByTag(TAG_HOME)
+        if (fr != null) fr as HomeFragment
+        else{
+            HomeFragment()
+        }
+
+    }
+
+    private val findFriend: FindFriendFragment by lazy {
+        val fr = supportFragmentManager.findFragmentByTag(TAG_FINDFRIEND)
+        if (fr != null) fr as FindFriendFragment
+        else FindFriendFragment()
+    }
+
+
 
     private val recordFragment: RecordFragment by lazy {
         val fr = supportFragmentManager.findFragmentByTag(TAG_RECORD)
@@ -96,6 +118,8 @@ class MainNavigationActivity : AppCompatActivity() {
         when (selectedFragment) {
             R.id.navigation_map -> activeFragment = mapFragment
             R.id.navigation_settings -> activeFragment = settingsFragment
+            R.id.navigation_home -> activeFragment = homeFragment
+            R.id.find_friends_fragment -> activeFragment = findFriend
             //TODO: R.id.navigation_{required menu button} -> activeFragment = {required fragment}
         }
 
@@ -105,6 +129,8 @@ class MainNavigationActivity : AppCompatActivity() {
             supportFragmentManager.beginTransaction()
                 .add(R.id.fragment_container, mapFragment, TAG_MAP).hide(mapFragment)
                 .add(R.id.fragment_container, settingsFragment, TAG_SETTINGS).hide(settingsFragment)
+                .add(R.id.fragment_container, homeFragment, TAG_HOME).hide(homeFragment)
+                .add(R.id.fragment_container, findFriend, TAG_FINDFRIEND).hide(findFriend)
                 //TODO: .add(R.id.fragment_container, {required fragment}, TAG_RECORD).hide({required fragment})
                 .show(activeFragment!!)
                 .commit()
@@ -154,6 +180,36 @@ class MainNavigationActivity : AppCompatActivity() {
                 mapFragment.setCenterOnGeoLocation()
                 activeFragment = mapFragment
             }
+            R.id.navigation_home ->{
+                if (activeFragment is HomeFragment) return false
+                val findFriendButton: ImageButton = findViewById(R.id.findFriendsButton)
+                findFriendButton.setOnClickListener(object : View.OnClickListener{
+                    override fun onClick(p0: View?) {
+                        findFriend.disp()
+                        supportFragmentManager
+                            .beginTransaction()
+                            .hide(activeFragment!!)
+                            .show(findFriend).commit()
+
+                        activeFragment = findFriend
+                    }
+
+                })
+                supportFragmentManager
+                    .beginTransaction()
+                    .hide(activeFragment!!)
+                    .show(homeFragment).commit()
+
+                activeFragment = homeFragment
+            }
+            R.id.find_friends_fragment ->{
+                if (activeFragment is FindFriendFragment) return false
+                supportFragmentManager
+                    .beginTransaction()
+                    .hide(activeFragment!!)
+                    .show(findFriend).commit()
+                activeFragment = findFriend
+            }
             else -> {
                 if (activeFragment is SettingsFragment) return false
                 supportFragmentManager.beginTransaction().hide(activeFragment!!)
@@ -164,6 +220,7 @@ class MainNavigationActivity : AppCompatActivity() {
         }
         return true
     }
+
 
     public override fun onResume() {
         super.onResume()
@@ -177,5 +234,7 @@ class MainNavigationActivity : AppCompatActivity() {
         super.onSaveInstanceState(outState)
         outState.putInt(CURRENT_FRAGMENT, selectedFragment)
     }
+
+
 
 }

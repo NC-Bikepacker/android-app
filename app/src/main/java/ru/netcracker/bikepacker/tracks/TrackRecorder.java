@@ -26,8 +26,8 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import ru.netcracker.bikepacker.manager.RetrofitManager;
-import ru.netcracker.bikepacker.network.pojos.TrackDTO;
-import ru.netcracker.bikepacker.network.pojos.UserDTO;
+import ru.netcracker.bikepacker.model.TrackModel;
+import ru.netcracker.bikepacker.model.UserModel;
 import ru.netcracker.bikepacker.tracks.listeners.OnRecordingEventsListener;
 
 
@@ -94,8 +94,8 @@ public class TrackRecorder {
         );
         wayPoints.clear();
 
-        UserDTO user = new UserDTO(1L);
-        TrackDTO trackToPost = new TrackDTO(2, 3, user, GpxUtil.gpxToString(getGpx()));
+        UserModel user = new UserModel(1L,"","","");
+        TrackModel trackToPost = new TrackModel(2, 3, user, GpxUtil.gpxToString(getGpx()));
 
         RetrofitManager.getInstance(ctx).getJSONApi().postTrack(trackToPost).enqueue(new Callback<ResponseBody>() {
             @Override
