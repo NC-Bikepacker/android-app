@@ -22,7 +22,12 @@
     <string name="settings_icon">settings</string>
     <string name="favourite_tracks">favourite</string>
     <string name="start_route">Start new route</string>
+    <string name="rate">Rate the complexity</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="time">Time:</string>
+    <string name="accept">Accept</string>
+    <string name="track_recorded">Track recorded!</string>
+    <string name="distance">Distance:</string>
+    <string name="average_speed">Average speed:</string>
 </resources>

@@ -9,8 +9,6 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.fragment.NavHostFragment;
 
-import com.google.android.material.textfield.TextInputLayout;
-
 import ru.netcracker.bikepacker.R;
 import ru.netcracker.bikepacker.databinding.FragmentSignInBinding;
 
@@ -33,13 +31,9 @@ public class SignInFragment extends Fragment {
 
 
 
-        fragmentSignInBinding.fragmentSignUpButtonSignUp.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-//                TODO: Handle click
-                NavHostFragment.findNavController(SignInFragment.this)
-                        .navigate(R.id.action_signInFragment_to_mapPage);
-            }
+        fragmentSignInBinding.fragmentSignUpButtonSignUp.setOnClickListener(view1 -> {
+            NavHostFragment.findNavController(SignInFragment.this)
+                    .navigate(R.id.action_signInFragment_to_mapPage);
         });
     }
 

@@ -1,4 +1,4 @@
-package ru.netcracker.bikepacker;
+package ru.netcracker.bikepacker.view;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
@@ -11,6 +11,9 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.ImageButton;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -23,22 +26,40 @@ import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.CustomZoomButtonsController;
 import org.osmdroid.views.MapView;
+import org.osmdroid.views.overlay.gestures.RotationGestureOverlay;
 import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
 import java.util.ArrayList;
 
+import ru.netcracker.bikepacker.R;
+
 
 public class MapFragment extends Fragment {
-    protected MapView map;
-    protected static final double START_ZOOM = 9.5;
-    protected static final GeoPoint DEFAULT_POINT = new GeoPoint(51.672, 39.1843);
-    protected static final int REQUEST_PERMISSIONS_REQUEST_CODE = 1;
-    protected LocationManager locationManager;
-    protected IMapController mapController;
-    protected Context ctx;
+    private MapView map;
+    private static final double START_ZOOM = 9.5;
+    private static final GeoPoint DEFAULT_POINT = new GeoPoint(51.672, 39.1843);
+    private static final int REQUEST_PERMISSIONS_REQUEST_CODE = 1;
+    private Animation onClickAnim, onClickAnimUp, ActiveOnClickAnim;
+    private LocationManager locationManager;
+    private IMapController mapController;
+    private Context ctx;
     private Drawable startIcon, finishIcon;
+    private ImageButton locationBtn, zoomInBtn, zoomOutBtn;
+    private GeoPoint userLocation;
 
+    public IMapController getMapController() {
+        return mapController;
+    }
+    public GeoPoint getUserLocation() {
+        if (ActivityCompat.checkSelfPermission(ctx, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(ctx, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return DEFAULT_POINT;
+        }
+        Location imHere = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        userLocation = imHere != null ? new GeoPoint(imHere) : DEFAULT_POINT;
+        return userLocation;
+    }
     public MapView getMap() {
         return map;
     }
@@ -55,7 +76,7 @@ public class MapFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_map, container, false);
     }
 
-    @SuppressLint("UseCompatLoadingForDrawables")
+    @SuppressLint({"UseCompatLoadingForDrawables", "ClickableViewAccessibility"})
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -63,6 +84,9 @@ public class MapFragment extends Fragment {
         assert ctx != null;
         startIcon = ctx.getResources().getDrawable(R.drawable.ic_flag_start, ctx.getTheme());
         finishIcon = ctx.getResources().getDrawable(R.drawable.ic_flag_finish, ctx.getTheme());
+        onClickAnim = AnimationUtils.loadAnimation(ctx, R.anim.left_trans_repeat);
+        onClickAnimUp = AnimationUtils.loadAnimation(ctx, R.anim.up_trans_repeat);
+        ActiveOnClickAnim = onClickAnim;
 
         map = view.findViewById(R.id.map);
 
@@ -72,14 +96,16 @@ public class MapFragment extends Fragment {
         //setting map backdrop
         map.setTileSource(TileSourceFactory.MAPNIK);
         //setting visibility for map zoom controllers
-        map.getZoomController().setVisibility(CustomZoomButtonsController.Visibility.SHOW_AND_FADEOUT);
+        map.getZoomController().setVisibility(CustomZoomButtonsController.Visibility.NEVER);
         //setting hand gestures for zoom in/out
         map.setMultiTouchControls(true);
-
 
         mapController = map.getController();
         //setting initial zoom
         mapController.setZoom(START_ZOOM);
+        RotationGestureOverlay mRotationGestureOverlay = new RotationGestureOverlay(map);
+        mRotationGestureOverlay.setEnabled(true);
+        map.getOverlays().add(mRotationGestureOverlay);
 
         //requesting permissions if they'rnt requested or accepted
         requestPermissionsIfNecessary(new String[]{
@@ -87,10 +113,11 @@ public class MapFragment extends Fragment {
                 Manifest.permission.WRITE_EXTERNAL_STORAGE
         });
 
-        //location manager setup
+        //location manager set
         locationManager = (LocationManager) ctx.getSystemService(Context.LOCATION_SERVICE);
 
-        setCenterOnGeoLocation();
+        //setting center on user location
+        mapController.setCenter(getUserLocation());
 
         //user location arrow setup
         MyLocationNewOverlay mLocationOverlay = new MyLocationNewOverlay(gpsMyLocationProvider, map);
@@ -98,7 +125,18 @@ public class MapFragment extends Fragment {
         //TODO: custom user arrow using drawable/ic_user_location_icon.xml (issue in getting drawable:
         // most likely that getting drawable should be in another method)
         map.getOverlays().add(mLocationOverlay);
+
+        setupButtons(view, onClickAnim);
+
+        map.invalidate();
     }
+
+    public void switchOnClickAnim() {
+        if (ActiveOnClickAnim.equals(onClickAnim)) ActiveOnClickAnim = onClickAnimUp;
+        else ActiveOnClickAnim = onClickAnim;
+        setupButtons(requireView(),ActiveOnClickAnim);
+    }
+
 
     @Override
     public void onResume() {
@@ -110,20 +148,6 @@ public class MapFragment extends Fragment {
     public void onPause() {
         super.onPause();
         map.onPause();
-    }
-
-    public void setCenterOnGeoLocation() {
-        if (ActivityCompat.checkSelfPermission(ctx, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(ctx, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            //TODO:возвращение на экран с авторизацией
-            return;
-        }
-        //getting user location
-        Location imHere = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-        GeoPoint userLocation = imHere != null ? new GeoPoint(imHere) : DEFAULT_POINT;
-
-        //setting center on user location
-        mapController.setCenter(userLocation);
-        map.invalidate();
     }
 
     private void requestPermissionsIfNecessary(String[] permissions) {
@@ -153,7 +177,34 @@ public class MapFragment extends Fragment {
                     permissionsToRequest,
                     REQUEST_PERMISSIONS_REQUEST_CODE);
         }
-        setCenterOnGeoLocation();
+        mapController.setCenter(getUserLocation());
+    }
+
+    private void setupButtons(@NonNull View view, Animation onClickAnim) {
+        locationBtn = view.findViewById(R.id.locationBtn);
+        zoomInBtn = view.findViewById(R.id.zoomInBtn);
+        zoomOutBtn = view.findViewById(R.id.zoomOutBtn);
+
+        locationBtn.setOnClickListener(
+                view1 -> {
+                    mapController.animateTo(getUserLocation());
+                    view1.startAnimation(onClickAnim);
+                }
+        );
+
+        zoomInBtn.setOnClickListener(
+                view1 -> {
+                    mapController.zoomIn();
+                    view1.startAnimation(onClickAnim);
+                }
+        );
+
+        zoomOutBtn.setOnClickListener(
+                view1 -> {
+                    mapController.zoomOut();
+                    view1.startAnimation(onClickAnim);
+                }
+        );
     }
 
     public Drawable getStartIcon() {

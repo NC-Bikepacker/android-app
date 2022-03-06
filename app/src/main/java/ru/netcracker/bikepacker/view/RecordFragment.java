@@ -1,5 +1,6 @@
-package ru.netcracker.bikepacker;
+package ru.netcracker.bikepacker.view;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.location.LocationManager;
 import android.os.Bundle;
@@ -13,23 +14,30 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import org.osmdroid.views.overlay.Polyline;
-
-import ru.netcracker.bikepacker.tracks.GpxUtil;
+import ru.netcracker.bikepacker.R;
 import ru.netcracker.bikepacker.tracks.TrackRecorder;
 import ru.netcracker.bikepacker.tracks.listeners.OnGpxCreatedListener;
 import ru.netcracker.bikepacker.tracks.listeners.OnRecordingEventsListener;
+import ru.netcracker.bikepacker.tracks.listeners.OnStopBtnClickListener;
 
 
 public class RecordFragment extends Fragment {
+    public TrackRecorder getTrackRecorder() {
+        return trackRecorder;
+    }
+
     private TrackRecorder trackRecorder;
     private Context ctx;
     private boolean recording = false;
     private OnGpxCreatedListener onGpxCreatedListener;
-    private static final String TAG_START = "start";
+    private OnStopBtnClickListener onStopBtnClickListener;
 
     public void setOnGpxCreatedListener(OnGpxCreatedListener onGpxCreatedListener) {
         this.onGpxCreatedListener = onGpxCreatedListener;
+    }
+
+    public void setOnStopBtnClickListener(OnStopBtnClickListener onStopBtnClickListener) {
+        this.onStopBtnClickListener = onStopBtnClickListener;
     }
 
     @Override
@@ -42,9 +50,11 @@ public class RecordFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
+
         return inflater.inflate(R.layout.fragment_record, container, false);
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -54,36 +64,34 @@ public class RecordFragment extends Fragment {
         LocationManager locationManager = (LocationManager) ctx.getSystemService(Context.LOCATION_SERVICE);
         trackRecorder = new TrackRecorder(ctx, locationManager);
         trackRecorder.setOnRecordingListener(
-                new OnRecordingEventsListener() {
-
-                    @Override
-                    public void onStartRecording() {
-                        recordButton.setImageResource(R.drawable.ic_stop_recording);
-                    }
-
-                    @Override
-                    public void onFinishRecording() {
-                        recordButton.setImageResource(R.drawable.ic_start_new_track);
-                        Polyline track = GpxUtil.trackToPolyline(trackRecorder.getGpx().getTracks().get(0));
-                        onGpxCreatedListener.onGpxCreated(trackRecorder.getGpx());
-                    }
+            new OnRecordingEventsListener() {
+                @Override
+                public void onStartRecording() {
+                    recordButton.setImageResource(R.drawable.ic_stop_recording);
                 }
 
+                @Override
+                public void onFinishRecording() {
+                    recordButton.setImageResource(R.drawable.ic_start_new_track);
+                    onStopBtnClickListener.onClick();
+                    onGpxCreatedListener.onGpxCreated(trackRecorder.getGpx());
+
+                }
+            }
         );
 
         recordButton.setOnClickListener(
-                view1 -> {
-                    if (recording) {
-                        ((TextView) view.findViewById(R.id.textView2)).setText((CharSequence) "Recording finished");
-                        view.findViewById(R.id.favourite_tracks).setVisibility(View.VISIBLE);
-                        trackRecorder.finishRecording();
-                    } else {
-                        ((TextView) view.findViewById(R.id.textView2)).setText((CharSequence) "Time: ");
-                        view.findViewById(R.id.favourite_tracks).setVisibility(View.GONE);
-                        trackRecorder.startRecording();
-                    }
-                    recording = !recording;
+            view1 -> {
+                if (recording) {
+                    trackRecorder.finishRecording();
+                } else {
+                    ((TextView) view.findViewById(R.id.textView2)).setText("Time: ");
+                    view.findViewById(R.id.favourite_tracks).setVisibility(View.GONE);
+
+                    trackRecorder.startRecording();
                 }
+                recording = !recording;
+            }
         );
     }
 
