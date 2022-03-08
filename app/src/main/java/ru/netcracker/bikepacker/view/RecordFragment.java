@@ -16,6 +16,7 @@ import androidx.fragment.app.Fragment;
 import org.osmdroid.views.overlay.Polyline;
 
 import ru.netcracker.bikepacker.R;
+import ru.netcracker.bikepacker.manager.SessionManager;
 import ru.netcracker.bikepacker.tracks.GpxUtil;
 import ru.netcracker.bikepacker.tracks.TrackRecorder;
 import ru.netcracker.bikepacker.tracks.listeners.OnGpxCreatedListener;
@@ -53,7 +54,8 @@ public class RecordFragment extends Fragment {
 
         ImageButton recordButton = view.findViewById(R.id.record);
         LocationManager locationManager = (LocationManager) ctx.getSystemService(Context.LOCATION_SERVICE);
-        trackRecorder = new TrackRecorder(ctx, locationManager);
+
+        trackRecorder = new TrackRecorder(ctx, locationManager,  SessionManager.getInstance(ctx).getSessionUser());
         trackRecorder.setOnRecordingListener(
                 new OnRecordingEventsListener() {
 

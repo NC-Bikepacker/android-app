@@ -1,6 +1,7 @@
 package ru.netcracker.bikepacker.adapter;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,20 +15,15 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
-
 import ru.netcracker.bikepacker.R;
 import ru.netcracker.bikepacker.listholder.MyFriendsList;
 import ru.netcracker.bikepacker.model.UserModel;
+import ru.netcracker.bikepacker.adapter.OnFriendClickListener;
 
 public class FindFriendAdapter extends RecyclerView.Adapter<FindFriendAdapter.FindFriendViewHolder> {
 
     private Context context;
     private List<UserModel> findFriends;
-
-    public interface OnFriendClickListener{
-        void addFriendClick(UserModel user, int position);
-        void deleteFriendClick(UserModel user, int position);
-    }
 
     private final OnFriendClickListener onClickListener;
 

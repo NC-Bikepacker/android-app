@@ -7,6 +7,7 @@ import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.HTTP;
+import retrofit2.http.Header;
 import retrofit2.http.Headers;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
@@ -23,7 +24,7 @@ public interface ApiService {
             "Content-Type: application/json;" +
                     "charset=UTF-8"})
     @POST("/login")
-    Call<ru.netcracker.bikepacker.model.UserModel> login(@Body AuthModel authModel);
+    Call<UserModel> login(@Body AuthModel authModel);
 
     @Headers({
             "Content-Type: application/json;" +
@@ -31,27 +32,27 @@ public interface ApiService {
     @POST("/signup")
     Call<Void> signUp(@Body SignUpModel signUpModel);
 
-//    Post track request
+//  Post track request
     @POST("/tracks")
-    public Call<ResponseBody> postTrack(@Body TrackModel track);
+    public Call<ResponseBody> postTrack(@Header ("Cookie") String cookie, @Body TrackModel track);
 
     //operations with usersApi
     @GET("/users/{id}")
-    Call<UserModel> getUserWithID(@Path("id") long id);
+    Call<UserModel> getUserWithID(@Header ("Cookie") String cookie, @Path("id") long id);
 
-    @GET("/users/getUser/{userNickName}")
-    Call<ru.netcracker.bikepacker.model.UserModel> getFriendWithNickName(@Path("userNickName") String nickName);
+    @GET("/users/user/getbyusername/{userNickName}")
+    Call<UserModel> getFriendWithNickName(@Header ("Cookie") String cookie, @Path("userNickName") String nickName);
 
     @POST("/users")
-    Call<ru.netcracker.bikepacker.model.UserModel> postRequestUser(@Body UserModel findFriendEntity);
+    Call<UserModel> postRequestUser(@Header ("Cookie") String cookie, @Body UserModel findFriendEntity);
 
     //operations with friendsApi
     @GET("/friends/{nicknameThisUser}")
-    Call<List<ru.netcracker.bikepacker.model.UserModel>> getMyFriends(@Path("nicknameThisUser") String nickName);
+    Call<List<UserModel>> getMyFriends(@Header ("Cookie") String cookie, @Path("nicknameThisUser") String nickName);
 
     @POST("/friends/add")
-    Call<ResponseBody> postRequestFriend(@Body FriendModel friends);
+    Call<ResponseBody> postRequestFriend(@Header ("Cookie") String cookie, @Body FriendModel friends);
 
     @HTTP(method = "DELETE", path = "/friends/delete", hasBody = true)
-    Call<ResponseBody> deleteFriend(@Body FriendModel friends);
+    Call<ResponseBody> deleteFriend(@Header ("Cookie") String cookie, @Body FriendModel friends);
 }

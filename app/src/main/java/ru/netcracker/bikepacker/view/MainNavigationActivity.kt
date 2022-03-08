@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.preference.PreferenceManager
+import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.ImageButton
@@ -89,8 +90,9 @@ class MainNavigationActivity : AppCompatActivity() {
                             it.zoomToBoundingBox(userTrack.boundingBox,true)
                             it.overlayManager.addAll(userTrack.toList())
                         }
-
+                        Log.d("Record track",map.overlayManager.overlays().toString());
                         Toast.makeText(ctx,map.overlayManager.overlays().toString(),Toast.LENGTH_LONG).show()
+
                     }
                 }
             )
@@ -202,14 +204,14 @@ class MainNavigationActivity : AppCompatActivity() {
 
                 activeFragment = homeFragment
             }
-            R.id.find_friends_fragment ->{
+           /* R.id.find_friends_fragment ->{
                 if (activeFragment is FindFriendFragment) return false
                 supportFragmentManager
                     .beginTransaction()
                     .hide(activeFragment!!)
                     .show(findFriend).commit()
                 activeFragment = findFriend
-            }
+            }*/
             else -> {
                 if (activeFragment is SettingsFragment) return false
                 supportFragmentManager.beginTransaction().hide(activeFragment!!)

@@ -27,8 +27,10 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import ru.netcracker.bikepacker.R;
 import ru.netcracker.bikepacker.adapter.FindFriendAdapter;
+import ru.netcracker.bikepacker.adapter.OnFriendClickListener;
 import ru.netcracker.bikepacker.listholder.MyFriendsList;
 import ru.netcracker.bikepacker.manager.RetrofitManager;
+import ru.netcracker.bikepacker.manager.SessionManager;
 import ru.netcracker.bikepacker.model.FriendModel;
 import ru.netcracker.bikepacker.model.UserModel;
 
@@ -42,8 +44,11 @@ public class FindFriendFragment extends Fragment {
     private EditText findFriendSearchPlane;
     private ImageButton searchFriendButton;
     private View viewFindFriendFragment;
+    private SessionManager sessionManager;
     //Юзер из под которого подключаемся
-    private UserModel iAmUser = new UserModel(5L,"","","ComeBak");
+    private UserModel iAmUser;
+    private String cookie;
+    private OnFriendClickListener clickListener;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -57,6 +62,62 @@ public class FindFriendFragment extends Fragment {
                              Bundle savedInstanceState) {
         //получаем context
         context = getContext();
+
+        //инициализаруем session manager
+        sessionManager = SessionManager.getInstance(context);
+
+        cookie = "JSESSIONID=" + sessionManager.getSessionId() + "; Path=/; HttpOnly;";
+
+        //получаем sessionUser
+        iAmUser = sessionManager.getSessionUser();
+
+        //attach clickListener
+        this.clickListener = new OnFriendClickListener() {
+            FriendModel friends;
+            @Override
+            public void addFriendClick(UserModel user, int position) {
+                friends = new FriendModel(String.valueOf(iAmUser.getId()), String.valueOf(user.getId()));
+                RetrofitManager.getInstance(getContext())
+                        .getJSONApi()
+                        .postRequestFriend(cookie, friends)
+                        .enqueue(new Callback<ResponseBody>() {
+                            @Override
+                            public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
+                                Toast.makeText(getContext(), "Заяка пользователю " + user.getFirstname() + " отправлена", Toast.LENGTH_SHORT).show();
+                                displayFindFriend(viewFindFriendFragment, user.getUsername());
+                            }
+                            @Override
+                            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                                Toast.makeText(context, "Ошибка добавления пользователя", Toast.LENGTH_SHORT).show();
+                                displayFindFriend(viewFindFriendFragment, findFriendsList.get(position).getUsername());
+                                Log.d(t.getMessage(), "Ошибка добавления пользователя");
+                            }
+                        });
+            }
+
+            @Override
+            public void deleteFriendClick(UserModel user, int position) {
+                friends = new FriendModel(String.valueOf(iAmUser.getId()), String.valueOf(user.getId()));
+                RetrofitManager.getInstance(getContext())
+                        .getJSONApi()
+                        .deleteFriend(cookie, friends)
+                        .enqueue(new Callback<ResponseBody>() {
+                            @Override
+                            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                                Toast.makeText(getContext(), "Пользователь " + user.getFirstname() + " удален", Toast.LENGTH_SHORT).show();
+                                MyFriendsList.getInstance().deleteFriend(user);
+                                displayMyFriend(viewFindFriendFragment);
+                            }
+
+                            @Override
+                            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                                Toast.makeText(getContext(), "Ошибка удаления", Toast.LENGTH_SHORT).show();
+                                displayMyFriend(viewFindFriendFragment);
+                                Log.d(t.getMessage(), "Ошибка удаления друга");
+                            }
+                        });
+            }
+        };
 
         //устанавливаем fragment для текущего view
         viewFindFriendFragment = inflater.inflate(R.layout.fragment_find_friend, container, false);
@@ -89,51 +150,50 @@ public class FindFriendFragment extends Fragment {
         friendsRecyclerView = view.findViewById(R.id.findFriendRecycler);
         friendsRecyclerView.setLayoutManager(layoutManager);
 
-        friendAdapter = new FindFriendAdapter(getContext(), findFriendsList, clickListener());
+        friendAdapter = new FindFriendAdapter(getContext(), findFriendsList, clickListener);
         friendsRecyclerView.setAdapter(friendAdapter);
     }
 
-    public void displayMyFriend(View view){
-            RetrofitManager.getInstance(getContext())
-                    .getJSONApi()
-                    .getMyFriends(iAmUser.getUsername())
-                    .enqueue(new Callback<List<UserModel>>() {
-                        @RequiresApi(api = Build.VERSION_CODES.N)
-                        @Override
-                        public void onResponse(Call<List<UserModel>> call, Response<List<UserModel>> response) {
-                            List<UserModel> friends = response.body();
-                            if(friends.isEmpty()){
-                                Toast.makeText(context, "у вас еще нет друзей", Toast.LENGTH_SHORT).show();
-                            }
-                            else {
-                                MyFriendsList.getInstance().updateMyFriends(friends);
-                                findFriendsList.clear();
-                                findFriendsList.addAll(friends);
-                                setFindFragmentRecycler(findFriendsList, view);
-                            }
-                        }
-
-                        @Override
-                        public void onFailure(Call<List<UserModel>> call, Throwable t) {
-                            Toast.makeText(context, "Нет соединения с сервером!", Toast.LENGTH_SHORT).show();
-                            Log.d(t.getMessage(), "Error occurred while getting request!");
-                        }
-                    });
-    }
-
-    private void displayFindFriend(View view, String nickName){
+    public void displayMyFriend(View view) {
         RetrofitManager.getInstance(getContext())
                 .getJSONApi()
-                .getFriendWithNickName(nickName)
+                .getMyFriends(cookie, iAmUser.getUsername())
+                .enqueue(new Callback<List<UserModel>>() {
+                    @RequiresApi(api = Build.VERSION_CODES.N)
+                    @Override
+                    public void onResponse(Call<List<UserModel>> call, Response<List<UserModel>> response) {
+                        List<UserModel> friends = response.body();
+                        System.out.println(response.code());
+                        if (friends == null || friends.isEmpty()) {
+                            Toast.makeText(context, "у вас еще нет друзей", Toast.LENGTH_SHORT).show();
+                        } else {
+                            MyFriendsList.getInstance().updateMyFriends(friends);
+                            findFriendsList.clear();
+                            findFriendsList.addAll(friends);
+                            setFindFragmentRecycler(findFriendsList, view);
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<List<UserModel>> call, Throwable t) {
+                        Toast.makeText(context, "Нет соединения с сервером!", Toast.LENGTH_SHORT).show();
+                        Log.d(t.getMessage(), "Error occurred while getting request!");
+                    }
+                });
+    }
+
+    private void displayFindFriend(View view, String nickName) {
+        RetrofitManager.getInstance(getContext())
+                .getJSONApi()
+                .getFriendWithNickName(cookie, nickName)
                 .enqueue(new Callback<UserModel>() {
                     @Override
                     public void onResponse(Call<UserModel> call, Response<UserModel> response) {
                         UserModel friend = response.body();
                         findFriendsList.clear();
-                        if(friend == null){
-                            Toast.makeText(getContext(), "Пользователи не найдены",Toast.LENGTH_SHORT).show();
-                        }
-                        else {
+                        if (friend == null) {
+                            Toast.makeText(getContext(), "Пользователи не найдены", Toast.LENGTH_SHORT).show();
+                        } else {
                             findFriendsList.add(friend);
                             setFindFragmentRecycler(findFriendsList, view);
                         }
@@ -141,68 +201,14 @@ public class FindFriendFragment extends Fragment {
 
                     @Override
                     public void onFailure(Call<UserModel> call, Throwable t) {
-                        Toast.makeText(getContext(), "Ошибка поиска пользователя",Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), "Ошибка поиска пользователя", Toast.LENGTH_SHORT).show();
                         Log.d(t.getMessage(), "Ошибка поиска пользователя");
                     }
                 });
 
     }
 
-    private FindFriendAdapter.OnFriendClickListener clickListener(){
-        /* определяем слушателя нажатия элемента в списке */
-        FindFriendAdapter.OnFriendClickListener friendClickListener = new FindFriendAdapter.OnFriendClickListener() {
-            FriendModel friends;
-            @Override
-            public void addFriendClick(UserModel user, int position) {
-                friends = new FriendModel(String.valueOf(iAmUser.getId()), String.valueOf(user.getId()));
-                RetrofitManager.getInstance(getContext())
-                        .getJSONApi()
-                        .postRequestFriend(friends)
-                        .enqueue(new Callback<ResponseBody>() {
-                            @Override
-                            public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
-                                Toast.makeText(getContext(), "Заяка пользователю " + user.getFirstname() + " отправлена", Toast.LENGTH_SHORT).show();
-                                displayFindFriend(viewFindFriendFragment, user.getUsername());
-                            }
-                            @Override
-                            public void onFailure(Call<ResponseBody> call, Throwable t) {
-                                Toast.makeText(context, "Ошибка добавления пользователя", Toast.LENGTH_SHORT).show();
-                                displayFindFriend(viewFindFriendFragment, findFriendsList.get(position).getUsername());
-                                Log.d(t.getMessage(), "Ошибка добавления пользователя");
-                            }
-                        });
-            }
-
-            @Override
-            public void deleteFriendClick(UserModel user, int position) {
-                friends = new FriendModel(String.valueOf(iAmUser.getId()), String.valueOf(user.getId()));
-                RetrofitManager.getInstance(getContext())
-                                .getJSONApi()
-                                .deleteFriend(friends)
-                                .enqueue(new Callback<ResponseBody>() {
-                                    @Override
-                                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                                        Toast.makeText(getContext(), "Пользователь " + user.getFirstname() + " удален", Toast.LENGTH_SHORT).show();
-                                        MyFriendsList.getInstance().deleteFriend(user);
-                                        displayMyFriend(viewFindFriendFragment);
-                                    }
-
-                                    @Override
-                                    public void onFailure(Call<ResponseBody> call, Throwable t) {
-                                        Toast.makeText(getContext(), "Ошибка удаления", Toast.LENGTH_SHORT).show();
-                                        displayMyFriend(viewFindFriendFragment);
-                                        Log.d(t.getMessage(), "Ошибка удаления друга");
-                                    }
-                                });
-            }
-
-        };
-
-        return friendClickListener;
-    }
-
-    public void disp(){
+    public void disp() {
         displayMyFriend(viewFindFriendFragment);
     }
-
 }

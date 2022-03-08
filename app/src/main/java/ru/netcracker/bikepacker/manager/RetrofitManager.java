@@ -5,6 +5,10 @@ import android.content.Context;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import java.io.IOException;
+
+import okhttp3.Interceptor;
+import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import ru.netcracker.bikepacker.R;
@@ -17,7 +21,7 @@ public class RetrofitManager {
     private String BASE_URL;
     private Gson gson = new GsonBuilder().setLenient().create();
 
-    private RetrofitManager(Context ctx) {
+    private RetrofitManager(Context ctx) throws IOException {
         BASE_URL = ctx.getResources().getString(R.string.server_ip);
         retrofit = new Retrofit.Builder()
                 .baseUrl(BASE_URL)
@@ -25,15 +29,18 @@ public class RetrofitManager {
                 .build();
     }
 
-    public static RetrofitManager getInstance(Context ctx) {
+    public static RetrofitManager getInstance(Context ctx)  {
         RetrofitManager localInstance = retrofitManager;
-
         if (localInstance == null) {
             synchronized (RetrofitManager.class) {
                 localInstance = retrofitManager;
 
                 if(localInstance == null) {
-                    retrofitManager = localInstance = new RetrofitManager(ctx);
+                    try {
+                        retrofitManager = localInstance = new RetrofitManager(ctx);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         }

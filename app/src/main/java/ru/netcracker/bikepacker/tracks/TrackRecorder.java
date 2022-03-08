@@ -26,6 +26,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import ru.netcracker.bikepacker.manager.RetrofitManager;
+import ru.netcracker.bikepacker.manager.SessionManager;
 import ru.netcracker.bikepacker.model.TrackModel;
 import ru.netcracker.bikepacker.model.UserModel;
 import ru.netcracker.bikepacker.tracks.listeners.OnRecordingEventsListener;
@@ -36,8 +37,11 @@ public class TrackRecorder {
     private final LocationManager locationManager;
     private final List<WayPoint> wayPoints;
     private final Context ctx;
+    private UserModel user;
     private static final long MIN_TIME_MS = 5000;
     private static final float MIN_DISTANCE_M = 5;
+    private SessionManager sessionManager;
+    private String cookie;
     private final LocationListener recorderListener = new LocationListener() {
         @Override
         public void onLocationChanged(@NonNull Location location) {
@@ -58,10 +62,13 @@ public class TrackRecorder {
 
 
 
-    public TrackRecorder(Context ctx, LocationManager locationManager) {
+    public TrackRecorder(Context ctx, LocationManager locationManager, UserModel user) {
         this.ctx = ctx;
         this.locationManager = locationManager;
         this.wayPoints = new ArrayList<>();
+        this.user = user;
+        this.sessionManager = SessionManager.getInstance(ctx);
+        this.cookie = "JSESSIONID="+sessionManager.getSessionId()+"; Path=/; HttpOnly;";
     }
 
     public void startRecording() {
@@ -94,10 +101,9 @@ public class TrackRecorder {
         );
         wayPoints.clear();
 
-        UserModel user = new UserModel(1L,"","","");
-        TrackModel trackToPost = new TrackModel(2, 3, user, GpxUtil.gpxToString(getGpx()));
 
-        RetrofitManager.getInstance(ctx).getJSONApi().postTrack(trackToPost).enqueue(new Callback<ResponseBody>() {
+        TrackModel trackToPost = new TrackModel(2, 3, user, GpxUtil.gpxToString(getGpx()));
+        RetrofitManager.getInstance(ctx).getJSONApi().postTrack(cookie, trackToPost).enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 Log.d("Track sending callback","SENDED");
