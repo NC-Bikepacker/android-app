@@ -24,9 +24,9 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import ru.netcracker.bikepacker.R;
 import ru.netcracker.bikepacker.databinding.FragmentSignUpBinding;
+import ru.netcracker.bikepacker.manager.RetrofitManager;
 import ru.netcracker.bikepacker.model.RoleEntity;
 import ru.netcracker.bikepacker.model.SignUpModel;
-import ru.netcracker.bikepacker.manager.RetrofitManager;
 import ru.netcracker.bikepacker.service.EmailValidationService;
 import ru.netcracker.bikepacker.service.PasswordGeneratingService;
 
