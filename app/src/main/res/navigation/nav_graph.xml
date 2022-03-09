@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/navigation"
-    app:startDestination="@id/logInFragment">
+    app:startDestination="@id/fragmentLoadingScreen">
 
     <fragment
         android:id="@+id/logInFragment"
@@ -11,35 +11,15 @@
         android:label=""
         tools:layout="@layout/fragment_log_in">
         <action
-            android:id="@+id/action_logInFragment_to_signInFragment"
-            app:destination="@id/signInFragment"
-            app:enterAnim="@anim/slide_in_right"
-            app:exitAnim="@anim/slide_out_left"
-            app:popEnterAnim="@anim/slide_in_left"
-            app:popExitAnim="@anim/slide_out_right" />
-        <action
             android:id="@+id/action_logInFragment_to_signUpFragment"
             app:destination="@id/signUpFragment"
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@anim/slide_in_left"
             app:popExitAnim="@anim/slide_out_right" />
-    </fragment>
-    <fragment
-        android:id="@+id/signInFragment"
-        android:name="ru.netcracker.bikepacker.view.SignInFragment"
-        android:label=""
-        tools:layout="@layout/fragment_sign_in">
         <action
-            android:id="@+id/action_signInFragment_to_logInFragment"
-            app:destination="@id/logInFragment"
-            app:enterAnim="@anim/slide_in_right"
-            app:exitAnim="@anim/slide_out_left"
-            app:popEnterAnim="@anim/slide_in_left"
-            app:popExitAnim="@anim/slide_out_right" />
-        <action
-            android:id="@+id/action_signInFragment_to_mapPage"
-            app:destination="@id/mapPage" />
+            android:id="@+id/action_logInFragment_to_mainNavigationActivity"
+            app:destination="@id/mainNavigationActivity" />
     </fragment>
     <fragment
         android:id="@+id/signUpFragment"
@@ -49,17 +29,27 @@
         <action
             android:id="@+id/action_signUpFragment_to_logInFragment"
             app:destination="@id/logInFragment"
-            app:enterAnim="@anim/slide_in_right"
-            app:exitAnim="@anim/slide_out_left"
+            app:enterAnim="@anim/slide_in_left"
+            app:exitAnim="@anim/slide_out_right"
             app:popEnterAnim="@anim/slide_in_left"
             app:popExitAnim="@anim/slide_out_right"/>
-        <action
-            android:id="@+id/action_signUpFragment_to_mapPage"
-            app:destination="@id/mapPage" />
     </fragment>
     <activity
-        android:id="@+id/mapPage"
+        android:id="@+id/mainNavigationActivity"
         android:name="ru.netcracker.bikepacker.view.MainNavigationActivity"
-        android:label="MapPage" />
+        android:label="activity_main_navigation"
+        tools:layout="@layout/activity_main_navigation" />
+    <fragment
+        android:id="@+id/fragmentLoadingScreen"
+        android:name="ru.netcracker.bikepacker.view.FragmentLoadingScreen"
+        android:label="FragmentLoadingScreen" >
+        <action
+            android:id="@+id/action_fragmentLoadingScreen_to_mainNavigationActivity"
+            app:destination="@id/mainNavigationActivity" />
+        <action
+            android:id="@+id/action_fragmentLoadingScreen_to_logInFragment"
+            app:destination="@id/logInFragment" />
+    </fragment>
+
 
 </navigation>

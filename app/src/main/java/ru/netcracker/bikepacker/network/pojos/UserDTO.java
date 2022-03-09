@@ -5,6 +5,8 @@ import com.google.gson.annotations.SerializedName;
 
 public class UserDTO {
 
+    //    TODO: remove
+
     @SerializedName("id")
     @Expose
     private long id;
