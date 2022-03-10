@@ -204,14 +204,6 @@ class MainNavigationActivity : AppCompatActivity() {
 
                 activeFragment = homeFragment
             }
-           /* R.id.find_friends_fragment ->{
-                if (activeFragment is FindFriendFragment) return false
-                supportFragmentManager
-                    .beginTransaction()
-                    .hide(activeFragment!!)
-                    .show(findFriend).commit()
-                activeFragment = findFriend
-            }*/
             else -> {
                 if (activeFragment is SettingsFragment) return false
                 supportFragmentManager.beginTransaction().hide(activeFragment!!)
