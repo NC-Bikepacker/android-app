@@ -18,7 +18,6 @@
     <string name="first_fragment_label">First Fragment</string>
     <string name="firstname">Firstname</string>
     <string name="forgot_password">Forgot password?</string>
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="home_icon">home</string>
     <string name="ip">http://192.168.1.60:8085</string>
     <string name="lastname">Lastname</string>
@@ -35,6 +34,9 @@
     <string name="sign_in">Sign in</string>
     <string name="sign_up">Sign up</string>
     <string name="start_route">Start new route</string>
+    <string name="rate">Rate the complexity</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="time">Time:</string>
     <string name="username">Username</string>
     <string name="large_text">
@@ -130,4 +132,8 @@
 
     <string name="hello_first_fragment">Hello first fragment</string>
     <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
+    <string name="accept">Accept</string>
+    <string name="track_recorded">Track recorded!</string>
+    <string name="distance">Distance:</string>
+    <string name="average_speed">Average speed:</string>
 </resources>

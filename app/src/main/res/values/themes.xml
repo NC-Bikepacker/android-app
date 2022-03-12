@@ -21,5 +21,16 @@
 
     <style name="Theme.Bikepacker.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
+    <style name="Button.Grey" parent="ThemeOverlay.AppCompat">
+        <item name="colorPrimary">@color/white</item>
+        <item name="colorSecondary">@color/bikepacker_purple</item>
+    </style>
+
+    <style name="CustomRatingBarStyle" parent="Widget.AppCompat.RatingBar">
+        <item name="android:progressDrawable">@drawable/custom_rating</item>
+        <item name="android:minHeight">15dip</item>
+        <item name="android:maxHeight">47dip</item>
+    </style>
+
     <style name="Theme.Bikepacker.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 </resources>

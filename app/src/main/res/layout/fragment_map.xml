@@ -1,25 +1,77 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mapPage"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:id="@+id/btn_container"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="298dp"
         android:layout_marginEnd="5dp"
-        android:layout_marginBottom="192dp"
+        android:layout_marginBottom="204dp"
+        android:background="@android:color/transparent"
+        android:elevation="1dp"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageButton
+            android:id="@+id/locationBtn"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_gravity="end"
+            android:background="@android:color/transparent"
+            android:backgroundTint="@android:color/transparent"
+            android:contentDescription="TODO"
+            android:contextClickable="true"
+            app:srcCompat="@drawable/ic_zoom_to_location" />
+
+        <ImageButton
+            android:id="@+id/zoomInBtn"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_gravity="end"
+            android:background="@android:color/transparent"
+            android:contentDescription="TODO"
+            app:srcCompat="@drawable/ic_zoom_in" />
+
+        <ImageButton
+            android:id="@+id/zoomOutBtn"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_gravity="end"
+            android:background="@android:color/transparent"
+            android:contentDescription="TODO"
+            app:srcCompat="@drawable/ic_zoom_out" />
+    </LinearLayout>
+
+    <FrameLayout
+        android:id="@+id/summary_marker"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="205dp"
+        android:layout_marginEnd="206dp"
+        android:layout_marginBottom="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btn_container">
+
+    </FrameLayout>
 
     <org.osmdroid.views.MapView
         android:id="@+id/map"
+        style="@style/Theme.Bikepacker.NoActionBar"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:visibility="visible"
+        tools:layout_editor_absoluteX="0dp"
+        tools:layout_editor_absoluteY="0dp">
 
     </org.osmdroid.views.MapView>
 
@@ -27,10 +79,21 @@
         android:id="@+id/start_new_route_container"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
         app:layout_constraintBottom_toBottomOf="@+id/map"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/map"
-        android:layout_marginBottom="16dp">
+        app:layout_constraintStart_toStartOf="@+id/map">
+
+    </FrameLayout>
+
+    <FrameLayout
+        android:id="@+id/record_summary_container"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
     </FrameLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
