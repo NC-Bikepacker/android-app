@@ -16,6 +16,7 @@ import org.osmdroid.util.GeoPoint;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import io.jenetics.jpx.GPX;
 import io.jenetics.jpx.Track;
@@ -37,6 +38,8 @@ public class TrackRecorder {
     private final LocationManager locationManager;
     private final List<WayPoint> wayPoints;
     private final Context ctx;
+    public static final long MIN_TIME_MS = 5000;
+    public static final float MIN_DISTANCE_M = 5;
     private UserModel user;
     private static final long MIN_TIME_MS = 5000;
     private static final float MIN_DISTANCE_M = 5;
@@ -66,13 +69,12 @@ public class TrackRecorder {
         this.ctx = ctx;
         this.locationManager = locationManager;
         this.wayPoints = new ArrayList<>();
-        this.user = user;
-        this.sessionManager = SessionManager.getInstance(ctx);
-        this.cookie = "JSESSIONID="+sessionManager.getSessionId()+"; Path=/; HttpOnly;";
     }
 
     public void startRecording() {
         wayPoints.clear();
+        trackBuilder.segments().clear();
+        gpxBuilder.tracks().clear();
 
         if (ActivityCompat.checkSelfPermission(ctx, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(ctx, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
@@ -85,10 +87,12 @@ public class TrackRecorder {
                 recorderListener);
 
         Location userLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-        if (userLocation == null) return;
+        if (userLocation == null) {
+            Toast.makeText(ctx,"Recording start failed",Toast.LENGTH_LONG).show();
+            return;
+        }
         GeoPoint start = new GeoPoint(userLocation);
-        wayPoints.add(WayPoint.of(start.getLatitude(), start.getLongitude()));
-
+        wayPoints.add(WayPoint.builder().lat(start.getLatitude()).lon(start.getLongitude()).desc(String.valueOf((double) (new Random()).nextDouble())).build());
         onRecordingEventsListener.onStartRecording();
     }
 
@@ -101,6 +105,20 @@ public class TrackRecorder {
         );
         wayPoints.clear();
 
+        onRecordingEventsListener.onFinishRecording();
+    }
+
+    public GPX getGpx() {
+        return gpxBuilder
+                .addTrack(
+                        trackBuilder.build()
+                ).build();
+    }
+
+    public void sendData(float complexity) {
+        UserDTO user = new UserDTO(1L);
+        //TODO: Change complexity to float
+        TrackDTO trackToPost = new TrackDTO(2, (long) complexity, user, GpxUtil.gpxToString(getGpx()));
 
         TrackModel trackToPost = new TrackModel(2, 3, user, GpxUtil.gpxToString(getGpx()));
         RetrofitManager.getInstance(ctx).getJSONApi().postTrack(cookie, trackToPost).enqueue(new Callback<ResponseBody>() {
@@ -114,14 +132,6 @@ public class TrackRecorder {
                 Log.d("Track sending callback","NOT SENDED");
             }
         });
-        onRecordingEventsListener.onFinishRecording();
-    }
-
-    public GPX getGpx() {
-        return gpxBuilder
-                .addTrack(
-                        trackBuilder.build()
-                ).build();
     }
 
 }

@@ -4,19 +4,20 @@ import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.preference.PreferenceManager
-import android.util.Log
 import android.view.View
-import android.widget.Button
 import android.widget.ImageButton
 import android.widget.Toast
+import android.view.animation.Animation
+import android.view.animation.AnimationUtils
+import android.widget.*
 import androidx.fragment.app.Fragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import io.jenetics.jpx.GPX
 import org.osmdroid.config.Configuration
-import ru.netcracker.bikepacker.R
+import org.osmdroid.views.overlay.OverlayWithIW
+import ru.netcracker.bikepacker.*
+import ru.netcracker.bikepacker.databinding.ActivityMainNavigationBinding
 import ru.netcracker.bikepacker.tracks.UserTrack
 import ru.netcracker.bikepacker.tracks.GpxUtil
-import ru.netcracker.bikepacker.tracks.listeners.OnGpxCreatedListener
 import java.util.stream.Collectors
 
 class MainNavigationActivity : AppCompatActivity() {
@@ -34,16 +35,55 @@ class MainNavigationActivity : AppCompatActivity() {
         const val TAG_RECORD = "record"
         const val TAG_HOME = "home"
         const val TAG_FINDFRIEND = "findFriend"
-
+        const val TAG_RECORD_SM = "record_summary"
     }
 
+    private var downAnim: Animation? = null
+    private var upAnim: Animation? = null
+    private var userTrack: UserTrack? = null
+    private var binding: ActivityMainNavigationBinding? = null
+
     //fragments
+            private
+    val recordSummaryFragment: RecordSummaryFragment by lazy {
+        val fr = supportFragmentManager.findFragmentByTag(TAG_RECORD_SM)
+        if (fr != null) fr as RecordSummaryFragment
+        else {
+            val recordSummaryFragment_ = RecordSummaryFragment(recordFragment.trackRecorder)
+            recordSummaryFragment_.setOnAcceptBtnClickListener {
+                findViewById<BottomNavigationView>(R.id.bottom_navig_view).visibility = View.VISIBLE
+                supportFragmentManager.beginTransaction()
+                    .setCustomAnimations(R.anim.up_alpha_trans, R.anim.down_alpha_trans)
+                    .remove(recordSummaryFragment)
+                    .commit()
+                supportFragmentManager.beginTransaction()
+                    .setCustomAnimations(R.anim.up_alpha_trans, R.anim.down_alpha_trans)
+                    .replace(R.id.start_new_route_container, recordFragment, TAG_RECORD)
+                    .commit()
+                mapFragment.map.overlays.removeIf { overlay ->
+                    overlay is OverlayWithIW &&
+                            overlay.id == UserTrack.RECORDED_TRACK_TAG
+                }
+                Toast.makeText(
+                    ctx,
+                    mapFragment.map.overlayManager.overlays().toString(),
+                    Toast.LENGTH_LONG
+                ).show()
+                findViewById<LinearLayout>(R.id.btn_container).let {
+                    it.translationX = 0f
+                    it.translationY = 0f
+                    it.orientation = LinearLayout.VERTICAL
+                    mapFragment.switchOnClickAnim()
+                }
+            }
+            recordSummaryFragment_
+        }
+    }
     private val mapFragment: MapFragment by lazy {
         val fr = supportFragmentManager.findFragmentByTag(TAG_MAP)
         if (fr != null) fr as MapFragment
-        else MapFragment()
+        else ru.netcracker.bikepacker.view.MapFragment()
     }
-
     private val settingsFragment: SettingsFragment by lazy {
         val fr = supportFragmentManager.findFragmentByTag(TAG_SETTINGS)
         if (fr != null) fr as SettingsFragment
@@ -72,30 +112,44 @@ class MainNavigationActivity : AppCompatActivity() {
 
         if (fr != null) fr as RecordFragment
         else {
-            val initialFr = RecordFragment()
-            initialFr.setOnGpxCreatedListener(
-                object : OnGpxCreatedListener {
-                    override fun onGpxCreated(gpx: GPX?) {
-                        val map = mapFragment.map
-                        val userTrack: UserTrack = UserTrack.newInstance(
-                            map,
-                            mapFragment.startIcon,
-                            mapFragment.finishIcon,
-                            GpxUtil.trackToPolyline(
-                                gpx?.tracks()?.collect(Collectors.toList())?.get(0)
-                            )
+            val initialFr = ru.netcracker.bikepacker.view.RecordFragment()
+            initialFr.setOnGpxCreatedListener { gpx ->
+                run {
+                    val map = mapFragment.map
+                    userTrack = UserTrack.newInstance(
+                        map,
+                        mapFragment.startIcon,
+                        mapFragment.finishIcon,
+                        GpxUtil.trackToPolyline(
+                            gpx?.tracks()?.collect(Collectors.toList())?.get(0)
                         )
-
-                        map.let{
-                            it.zoomToBoundingBox(userTrack.boundingBox,true)
-                            it.overlayManager.addAll(userTrack.toList())
-                        }
-                        Log.d("Record track",map.overlayManager.overlays().toString());
-                        Toast.makeText(ctx,map.overlayManager.overlays().toString(),Toast.LENGTH_LONG).show()
-
+                    )
+                    Toast.makeText(ctx,
+                        gpx?.tracks()?.collect(Collectors.toList())?.get(0)?.segments?.get(0)?.points?.get(0)?.description?.get(), Toast.LENGTH_LONG).show();
+                    map.let {
+                        it?.zoomToBoundingBox(userTrack?.boundingBox, true)
+                        it?.overlayManager?.addAll(userTrack?.toList()!!)
                     }
                 }
-            )
+            }
+            initialFr.setOnStopBtnClickListener {
+
+                findViewById<FrameLayout>(R.id.start_new_route_container)?.startAnimation(downAnim)
+                supportFragmentManager.beginTransaction()
+                    .setCustomAnimations(R.anim.up_alpha_trans, R.anim.down_alpha_trans)
+                    .replace(R.id.record_summary_container, recordSummaryFragment, TAG_RECORD_SM)
+                    .commit()
+
+                binding!!.bottomNavigView.visibility = View.GONE
+                findViewById<LinearLayout>(R.id.btn_container).orientation = LinearLayout.HORIZONTAL
+                findViewById<LinearLayout>(R.id.btn_container).let {
+                    it.translationX =
+                        findViewById<FrameLayout>(R.id.start_new_route_container).paddingLeft - it.width - it.height / 2f
+                    it.translationY =
+                        binding!!.mainConstLayout.bottom - it.bottom + 0.0f
+                    mapFragment.switchOnClickAnim()
+                }
+            }
             initialFr
         }
     }
@@ -106,11 +160,27 @@ class MainNavigationActivity : AppCompatActivity() {
 
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        binding = ActivityMainNavigationBinding.inflate(layoutInflater)
         ctx = applicationContext
+        downAnim = AnimationUtils.loadAnimation(ctx, R.anim.down_alpha_trans)
+        upAnim = AnimationUtils.loadAnimation(ctx, R.anim.up_alpha_trans)
+        with(downAnim) {
+            this?.setAnimationListener(object : Animation.AnimationListener {
+                override fun onAnimationStart(p0: Animation?) {}
+                override fun onAnimationRepeat(p0: Animation?) {}
+                override fun onAnimationEnd(p0: Animation?) {
+                    supportFragmentManager
+                        .beginTransaction()
+                        .remove(recordFragment)
+                        .show(mapFragment)
+                        .commit()
+                }
+            })
+        }
 
         //android preferences setting
         Configuration.getInstance().load(ctx, PreferenceManager.getDefaultSharedPreferences(ctx))
-        setContentView(R.layout.activity_main_navigation)
+        setContentView(binding!!.root)
         //retrieve current fragment from savedInstanceState
         savedInstanceState?.let {
             selectedFragment = it.getInt(CURRENT_FRAGMENT, R.id.navigation_map)
@@ -145,6 +215,7 @@ class MainNavigationActivity : AppCompatActivity() {
         bottomNav.setOnItemSelectedListener {
             setFragment(it.itemId)
         }
+
     }
 
     private fun setFragment(itemId: Int): Boolean {
@@ -158,11 +229,9 @@ class MainNavigationActivity : AppCompatActivity() {
                         ) == null
                     ) false
                     else {
-                        supportFragmentManager
-                            .beginTransaction()
-                            .remove(recordFragment)
-                            .show(mapFragment)
-                            .commit()
+                        findViewById<FrameLayout>(R.id.start_new_route_container)?.startAnimation(
+                            downAnim
+                        )
                         true
                     }
                 }
@@ -177,9 +246,10 @@ class MainNavigationActivity : AppCompatActivity() {
                         .commit()
                 }
                 supportFragmentManager.beginTransaction()
+                    .setCustomAnimations(R.anim.up_alpha_trans, R.anim.down_alpha_trans)
                     .replace(R.id.start_new_route_container, recordFragment, TAG_RECORD)
                     .commit()
-                mapFragment.setCenterOnGeoLocation()
+                mapFragment.mapController.animateTo(mapFragment.userLocation)
                 activeFragment = mapFragment
             }
             R.id.navigation_home ->{
