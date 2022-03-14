@@ -8,13 +8,13 @@ public class TrackModel {
 
     //    TODO: rename and move
 
-    @SerializedName("track_id")
+    @SerializedName("trackId")
     @Expose
     private long trackId;
-    @SerializedName("travel_time")
+    @SerializedName("travelTime")
     @Expose
     private long travelTime;
-    @SerializedName("track_complexity")
+    @SerializedName("trackComplexity")
     @Expose
     private long trackComplexity;
     @SerializedName("user")
@@ -70,5 +70,4 @@ public class TrackModel {
     public void setGpx(String gpx) {
         this.gpx = gpx;
     }
-
 }
