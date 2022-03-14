@@ -72,7 +72,7 @@ public final class SessionManager {
         userModel.setFirstname(getSessionUserFirstname());
         userModel.setUserPicLink(getSessionUserPicUrl());
         userModel.setUsername(getSessionUsername());
-        userModel.setId(getSessionUserId());
+        userModel.setId(Long.parseLong(getSessionUserId()));
         return userModel;
     }
 
@@ -124,8 +124,8 @@ public final class SessionManager {
         editor.putLong(SESSION_USER_ID, id).commit();
     }
 
-    public synchronized Long getSessionUserId() {
-        return sharedPreferences.getLong(SESSION_USER_ID, -1);
+    public synchronized String getSessionUserId() {
+        return sharedPreferences.getString(SESSION_USER_ID, null);
     }
 
     public synchronized void removeSession() {

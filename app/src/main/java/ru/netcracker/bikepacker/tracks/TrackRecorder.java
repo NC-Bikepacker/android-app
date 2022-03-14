@@ -1,5 +1,4 @@
 package ru.netcracker.bikepacker.tracks;
-
 import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
@@ -27,8 +26,8 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import ru.netcracker.bikepacker.manager.RetrofitManager;
-import ru.netcracker.bikepacker.network.pojos.TrackDTO;
-import ru.netcracker.bikepacker.network.pojos.UserDTO;
+import ru.netcracker.bikepacker.manager.UserAccountManager;
+import ru.netcracker.bikepacker.model.TrackModel;
 import ru.netcracker.bikepacker.tracks.listeners.OnRecordingEventsListener;
 
 
@@ -39,6 +38,7 @@ public class TrackRecorder {
     private final Context ctx;
     public static final long MIN_TIME_MS = 5000;
     public static final float MIN_DISTANCE_M = 5;
+    private UserAccountManager userAccountManager;
     private final LocationListener recorderListener = new LocationListener() {
         @Override
         public void onLocationChanged(@NonNull Location location) {
@@ -63,6 +63,7 @@ public class TrackRecorder {
         this.ctx = ctx;
         this.locationManager = locationManager;
         this.wayPoints = new ArrayList<>();
+        this.userAccountManager = UserAccountManager.getInstance(ctx);
     }
 
     public void startRecording() {
@@ -110,11 +111,10 @@ public class TrackRecorder {
     }
 
     public void sendData(float complexity) {
-        UserDTO user = new UserDTO(1L);
         //TODO: Change complexity to float
-        TrackDTO trackToPost = new TrackDTO(2, (long) complexity, user, GpxUtil.gpxToString(getGpx()));
+        TrackModel trackToPost = new TrackModel(2, (long) complexity, userAccountManager.getUser(), GpxUtil.gpxToString(getGpx()));
 
-        RetrofitManager.getInstance(ctx).getJSONApi().postTrack(trackToPost).enqueue(new Callback<ResponseBody>() {
+        RetrofitManager.getInstance(ctx).getJSONApi().postTrack(userAccountManager.getCookie(),trackToPost).enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 Log.d("Track sending callback","SENDED");
