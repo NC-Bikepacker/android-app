@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <color name="purple_main">#5D3EA8</color>
+    <color name="purple_opacity_25">#405D3EA8</color>
+    <color name="green_main">#67AD5B</color>
+    <color name="grey_main">#AEAEAE</color>
+    <color name="bikepacker_purple">#5D3EA8</color>
     <color name="purple_200">#FFBB86FC</color>
     <color name="purple_500">#FF6200EE</color>
     <color name="purple_700">#FF3700B3</color>
@@ -10,4 +15,5 @@
     <color name="red_off">#FF3636</color>
     <color name="red_on">#C61616</color>
     <color name="tabIconColor">#5D3EA8</color>
+    <color name="transparent">#FF000000</color>
 </resources>

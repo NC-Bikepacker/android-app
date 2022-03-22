@@ -8,8 +8,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import ru.netcracker.bikepacker.model.User;
-import ru.netcracker.bikepacker.networkService.NetworkService;
+import ru.netcracker.bikepacker.model.UserModel;
+
 
 public class MyFriendsList {
 
@@ -27,19 +27,19 @@ public class MyFriendsList {
         return myFriendList;
     }
 
-    public void addFriend(User user){
+    public void addFriend(UserModel user){
         idMyfriends.add(user.getId());
     }
 
-    public void deleteFriend(User user){
+    public void deleteFriend(UserModel user){
         idMyfriends.remove(user.getId());
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
-    public void updateMyFriends(List<User> users){
+    public void updateMyFriends(List<UserModel> users){
         idMyfriends.clear();
         idMyfriends.addAll(users.stream()
-                                .map(User::getId)
+                                .map(UserModel::getId)
                                 .collect(Collectors.toList())
                             );
     }

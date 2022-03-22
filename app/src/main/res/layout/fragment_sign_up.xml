@@ -4,75 +4,265 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/fragment_sign_up_constraint"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/purple_500">
+    android:layout_height="wrap_content"
+    android:background="@color/white">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:id="@+id/linearLayout"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:orientation="vertical"
+        android:paddingLeft="24dp"
+        android:paddingTop="0dp"
+        android:paddingRight="24dp"
+        android:paddingBottom="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_weight="1"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_weight="0.5">
+        app:layout_constraintTop_toTopOf="parent">
 
-        <ImageView
-            android:layout_width="200dp"
-            android:layout_height="200dp"
-            android:layout_marginBottom="80dp"
-            android:contentDescription="@string/app_name"
-            android:src="@drawable/ic_baseline_directions_bike_24"
-            app:layout_constraintBottom_toTopOf="@id/fragment_sign_up_email_input"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/fragment_sign_up_email_input"
-            android:layout_width="300dp"
+        <TextView
+            android:id="@+id/layout_signup_layout_title"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            app:layout_constraintBottom_toTopOf="@+id/fragment_sign_up_password_input"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent">
+            android:layout_marginTop="48dp"
+            android:layout_marginBottom="32dp"
+            android:fontFamily="@font/proxima_nova_semibold"
+            android:letterSpacing="0"
+            android:text="@string/sign_up"
+            android:textAlignment="viewStart"
+            android:textColor="@color/black"
+            android:textSize="24sp"
+            app:lineHeight="29.23sp" />
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/fragment_sign_up_email_input_field"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/enter_your_email_address"
-                android:inputType="textEmailAddress" />
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/fragment_sign_up_password_input"
-            android:layout_width="300dp"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="64dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent">
+            android:orientation="vertical">
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/fragment_sign_up_password_input_field"
+            <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/enter_your_password"
-                android:inputType="textPassword" />
-        </com.google.android.material.textfield.TextInputLayout>
+                android:layout_height="match_parent">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/layout_signup_firstname_field_textField"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    android:height="50dp"
+                    android:background="@drawable/background_with_border"
+                    android:ems="10"
+                    android:hint="@string/firstname"
+                    android:importantForAutofill="no"
+                    android:inputType="text"
+                    android:maxHeight="50dp"
+                    android:maxLines="1"
+                    android:minHeight="50dp"
+                    android:paddingHorizontal="16dp"
+                    android:paddingVertical="16dp"
+                    android:singleLine="true"
+                    android:textColor="@color/black"
+                    android:textColorHighlight="@color/purple_opacity_25"
+                    android:textColorHint="@color/grey_main"
+                    android:textSize="14sp" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/layout_signup_lastname_field_textField"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    android:height="50dp"
+                    android:background="@drawable/background_with_border"
+                    android:ems="10"
+                    android:hint="@string/lastname"
+                    android:importantForAutofill="no"
+                    android:inputType="text"
+                    android:maxHeight="50dp"
+                    android:maxLines="1"
+                    android:minHeight="50dp"
+                    android:paddingHorizontal="16dp"
+                    android:paddingVertical="16dp"
+                    android:singleLine="true"
+                    android:textColor="@color/black"
+                    android:textColorHighlight="@color/purple_opacity_25"
+                    android:textColorHint="@color/grey_main"
+                    android:textSize="14sp" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/layout_signup_username_field_textField"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    android:height="50dp"
+                    android:background="@drawable/background_with_border"
+                    android:ems="10"
+                    android:hint="@string/username"
+                    android:importantForAutofill="no"
+                    android:inputType="text"
+                    android:maxHeight="50dp"
+                    android:maxLines="1"
+                    android:minHeight="50dp"
+                    android:paddingHorizontal="16dp"
+                    android:paddingVertical="16dp"
+                    android:singleLine="true"
+                    android:textColor="@color/black"
+                    android:textColorHighlight="@color/purple_opacity_25"
+                    android:textColorHint="@color/grey_main"
+                    android:textSize="14sp" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/layout_signup_email_field_textField"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    android:height="50dp"
+                    android:background="@drawable/background_with_border"
+                    android:ems="10"
+                    android:hint="@string/email"
+                    android:importantForAutofill="no"
+                    android:inputType="textEmailAddress"
+                    android:maxHeight="50dp"
+                    android:maxLines="1"
+                    android:minHeight="50dp"
+                    android:paddingHorizontal="16dp"
+                    android:paddingVertical="16dp"
+                    android:singleLine="true"
+                    android:textColor="@color/black"
+                    android:textColorHighlight="@color/purple_opacity_25"
+                    android:textColorHint="@color/grey_main"
+                    android:textSize="14sp" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:passwordToggleDrawable="@drawable/show_password_selector"
+                app:passwordToggleEnabled="true">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/layout_signup_password_field_textField"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    android:height="50dp"
+                    android:background="@drawable/background_with_border"
+                    android:ems="10"
+                    android:hint="@string/password"
+                    android:importantForAutofill="no"
+                    android:inputType="textPassword"
+                    android:maxHeight="50dp"
+                    android:maxLines="1"
+                    android:minHeight="50dp"
+                    android:paddingHorizontal="16dp"
+                    android:paddingVertical="16dp"
+                    android:textColor="@color/black"
+                    android:textColorHighlight="@color/purple_opacity_25"
+                    android:textColorHint="@color/grey_main"
+                    android:textSize="14sp"
+                    app:passwordToggleEnabled="true"
+                    app:passwordToggleTint="@color/purple_main" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:passwordToggleDrawable="@drawable/show_password_selector"
+                app:passwordToggleEnabled="true">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/layout_signup_confirm_password_field_textview"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    android:height="50dp"
+                    android:background="@drawable/background_with_border"
+                    android:ems="10"
+                    android:hint="@string/confirm_password"
+                    android:importantForAutofill="no"
+                    android:inputType="textPassword"
+                    android:maxHeight="50dp"
+                    android:maxLines="1"
+                    android:minHeight="50dp"
+                    android:paddingHorizontal="16dp"
+                    android:paddingVertical="16dp"
+                    android:textColor="@color/black"
+                    android:textColorHighlight="@color/purple_opacity_25"
+                    android:textColorHint="@color/grey_main"
+                    android:textSize="14sp"
+                    app:passwordToggleEnabled="true" />
+            </com.google.android.material.textfield.TextInputLayout>
+        </LinearLayout>
 
         <Button
             android:id="@+id/fragment_sign_up_button_sign_up"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:backgroundTint="@color/purple_700"
+            android:layout_marginBottom="16dp"
+            android:elegantTextHeight="false"
+            android:fontFamily="@font/proxima_nova_semibold"
+            android:letterSpacing="0"
+            android:minHeight="60dp"
             android:text="@string/sign_up"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/fragment_sign_up_password_input" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            android:textAlignment="center"
+            android:textAllCaps="false"
+            android:textSize="18sp" />
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="24dp"
+            android:baselineAligned="false"
+            android:gravity="center_horizontal"
+            android:orientation="horizontal"
+            android:textAlignment="center">
+
+            <TextView
+                android:id="@+id/layout_signup_already_have_account_textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_weight="0"
+                android:fontFamily="@font/proxima_nova_semibold"
+                android:gravity="center_vertical"
+                android:minHeight="32dp"
+                android:text="@string/already_have_an_account"
+                android:textAlignment="center"
+                android:textColor="@color/black"
+                android:textSize="18sp"
+                tools:ignore="RtlCompat" />
+
+            <TextView
+                android:id="@+id/layout_signup_sign_in_link_textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="0"
+                android:clickable="true"
+                android:focusable="true"
+                android:fontFamily="@font/proxima_nova_semibold"
+                android:gravity="center_vertical"
+                android:minHeight="32dp"
+                android:text="@string/log_in"
+                android:textAlignment="center"
+                android:textColor="@color/purple_main"
+                android:textSize="18sp"
+                app:lineHeight="20sp"
+                tools:ignore="RtlCompat" />
+        </LinearLayout>
+    </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

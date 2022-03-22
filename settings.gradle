@@ -4,7 +4,10 @@ dependencyResolutionManagement {
         google()
         mavenCentral()
         jcenter() // Warning: this repository is going to shut down soon
-    }
+        maven { url "https://jitpack.io" }
+        maven { url "https://repo.osgeo.org/repository/release/"}
+        maven { url "https://maven.geotoolkit.org/"}
+        maven { url "https://repo.maven.apache.org/maven2/"}}
 }
 rootProject.name = "Bikepacker"
 include ':app'
