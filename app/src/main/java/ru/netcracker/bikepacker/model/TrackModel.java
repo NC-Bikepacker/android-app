@@ -31,6 +31,10 @@ public class TrackModel {
         this.gpx = gpx;
     }
 
+    public TrackModel(UserModel user) {
+        this.user = user;
+    }
+
     public long getTrackId() {
         return trackId;
     }

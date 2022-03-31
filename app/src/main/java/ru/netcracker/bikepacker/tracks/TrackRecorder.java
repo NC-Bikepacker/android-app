@@ -1,4 +1,5 @@
 package ru.netcracker.bikepacker.tracks;
+
 import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
@@ -13,9 +14,10 @@ import androidx.core.app.ActivityCompat;
 
 import org.osmdroid.util.GeoPoint;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
+import java.util.Timer;
 
 import io.jenetics.jpx.GPX;
 import io.jenetics.jpx.Track;
@@ -38,26 +40,31 @@ public class TrackRecorder {
     private final Context ctx;
     public static final long MIN_TIME_MS = 5000;
     public static final float MIN_DISTANCE_M = 5;
-    private UserAccountManager userAccountManager;
+    private final UserAccountManager userAccountManager;
+    private final Timer timer = new Timer();
     private final LocationListener recorderListener = new LocationListener() {
         @Override
         public void onLocationChanged(@NonNull Location location) {
-            wayPoints.add(WayPoint.of(
-                    location.getLatitude()
-                    , location.getLongitude()
-                    , location.getAltitude()
-                    , location.getTime()));
+            int ind = wayPoints.size() - 1;
+            double lat = location.getLatitude();
+            double lon = location.getLongitude();
+
+            WayPoint wp = WayPoint.builder()
+                    .lat(lat)
+                    .lon(lon)
+                    .build();
+            wayPoints.add(wp);
             Toast.makeText(ctx, "changed", Toast.LENGTH_SHORT).show();
         }
     };
     private static final GPX.Builder gpxBuilder = GPX.builder();
     private static final Track.Builder trackBuilder = Track.builder();
+    private static int trackId;
+    private static final int UPDATE_TIME_DURATION = 1000;
 
     public void setOnRecordingListener(OnRecordingEventsListener onRecordingEventsListener) {
         this.onRecordingEventsListener = onRecordingEventsListener;
     }
-
-
 
     public TrackRecorder(Context ctx, LocationManager locationManager) {
         this.ctx = ctx;
@@ -83,11 +90,12 @@ public class TrackRecorder {
 
         Location userLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
         if (userLocation == null) {
-            Toast.makeText(ctx,"Recording start failed",Toast.LENGTH_LONG).show();
+            Toast.makeText(ctx, "Recording start failed", Toast.LENGTH_LONG).show();
             return;
         }
         GeoPoint start = new GeoPoint(userLocation);
-        wayPoints.add(WayPoint.builder().lat(start.getLatitude()).lon(start.getLongitude()).desc(String.valueOf((double) (new Random()).nextDouble())).build());
+        wayPoints.add(WayPoint.builder().lat(start.getLatitude()).lon(start.getLongitude()).build());
+        sendPostRequest();
         onRecordingEventsListener.onStartRecording();
     }
 
@@ -99,7 +107,7 @@ public class TrackRecorder {
                         .build()
         );
         wayPoints.clear();
-
+        sendPutRequest();
         onRecordingEventsListener.onFinishRecording();
     }
 
@@ -110,21 +118,119 @@ public class TrackRecorder {
                 ).build();
     }
 
-    public void sendData(float complexity) {
-        //TODO: Change complexity to float
-        TrackModel trackToPost = new TrackModel(2, (long) complexity, userAccountManager.getUser(), GpxUtil.gpxToString(getGpx()));
+    // generally used geo measurement function
+    public static double measure(double lat1, double lon1, double lat2, double lon2) {
+        double R = 6378.137; // Radius of earth in KM
+        double dLat = lat2 * Math.PI / 180 - lat1 * Math.PI / 180;
+        double dLon = lon2 * Math.PI / 180 - lon1 * Math.PI / 180;
+        double a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                        Math.sin(dLon / 2) * Math.sin(dLon / 2);
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        double d = R * c;
+        return d * 1000; // meters
+    }
 
-        RetrofitManager.getInstance(ctx).getJSONApi().postTrack(userAccountManager.getCookie(),trackToPost).enqueue(new Callback<ResponseBody>() {
+    public void sendPostRequest() {
+        TrackModel trackToPost = new TrackModel(userAccountManager.getUser());
+        RetrofitManager.getInstance(ctx).getJSONApi().postTrack(userAccountManager.getCookie(), trackToPost).enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                Log.d("Track sending callback","SENDED");
+                if (response.isSuccessful()) {
+                    String temp = null;
+                    try {
+                        assert response.body() != null;
+                        temp = response.body().string();
+
+                        Log.d("CALLBACK", temp);
+
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    assert temp != null;
+                    temp = temp.replaceAll("\\p{C}", "").trim()
+                            .split(":", 2)[1].split(",", 2)[0];
+                    trackId = Integer.parseInt(temp);
+                    Log.d("TrackPostingCallback", "TRACK №" + trackId + " SENT");
+                } else {
+                    Log.e("PostingTrackError", String.format("Error response: %d %s", response.code(), response.message()));
+                    ResponseBody errorBody = response.errorBody();
+                    if (errorBody != null) {
+                        try {
+                            Log.e("PostingTrackError", "Error body:\n" + errorBody.string());
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+
             }
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
-                Log.d("Track sending callback","NOT SENDED");
+                Log.d("Track sending callback", "NOT SENT");
             }
         });
     }
 
+    public void sendPutRequest(long travelTime, float complexity) {
+        //TODO: Change complexity to float
+        TrackModel trackToPut = new TrackModel(travelTime, (long) complexity, userAccountManager.getUser(), GpxUtil.gpxToString(getGpx()));
+
+        RetrofitManager.getInstance(ctx).getJSONApi()
+                .putTrack(userAccountManager.getCookie(), trackId, trackToPut)
+                .enqueue(new Callback<ResponseBody>() {
+                    @Override
+                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                        if (response.isSuccessful()) {
+                            Log.d("TrackPuttingCallback", "PUT");
+                        } else {
+                            Log.e("PuttingTrackError", String.format("Error response: %d %s", response.code(), response.message()));
+                            ResponseBody errorBody = response.errorBody();
+                            if (errorBody != null) {
+                                try {
+                                    Log.e("PuttingTrackError", "Error body:\n" + errorBody.string());
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+                        Log.d("TrackPuttingCallback", "NOT PUT");
+                    }
+                });
+    }
+
+    public void sendPutRequest() {
+        TrackModel trackToPut = new TrackModel(userAccountManager.getUser());
+        trackToPut.setGpx(GpxUtil.gpxToString(getGpx()));
+        RetrofitManager.getInstance(ctx).getJSONApi()
+                .putTrack(userAccountManager.getCookie(), trackId, trackToPut)
+                .enqueue(new Callback<ResponseBody>() {
+                    @Override
+                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                        if (response.isSuccessful()) {
+                            Log.d("TrackPuttingCallback", "PUT");
+                        } else {
+                            Log.e("PuttingTrackError", String.format("Error response: %d %s", response.code(), response.message()));
+                            ResponseBody errorBody = response.errorBody();
+                            if (errorBody != null) {
+                                try {
+                                    Log.e("PuttingTrackError", "Error body:\n" + errorBody.string());
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+                        Log.d("TrackPuttingCallback", "NOT PUT");
+                    }
+                });
+    }
 }
