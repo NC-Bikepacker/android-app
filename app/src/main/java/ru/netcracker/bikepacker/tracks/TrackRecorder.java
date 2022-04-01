@@ -18,6 +18,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import io.jenetics.jpx.GPX;
 import io.jenetics.jpx.Track;
@@ -59,7 +61,7 @@ public class TrackRecorder {
     };
     private static final GPX.Builder gpxBuilder = GPX.builder();
     private static final Track.Builder trackBuilder = Track.builder();
-    private static int trackId;
+    private int trackId;
     private static final int UPDATE_TIME_DURATION = 1000;
 
     public void setOnRecordingListener(OnRecordingEventsListener onRecordingEventsListener) {
@@ -143,15 +145,24 @@ public class TrackRecorder {
                         temp = response.body().string();
 
                         Log.d("CALLBACK", temp);
-
                     } catch (IOException e) {
-                        e.printStackTrace();
+                        Log.e("CallbackBodyIsNullError", e.getMessage(),e);
                     }
                     assert temp != null;
-                    temp = temp.replaceAll("\\p{C}", "").trim()
-                            .split(":", 2)[1].split(",", 2)[0];
-                    trackId = Integer.parseInt(temp);
-                    Log.d("TrackPostingCallback", "TRACK №" + trackId + " SENT");
+                    Matcher matcher = Pattern.compile("(\"trackId\":)(\\d+)")
+                            .matcher(temp.replaceAll("\\p{C}", "").trim());
+                    if (matcher.find()) {
+                        temp = matcher.group(2);
+                        assert temp != null;
+                        try {
+                            trackId = Integer.parseInt(temp);
+                        } catch (Exception e) {
+                            Log.e("ParsingIntError", e.getMessage(),e);
+                        }
+                        Log.d("TrackPostingCallback", "TRACK №" + trackId + " SENT");
+                    } else {
+                        Log.e("IpNotFoundError", "IP parsing failed");
+                    }
                 } else {
                     Log.e("PostingTrackError", String.format("Error response: %d %s", response.code(), response.message()));
                     ResponseBody errorBody = response.errorBody();
@@ -159,7 +170,7 @@ public class TrackRecorder {
                         try {
                             Log.e("PostingTrackError", "Error body:\n" + errorBody.string());
                         } catch (IOException e) {
-                            e.printStackTrace();
+                            Log.e("ErrorBodyStringError",e.getMessage(),e);
                         }
                     }
                 }
@@ -191,7 +202,7 @@ public class TrackRecorder {
                                 try {
                                     Log.e("PuttingTrackError", "Error body:\n" + errorBody.string());
                                 } catch (IOException e) {
-                                    e.printStackTrace();
+                                    Log.e("ErrorBodyStringError",e.getMessage(),e);
                                 }
                             }
                         }
@@ -221,7 +232,7 @@ public class TrackRecorder {
                                 try {
                                     Log.e("PuttingTrackError", "Error body:\n" + errorBody.string());
                                 } catch (IOException e) {
-                                    e.printStackTrace();
+                                    Log.e("ErrorBodyStringError",e.getMessage(),e);
                                 }
                             }
                         }
