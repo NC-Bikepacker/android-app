@@ -143,25 +143,21 @@ public class TrackRecorder {
                     try {
                         assert response.body() != null;
                         temp = response.body().string();
-
                         Log.d("CALLBACK", temp);
-                    } catch (IOException e) {
-                        Log.e("CallbackBodyIsNullError", e.getMessage(),e);
-                    }
-                    assert temp != null;
-                    Matcher matcher = Pattern.compile("(\"trackId\":)(\\d+)")
-                            .matcher(temp.replaceAll("\\p{C}", "").trim());
-                    if (matcher.find()) {
-                        temp = matcher.group(2);
-                        assert temp != null;
-                        try {
+
+                        Matcher matcher = Pattern.compile("(\"trackId\":)(\\d+)")
+                                .matcher(temp.replaceAll("\\p{C}", "").trim());
+                        if (matcher.find()) {
+                            temp = matcher.group(2);
+                            assert temp != null;
                             trackId = Integer.parseInt(temp);
-                        } catch (Exception e) {
-                            Log.e("ParsingIntError", e.getMessage(),e);
+
+                            Log.d("TrackPostingCallback", "TRACK №" + trackId + " SENT");
+                        } else {
+                            Log.e("IpNotFoundError", "IP parsing failed");
                         }
-                        Log.d("TrackPostingCallback", "TRACK №" + trackId + " SENT");
-                    } else {
-                        Log.e("IpNotFoundError", "IP parsing failed");
+                    } catch (Exception e) {
+                        Log.e("PostingTrackError", e.getMessage(),e);
                     }
                 } else {
                     Log.e("PostingTrackError", String.format("Error response: %d %s", response.code(), response.message()));
