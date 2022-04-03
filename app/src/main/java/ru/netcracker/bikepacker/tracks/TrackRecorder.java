@@ -138,9 +138,9 @@ public class TrackRecorder {
         RetrofitManager.getInstance(ctx).getJSONApi().postTrack(userAccountManager.getCookie(), trackToPost).enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                if (response.isSuccessful()) {
-                    String temp = null;
-                    try {
+                try {
+                    if (response.isSuccessful()) {
+                        String temp = null;
                         assert response.body() != null;
                         temp = response.body().string();
                         Log.d("CALLBACK", temp);
@@ -156,21 +156,18 @@ public class TrackRecorder {
                         } else {
                             Log.e("IpNotFoundError", "IP parsing failed");
                         }
-                    } catch (Exception e) {
-                        Log.e("PostingTrackError", e.getMessage(),e);
-                    }
-                } else {
-                    Log.e("PostingTrackError", String.format("Error response: %d %s", response.code(), response.message()));
-                    ResponseBody errorBody = response.errorBody();
-                    if (errorBody != null) {
-                        try {
+
+                    } else {
+                        Log.e("PostingTrackError", String.format("Error response: %d %s", response.code(), response.message()));
+                        ResponseBody errorBody = response.errorBody();
+                        if (errorBody != null) {
                             Log.e("PostingTrackError", "Error body:\n" + errorBody.string());
-                        } catch (IOException e) {
-                            Log.e("ErrorBodyStringError",e.getMessage(),e);
                         }
                     }
-                }
 
+                } catch (IOException e) {
+                    Log.e("PostingTrackError",e.getMessage(),e);
+                }
             }
 
             @Override
@@ -198,7 +195,7 @@ public class TrackRecorder {
                                 try {
                                     Log.e("PuttingTrackError", "Error body:\n" + errorBody.string());
                                 } catch (IOException e) {
-                                    Log.e("ErrorBodyStringError",e.getMessage(),e);
+                                    Log.e("ErrorBodyStringError", e.getMessage(), e);
                                 }
                             }
                         }
@@ -228,7 +225,7 @@ public class TrackRecorder {
                                 try {
                                     Log.e("PuttingTrackError", "Error body:\n" + errorBody.string());
                                 } catch (IOException e) {
-                                    Log.e("ErrorBodyStringError",e.getMessage(),e);
+                                    Log.e("ErrorBodyStringError", e.getMessage(), e);
                                 }
                             }
                         }
