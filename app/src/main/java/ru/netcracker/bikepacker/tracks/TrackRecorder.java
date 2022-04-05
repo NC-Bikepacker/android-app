@@ -34,11 +34,49 @@ import ru.netcracker.bikepacker.manager.UserAccountManager;
 import ru.netcracker.bikepacker.model.TrackModel;
 import ru.netcracker.bikepacker.tracks.listeners.OnRecordingEventsListener;
 
+//    public GeoPoint getLastLocation() {
+//        if (ActivityCompat.checkSelfPermission(ctx, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(ctx, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+//            // TODO: Consider calling
+//            //    ActivityCompat#requestPermissions
+//            // here to request the missing permissions, and then overriding
+//            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+//            //                                          int[] grantResults)
+//            // to handle the case where the user grants the permission. See the documentation
+//            // for ActivityCompat#requestPermissions for more details.
+//            return null;
+//        }
+//        Location userLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+//        if (userLocation == null) {
+//            Toast.makeText(ctx,"Recording start failed",Toast.LENGTH_LONG).show();
+//            return null;
+//        }
+//        GeoPoint start = new GeoPoint(userLocation);
+//        return start;
+//    }
+//
+//    public void addPoint(String description) {
+//        if (ActivityCompat.checkSelfPermission(ctx, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(ctx, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+//            return;
+//        }
+//        Location userLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+//        if (userLocation == null) {
+//            Toast.makeText(ctx,"Recording start failed",Toast.LENGTH_LONG).show();
+//            return;
+//        }
+//        GeoPoint start = new GeoPoint(userLocation);
+//        points.add(WayPoint.builder().lat(start.getLatitude()).lon(start.getLongitude()).desc(description).build());
+//    }
 
 public class TrackRecorder {
     private OnRecordingEventsListener onRecordingEventsListener;
+
+    public LocationManager getLocationManager() {
+        return locationManager;
+    }
+
     private final LocationManager locationManager;
     private final List<WayPoint> wayPoints;
+    private final List<WayPoint> points;
     private final Context ctx;
     public static final long MIN_TIME_MS = 5000;
     public static final float MIN_DISTANCE_M = 5;
@@ -61,6 +99,11 @@ public class TrackRecorder {
     };
     private static final GPX.Builder gpxBuilder = GPX.builder();
     private static final Track.Builder trackBuilder = Track.builder();
+
+    public int getTrackId() {
+        return trackId;
+    }
+
     private int trackId;
     private static final int UPDATE_TIME_DURATION = 1000;
 
@@ -68,11 +111,44 @@ public class TrackRecorder {
         this.onRecordingEventsListener = onRecordingEventsListener;
     }
 
+    public GeoPoint getLastLocation() {
+        if (ActivityCompat.checkSelfPermission(ctx, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(ctx, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return null;
+        }
+        Location userLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        if (userLocation == null) {
+            Toast.makeText(ctx,"Recording start failed",Toast.LENGTH_LONG).show();
+            return null;
+        }
+        return new GeoPoint(userLocation);
+    }
+    public void addPoint(String description) {
+        if (ActivityCompat.checkSelfPermission(ctx, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(ctx, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+        Location userLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        if (userLocation == null) {
+            Toast.makeText(ctx,"Recording start failed",Toast.LENGTH_LONG).show();
+            return;
+        }
+        GeoPoint start = new GeoPoint(userLocation);
+        points.add(WayPoint.builder().lat(start.getLatitude()).lon(start.getLongitude()).desc(description).build());
+    }
+
+
     public TrackRecorder(Context ctx, LocationManager locationManager) {
         this.ctx = ctx;
         this.locationManager = locationManager;
         this.wayPoints = new ArrayList<>();
         this.userAccountManager = UserAccountManager.getInstance(ctx);
+        this.points = new ArrayList<>();
     }
 
     public void startRecording() {
@@ -140,7 +216,7 @@ public class TrackRecorder {
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 try {
                     if (response.isSuccessful()) {
-                        String temp = null;
+                        String temp;
                         assert response.body() != null;
                         temp = response.body().string();
                         Log.d("CALLBACK", temp);
@@ -236,5 +312,8 @@ public class TrackRecorder {
                         Log.d("TrackPuttingCallback", "NOT PUT");
                     }
                 });
+    }
+    public List<WayPoint> getPoints() {
+        return points;
     }
 }

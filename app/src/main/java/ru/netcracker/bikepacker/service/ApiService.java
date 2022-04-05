@@ -13,6 +13,7 @@ import retrofit2.http.POST;
 import retrofit2.http.PUT;
 import retrofit2.http.Path;
 import ru.netcracker.bikepacker.model.AuthModel;
+import ru.netcracker.bikepacker.model.PointModel;
 import ru.netcracker.bikepacker.model.SignUpModel;
 import ru.netcracker.bikepacker.model.FriendModel;
 import ru.netcracker.bikepacker.model.TrackModel;
@@ -20,7 +21,7 @@ import ru.netcracker.bikepacker.model.UserModel;
 
 public interface ApiService {
 
-    //    Login and sign up requests
+//    Login and sign up requests
     @Headers({
             "Content-Type: application/json;" +
                     "charset=UTF-8"})
@@ -59,5 +60,8 @@ public interface ApiService {
     Call<ResponseBody> postRequestFriend(@Header("Cookie") String cookie, @Body FriendModel friends);
 
     @HTTP(method = "DELETE", path = "/friends/delete", hasBody = true)
-    Call<ResponseBody> deleteFriend(@Header("Cookie") String cookie, @Body FriendModel friends);
+    Call<ResponseBody> deleteFriend(@Header ("Cookie") String cookie, @Body FriendModel friends);
+
+    @POST("/points/point")
+    Call<ResponseBody> addPoint(@Header ("Cookie") String cookie, @Body PointModel point);
 }

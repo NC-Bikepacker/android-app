@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
@@ -16,12 +17,15 @@ import androidx.fragment.app.Fragment;
 
 import ru.netcracker.bikepacker.R;
 import ru.netcracker.bikepacker.tracks.TrackRecorder;
+import ru.netcracker.bikepacker.tracks.listeners.OnCreatePointListener;
 import ru.netcracker.bikepacker.tracks.listeners.OnGpxCreatedListener;
 import ru.netcracker.bikepacker.tracks.listeners.OnRecordingEventsListener;
 import ru.netcracker.bikepacker.tracks.listeners.OnStopBtnClickListener;
 
 
 public class RecordFragment extends Fragment {
+    public RecordFragment() {
+    }
     public TrackRecorder getTrackRecorder() {
         return trackRecorder;
     }
@@ -31,7 +35,17 @@ public class RecordFragment extends Fragment {
     private boolean recording = false;
     private OnGpxCreatedListener onGpxCreatedListener;
     private OnStopBtnClickListener onStopBtnClickListener;
-    private TextView textView;
+//    private TextView textView;
+private OnCreatePointListener onCreatePointListener;
+
+    private Button btnPoint;
+
+    public void setBtnPoint(Button btnPoint) {
+        this.btnPoint = btnPoint;
+    }
+    public void setOnCreatePointListener(OnCreatePointListener onCreatePointListener) {
+        this.onCreatePointListener = onCreatePointListener;
+    }
 
     public void setOnGpxCreatedListener(OnGpxCreatedListener onGpxCreatedListener) {
         this.onGpxCreatedListener = onGpxCreatedListener;
@@ -68,6 +82,7 @@ public class RecordFragment extends Fragment {
                 @Override
                 public void onStartRecording() {
                     recordButton.setImageResource(R.drawable.ic_stop_recording);
+                    btnPoint.setVisibility(View.VISIBLE);
                 }
 
                 @Override
@@ -75,11 +90,11 @@ public class RecordFragment extends Fragment {
                     recordButton.setImageResource(R.drawable.ic_start_new_track);
                     onStopBtnClickListener.onClick();
                     onGpxCreatedListener.onGpxCreated(trackRecorder.getGpx());
-
+                    btnPoint.setVisibility(View.INVISIBLE);
                 }
             }
         );
-
+        btnPoint.setOnClickListener(view1 -> onCreatePointListener.onClick());
         recordButton.setOnClickListener(
                 view1 -> {
                     if (recording) {

@@ -33,6 +33,7 @@ import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 import java.util.ArrayList;
 
 import ru.netcracker.bikepacker.R;
+import ru.netcracker.bikepacker.databinding.FragmentMapBinding;
 
 
 public class MapFragment extends Fragment {
@@ -47,6 +48,7 @@ public class MapFragment extends Fragment {
     private Drawable startIcon, finishIcon;
     private ImageButton locationBtn, zoomInBtn, zoomOutBtn;
     private GeoPoint userLocation;
+    private FragmentMapBinding mapBinding;
 
     public IMapController getMapController() {
         return mapController;

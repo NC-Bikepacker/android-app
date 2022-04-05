@@ -75,16 +75,44 @@
 
     </org.osmdroid.views.MapView>
 
-    <FrameLayout
-        android:id="@+id/start_new_route_container"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        app:layout_constraintBottom_toBottomOf="@+id/map"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/map">
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
 
-    </FrameLayout>
+        >
+
+        <Button
+            android:id="@+id/buttonPoint"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/create_point"
+            android:visibility="invisible"
+            tools:ignore="MissingConstraints"
+            tools:layout_editor_absoluteX="168dp"
+            tools:layout_editor_absoluteY="166dp"
+            android:layout_gravity="center"
+
+            />
+
+
+        <FrameLayout
+            android:id="@+id/start_new_route_container"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            app:layout_constraintBottom_toBottomOf="@+id/map"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/map"
+            android:layout_gravity="center"
+
+            >
+
+        </FrameLayout>
+    </LinearLayout>
+
+
 
     <FrameLayout
         android:id="@+id/record_summary_container"
@@ -94,6 +122,14 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
+
+    </FrameLayout>
+    <FrameLayout
+        android:id="@+id/create_point_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:ignore="InvalidId"
+        >
 
     </FrameLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
