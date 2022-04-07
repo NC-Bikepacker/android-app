@@ -1,21 +1,13 @@
 package ru.netcracker.bikepacker.view
 
-import android.annotation.SuppressLint
 import android.content.Context
-import android.content.Intent
-import android.graphics.Bitmap
 import android.os.Bundle
 import android.preference.PreferenceManager
-import android.provider.MediaStore
-import android.util.Base64
 import android.view.View
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.*
-import androidx.activity.result.ActivityResult
-import androidx.activity.result.ActivityResultCallback
 import androidx.activity.result.ActivityResultLauncher
-import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -25,8 +17,6 @@ import ru.netcracker.bikepacker.R
 import ru.netcracker.bikepacker.databinding.ActivityMainNavigationBinding
 import ru.netcracker.bikepacker.tracks.GpxUtil
 import ru.netcracker.bikepacker.tracks.UserTrack
-import java.io.ByteArrayOutputStream
-import java.io.IOException
 import java.util.stream.Collectors
 
 class MainNavigationActivity : AppCompatActivity() {
@@ -47,8 +37,6 @@ class MainNavigationActivity : AppCompatActivity() {
         const val TAG_RECORD_SM = "record_summary"
         const val TAG_POINT = "point"
     }
-
-    var activityResultLauncher: ActivityResultLauncher<*>? = null
 
     private var downAnim: Animation? = null
     private var upAnim: Animation? = null
@@ -127,6 +115,7 @@ class MainNavigationActivity : AppCompatActivity() {
                 findViewById<ImageButton>(R.id.zoomInBtn).visibility = View.VISIBLE;
                 findViewById<ImageButton>(R.id.zoomOutBtn).visibility = View.VISIBLE;
                 findViewById<Button>(R.id.buttonPoint).visibility = View.VISIBLE
+                findViewById<EditText>(R.id.description).setText("")
                 supportFragmentManager.beginTransaction()
                     .show(recordFragment)
                     .remove(createPointFragment)

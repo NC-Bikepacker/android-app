@@ -61,7 +61,7 @@ public class CreatePointFragment extends Fragment {
     private ActivityResultLauncher activityResultLauncherTakePhoto;
     private ImageView imageView;
     private UserAccountManager userAccountManager;
-    private List<String> imagesEncodedList;
+    private List<String> imagesDecodedList;
 
     public void setRecordFragment(RecordFragment recordFragment) {
         this.recordFragment = recordFragment;
@@ -101,7 +101,7 @@ public class CreatePointFragment extends Fragment {
         left = fragmentCreatePointBinding.left;
         right = fragmentCreatePointBinding.right;
         ImageButton buttonTakePhoto = fragmentCreatePointBinding.takePhoto;
-        imagesEncodedList = new ArrayList<>();
+        imagesDecodedList = new ArrayList<>();
         activityResultLauncherTakePhoto = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
                 new ActivityResultCallback() {
                     @Override
@@ -111,7 +111,7 @@ public class CreatePointFragment extends Fragment {
                                 && null != result.getData()) {
                             Bundle extras = result.getData().getExtras();
                             Bitmap imageBitmap = (Bitmap) extras.get("data");
-                            imagesEncodedList.add(encodeImage(imageBitmap));
+                            imagesDecodedList.add(encodeImage(imageBitmap));
                             right.setVisibility(View.INVISIBLE);
                             left.setVisibility(View.INVISIBLE);
                             imageView.setImageBitmap(imageBitmap);
@@ -130,7 +130,7 @@ public class CreatePointFragment extends Fragment {
                                 if (result.getData().getData() != null) {
                                     Uri mImageUri = result.getData().getData();
                                     Bitmap bitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), mImageUri);
-                                    imagesEncodedList.add(encodeImage(bitmap));
+                                    imagesDecodedList.add(encodeImage(bitmap));
                                     Cursor cursor = getActivity().getContentResolver().query(mImageUri,
                                             filePathColumn, null, null, null);
                                     cursor.moveToFirst();
@@ -145,10 +145,10 @@ public class CreatePointFragment extends Fragment {
                                             cursor.moveToFirst();
                                             Bitmap bitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), uri);
                                             String imageStr = encodeImage(bitmap);
-                                            imagesEncodedList.add(imageStr);
+                                            imagesDecodedList.add(imageStr);
                                             cursor.close();
                                         }
-                                        Log.v("LOG_TAG", "Selected Images" + imagesEncodedList.size());
+                                        Log.v("LOG_TAG", "Selected Images" + imagesDecodedList.size());
                                     }
                                 }
                             } else {
@@ -156,31 +156,31 @@ public class CreatePointFragment extends Fragment {
                                         Toast.LENGTH_LONG).show();
                             }
 
-                            if (imagesEncodedList != null && imagesEncodedList.size() > 0) {
-                                imageView.setImageBitmap(decodeImage(imagesEncodedList.get(0)));
-                                final String[] currIm = {imagesEncodedList.get(0)};
+                            if (imagesDecodedList != null && imagesDecodedList.size() > 0) {
+                                imageView.setImageBitmap(decodeImage(imagesDecodedList.get(0)));
+                                final String[] currIm = {imagesDecodedList.get(0)};
                                 int i = 0;
-                                if (imagesEncodedList.size() > 1) {
+                                if (imagesDecodedList.size() > 1) {
                                     right.setVisibility(View.VISIBLE);
                                 }
                                 right.setOnClickListener(view -> {
-                                    if (imagesEncodedList.indexOf(currIm[0]) < imagesEncodedList.size() - 1) {
+                                    if (imagesDecodedList.indexOf(currIm[0]) < imagesDecodedList.size() - 1) {
                                         left.setVisibility(View.VISIBLE);
-                                        String currIm2 = imagesEncodedList.get(imagesEncodedList.indexOf(currIm[0]) + 1);
+                                        String currIm2 = imagesDecodedList.get(imagesDecodedList.indexOf(currIm[0]) + 1);
                                         imageView.setImageBitmap(decodeImage(currIm2));
                                         currIm[0] = currIm2;
-                                        if (imagesEncodedList.indexOf(currIm[0]) == imagesEncodedList.size() - 1) {
+                                        if (imagesDecodedList.indexOf(currIm[0]) == imagesDecodedList.size() - 1) {
                                             right.setVisibility(View.INVISIBLE);
                                         }
                                     }
                                 });
                                 left.setOnClickListener(view -> {
-                                    if (imagesEncodedList.indexOf(currIm[0]) > 0) {
+                                    if (imagesDecodedList.indexOf(currIm[0]) > 0) {
                                         right.setVisibility(View.VISIBLE);
-                                        String currIm2 = imagesEncodedList.get(imagesEncodedList.indexOf(currIm[0]) - 1);
+                                        String currIm2 = imagesDecodedList.get(imagesDecodedList.indexOf(currIm[0]) - 1);
                                         imageView.setImageBitmap(decodeImage(currIm2));
                                         currIm[0] = currIm2;
-                                        if ((imagesEncodedList.indexOf(currIm[0]) == 0)) {
+                                        if ((imagesDecodedList.indexOf(currIm[0]) == 0)) {
                                             left.setVisibility(View.INVISIBLE);
                                         }
                                     }
@@ -201,11 +201,12 @@ public class CreatePointFragment extends Fragment {
             String description = descriptionOpt.orElse("").toString().trim();
             long track_id = recordFragment.getTrackRecorder().getTrackId();
             PointModel pointModel = new PointModel(description, track_id, recordFragment.getTrackRecorder().getLastLocation().getLatitude(),
-                    recordFragment.getTrackRecorder().getLastLocation().getLongitude(), imagesEncodedList);
+                    recordFragment.getTrackRecorder().getLastLocation().getLongitude(), imagesDecodedList);
             recordFragment.getTrackRecorder().addPoint(description);
             sendData(pointModel);
             FragmentManager f = getActivity().getSupportFragmentManager();
             buttonPoint.setVisibility(View.VISIBLE);
+            descriptionText.setText("");
             f.beginTransaction()
                     .remove(Objects.requireNonNull(f.findFragmentByTag("point")))
                     .show(Objects.requireNonNull(f.findFragmentByTag("record")))
@@ -213,7 +214,7 @@ public class CreatePointFragment extends Fragment {
         });
 
         buttonAddPhoto.setOnClickListener(view -> {
-            imagesEncodedList = new ArrayList<>();
+            imagesDecodedList = new ArrayList<>();
             Intent cameraIntent = new Intent();
             cameraIntent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
             cameraIntent.setAction(Intent.ACTION_GET_CONTENT);
@@ -227,7 +228,7 @@ public class CreatePointFragment extends Fragment {
         });
 
         buttonTakePhoto.setOnClickListener(view -> {
-            imagesEncodedList = new ArrayList<>();
+            imagesDecodedList = new ArrayList<>();
             Intent takePictureIntent = new Intent();
             takePictureIntent.setAction(MediaStore.ACTION_IMAGE_CAPTURE);
             try {

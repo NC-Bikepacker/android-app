@@ -34,45 +34,8 @@ import ru.netcracker.bikepacker.manager.UserAccountManager;
 import ru.netcracker.bikepacker.model.TrackModel;
 import ru.netcracker.bikepacker.tracks.listeners.OnRecordingEventsListener;
 
-//    public GeoPoint getLastLocation() {
-//        if (ActivityCompat.checkSelfPermission(ctx, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(ctx, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-//            // TODO: Consider calling
-//            //    ActivityCompat#requestPermissions
-//            // here to request the missing permissions, and then overriding
-//            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-//            //                                          int[] grantResults)
-//            // to handle the case where the user grants the permission. See the documentation
-//            // for ActivityCompat#requestPermissions for more details.
-//            return null;
-//        }
-//        Location userLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-//        if (userLocation == null) {
-//            Toast.makeText(ctx,"Recording start failed",Toast.LENGTH_LONG).show();
-//            return null;
-//        }
-//        GeoPoint start = new GeoPoint(userLocation);
-//        return start;
-//    }
-//
-//    public void addPoint(String description) {
-//        if (ActivityCompat.checkSelfPermission(ctx, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(ctx, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-//            return;
-//        }
-//        Location userLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-//        if (userLocation == null) {
-//            Toast.makeText(ctx,"Recording start failed",Toast.LENGTH_LONG).show();
-//            return;
-//        }
-//        GeoPoint start = new GeoPoint(userLocation);
-//        points.add(WayPoint.builder().lat(start.getLatitude()).lon(start.getLongitude()).desc(description).build());
-//    }
-
 public class TrackRecorder {
     private OnRecordingEventsListener onRecordingEventsListener;
-
-    public LocationManager getLocationManager() {
-        return locationManager;
-    }
 
     private final LocationManager locationManager;
     private final List<WayPoint> wayPoints;
@@ -113,13 +76,6 @@ public class TrackRecorder {
 
     public GeoPoint getLastLocation() {
         if (ActivityCompat.checkSelfPermission(ctx, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(ctx, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
             return null;
         }
         Location userLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
@@ -142,7 +98,6 @@ public class TrackRecorder {
         points.add(WayPoint.builder().lat(start.getLatitude()).lon(start.getLongitude()).desc(description).build());
     }
 
-
     public TrackRecorder(Context ctx, LocationManager locationManager) {
         this.ctx = ctx;
         this.locationManager = locationManager;
@@ -155,17 +110,14 @@ public class TrackRecorder {
         wayPoints.clear();
         trackBuilder.segments().clear();
         gpxBuilder.tracks().clear();
-
         if (ActivityCompat.checkSelfPermission(ctx, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(ctx, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
         }
-
         this.locationManager.requestLocationUpdates(
                 LocationManager.GPS_PROVIDER,
                 MIN_TIME_MS,
                 MIN_DISTANCE_M,
                 recorderListener);
-
         Location userLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
         if (userLocation == null) {
             Toast.makeText(ctx, "Recording start failed", Toast.LENGTH_LONG).show();
