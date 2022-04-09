@@ -3,6 +3,7 @@ package ru.netcracker.bikepacker.view;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,13 +13,14 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 
 import ru.netcracker.bikepacker.R;
 import ru.netcracker.bikepacker.tracks.TrackRecorder;
 import ru.netcracker.bikepacker.tracks.listeners.OnGpxCreatedListener;
 import ru.netcracker.bikepacker.tracks.listeners.OnRecordingEventsListener;
-import ru.netcracker.bikepacker.tracks.listeners.OnStopBtnClickListener;
+import ru.netcracker.bikepacker.tracks.listeners.OnRecordBtnClickListener;
 
 
 public class RecordFragment extends Fragment {
@@ -30,15 +32,20 @@ public class RecordFragment extends Fragment {
     private Context ctx;
     private boolean recording = false;
     private OnGpxCreatedListener onGpxCreatedListener;
-    private OnStopBtnClickListener onStopBtnClickListener;
+    private OnRecordBtnClickListener onStopBtnClickListener;
+    private OnRecordBtnClickListener onStartBtnClickListener;
     private TextView textView;
 
     public void setOnGpxCreatedListener(OnGpxCreatedListener onGpxCreatedListener) {
         this.onGpxCreatedListener = onGpxCreatedListener;
     }
 
-    public void setOnStopBtnClickListener(OnStopBtnClickListener onStopBtnClickListener) {
+    public void setOnStopBtnClickListener(OnRecordBtnClickListener onStopBtnClickListener) {
         this.onStopBtnClickListener = onStopBtnClickListener;
+    }
+
+    public void setOnStartBtnClickListener(OnRecordBtnClickListener onStartBtnClickListener) {
+        this.onStartBtnClickListener = onStartBtnClickListener;
     }
 
     @Override
@@ -54,6 +61,7 @@ public class RecordFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_record, container, false);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @SuppressLint("SetTextI18n")
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
@@ -62,22 +70,24 @@ public class RecordFragment extends Fragment {
 
         ImageButton recordButton = view.findViewById(R.id.record);
         LocationManager locationManager = (LocationManager) ctx.getSystemService(Context.LOCATION_SERVICE);
-        trackRecorder = new TrackRecorder(ctx, locationManager);
+        textView = view.findViewById(R.id.textView2);
+        trackRecorder = new TrackRecorder(ctx, locationManager, textView);
         trackRecorder.setOnRecordingListener(
-            new OnRecordingEventsListener() {
-                @Override
-                public void onStartRecording() {
-                    recordButton.setImageResource(R.drawable.ic_stop_recording);
-                }
+                new OnRecordingEventsListener() {
+                    @Override
+                    public void onStartRecording() {
+                        view.findViewById(R.id.favourite_tracks).setVisibility(View.GONE);
+                        recordButton.setImageResource(R.drawable.ic_stop_recording);
+                    }
 
-                @Override
-                public void onFinishRecording() {
-                    recordButton.setImageResource(R.drawable.ic_start_new_track);
-                    onStopBtnClickListener.onClick();
-                    onGpxCreatedListener.onGpxCreated(trackRecorder.getGpx());
+                    @Override
+                    public void onFinishRecording() {
+                        recordButton.setImageResource(R.drawable.ic_start_new_track);
+                        onStopBtnClickListener.onClick();
+                        onGpxCreatedListener.onGpxCreated(trackRecorder.getGpx());
 
+                    }
                 }
-            }
         );
 
         recordButton.setOnClickListener(
@@ -85,10 +95,12 @@ public class RecordFragment extends Fragment {
                     if (recording) {
                         trackRecorder.finishRecording();
                     } else {
-                        ((TextView) view.findViewById(R.id.textView2)).setText("Time: ");
-                        view.findViewById(R.id.favourite_tracks).setVisibility(View.GONE);
+                        requireActivity().runOnUiThread(
+                                new Thread(() -> trackRecorder.startRecording())
+                        );
+//                        ((TextView) view.findViewById(R.id.textView2)).setText("Time: ");
 
-                        trackRecorder.startRecording();
+
                     }
                     recording = !recording;
                 }

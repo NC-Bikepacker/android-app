@@ -1,24 +1,38 @@
 package ru.netcracker.bikepacker.view
 
 import android.content.Context
-import androidx.appcompat.app.AppCompatActivity
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.preference.PreferenceManager
+import android.util.Log
 import android.view.View
-import android.widget.ImageButton
-import android.widget.Toast
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
-import android.widget.*
+import android.widget.FrameLayout
+import android.widget.ImageButton
+import android.widget.LinearLayout
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import org.osmdroid.config.Configuration
 import org.osmdroid.views.overlay.OverlayWithIW
-import ru.netcracker.bikepacker.*
+import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider
+import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay
+import ru.netcracker.bikepacker.R
 import ru.netcracker.bikepacker.databinding.ActivityMainNavigationBinding
-import ru.netcracker.bikepacker.tracks.UserTrack
 import ru.netcracker.bikepacker.tracks.GpxUtil
+import ru.netcracker.bikepacker.tracks.UserTrack
+import java.lang.String
 import java.util.stream.Collectors
+import kotlin.Boolean
+import kotlin.Int
+import kotlin.getValue
+import kotlin.lazy
+import kotlin.let
+import kotlin.run
+import kotlin.with
+
 
 class MainNavigationActivity : AppCompatActivity() {
     companion object {
@@ -42,9 +56,10 @@ class MainNavigationActivity : AppCompatActivity() {
     private var upAnim: Animation? = null
     private var userTrack: UserTrack? = null
     private var binding: ActivityMainNavigationBinding? = null
+    private var bitmap: Bitmap? = null
 
     //fragments
-            private
+    private
     val recordSummaryFragment: RecordSummaryFragment by lazy {
         val fr = supportFragmentManager.findFragmentByTag(TAG_RECORD_SM)
         if (fr != null) fr as RecordSummaryFragment
@@ -64,11 +79,6 @@ class MainNavigationActivity : AppCompatActivity() {
                     overlay is OverlayWithIW &&
                             overlay.id == UserTrack.RECORDED_TRACK_TAG
                 }
-                Toast.makeText(
-                    ctx,
-                    mapFragment.map.overlayManager.overlays().toString(),
-                    Toast.LENGTH_LONG
-                ).show()
                 findViewById<LinearLayout>(R.id.btn_container).let {
                     it.translationX = 0f
                     it.translationY = 0f
@@ -93,10 +103,9 @@ class MainNavigationActivity : AppCompatActivity() {
     private val homeFragment: HomeFragment by lazy {
         val fr = supportFragmentManager.findFragmentByTag(TAG_HOME)
         if (fr != null) fr as HomeFragment
-        else{
+        else {
             HomeFragment()
         }
-
     }
 
     private val findFriend: FindFriendFragment by lazy {
@@ -104,7 +113,6 @@ class MainNavigationActivity : AppCompatActivity() {
         if (fr != null) fr as FindFriendFragment
         else FindFriendFragment()
     }
-
 
 
     private val recordFragment: RecordFragment by lazy {
@@ -147,6 +155,12 @@ class MainNavigationActivity : AppCompatActivity() {
                     mapFragment.switchOnClickAnim()
                 }
             }
+            initialFr.setOnStartBtnClickListener {
+                mapFragment.map.overlays.removeIf { overlay ->
+                    overlay is OverlayWithIW &&
+                            overlay.id == UserTrack.RECORDED_TRACK_TAG
+                }
+            }
             initialFr
         }
     }
@@ -159,6 +173,7 @@ class MainNavigationActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainNavigationBinding.inflate(layoutInflater)
         ctx = applicationContext
+        bitmap = BitmapFactory.decodeResource(resources, R.drawable.ic_menu_compass)
         downAnim = AnimationUtils.loadAnimation(ctx, R.anim.down_alpha_trans)
         upAnim = AnimationUtils.loadAnimation(ctx, R.anim.up_alpha_trans)
         with(downAnim) {
@@ -213,6 +228,9 @@ class MainNavigationActivity : AppCompatActivity() {
             setFragment(it.itemId)
         }
 
+        bitmap = BitmapFactory.decodeResource(resources, R.drawable.ic_menu_compass)
+        Log.d("!!!!!!!!!!", String.valueOf(bitmap))
+
     }
 
     private fun setFragment(itemId: Int): Boolean {
@@ -249,10 +267,10 @@ class MainNavigationActivity : AppCompatActivity() {
                 mapFragment.mapController.animateTo(mapFragment.userLocation)
                 activeFragment = mapFragment
             }
-            R.id.navigation_home ->{
+            R.id.navigation_home -> {
                 if (activeFragment is HomeFragment) return false
                 val findFriendButton: ImageButton = findViewById(R.id.findFriendsButton)
-                findFriendButton.setOnClickListener(object : View.OnClickListener{
+                findFriendButton.setOnClickListener(object : View.OnClickListener {
                     override fun onClick(p0: View?) {
                         findFriend.disp()
                         supportFragmentManager
@@ -295,7 +313,6 @@ class MainNavigationActivity : AppCompatActivity() {
         super.onSaveInstanceState(outState)
         outState.putInt(CURRENT_FRAGMENT, selectedFragment)
     }
-
 
 
 }

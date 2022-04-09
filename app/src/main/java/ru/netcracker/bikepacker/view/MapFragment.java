@@ -4,6 +4,8 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.location.LocationManager;
@@ -119,15 +121,19 @@ public class MapFragment extends Fragment {
         //setting center on user location
         mapController.setCenter(getUserLocation());
 
-        //user location arrow setup
-        MyLocationNewOverlay mLocationOverlay = new MyLocationNewOverlay(gpsMyLocationProvider, map);
-        mLocationOverlay.enableMyLocation();
-        //TODO: custom user arrow using drawable/ic_user_location_icon.xml (issue in getting drawable:
-        // most likely that getting drawable should be in another method)
-        map.getOverlays().add(mLocationOverlay);
-
         setupButtons(view, onClickAnim);
 
+        MyLocationNewOverlay locationOverlay = new MyLocationNewOverlay(new GpsMyLocationProvider(ctx),map);
+
+        Drawable drawable = getResources().getDrawable(R.drawable.ic_directional_arrow);
+        Bitmap bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+        drawable.draw(canvas);
+
+        locationOverlay.setPersonIcon(bitmap);
+        locationOverlay.setDirectionArrow(bitmap,bitmap);
+        map.getOverlays().add(locationOverlay);
         map.invalidate();
     }
 
