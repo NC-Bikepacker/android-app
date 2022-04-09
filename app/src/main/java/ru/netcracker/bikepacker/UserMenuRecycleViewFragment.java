@@ -1,33 +1,45 @@
 package ru.netcracker.bikepacker;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.loader.content.AsyncTaskLoader;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import ru.netcracker.bikepacker.adapter.FindFriendAdapter;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 import ru.netcracker.bikepacker.adapter.usermenu.UserMenuRecyclerAdapter;
-import ru.netcracker.bikepacker.model.TrackDTO;
-import ru.netcracker.bikepacker.model.User;
+import ru.netcracker.bikepacker.manager.RetrofitManager;
+import ru.netcracker.bikepacker.manager.UserAccountManager;
+import ru.netcracker.bikepacker.model.TrackModel;
+import ru.netcracker.bikepacker.model.UserModel;
 
 
 public class UserMenuRecycleViewFragment extends Fragment {
 
-    View view;
-    int position;
-    RecyclerView userMenuRecyclerView;
-    UserMenuRecyclerAdapter recyclerAdapter;
+    private View view;
+    private int position;
+    private RecyclerView userMenuRecyclerView;
+    private UserMenuRecyclerAdapter recyclerAdapter;
+    private RetrofitManager retrofitManager;
+    private UserAccountManager userAccountManager;
 
     public UserMenuRecycleViewFragment(int position) {
         this.position = position;
+        this.retrofitManager = RetrofitManager.getInstance(this.getContext());
+        this.userAccountManager = UserAccountManager.getInstance(this.getContext());
     }
 
     @Override
@@ -50,7 +62,15 @@ public class UserMenuRecycleViewFragment extends Fragment {
 
     }
 
-    private void setUserMenuRecyclerFragment(List<TrackDTO> tracks, View view) {
+    private class DownloadTracks extends AsyncTask<View,Void,TrackModel>{
+
+        @Override
+        protected TrackModel doInBackground(View... views) {
+            return null;
+        }
+    }
+
+    private void setUserMenuRecyclerFragment(List<TrackModel> tracks, View view) {
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
 
         userMenuRecyclerView = view.findViewById(R.id.userMenuRecyclerView);
@@ -60,21 +80,70 @@ public class UserMenuRecycleViewFragment extends Fragment {
         userMenuRecyclerView.setAdapter(recyclerAdapter);
     }
 
-    private List<TrackDTO> getFavoriteTracks(){
-        List<TrackDTO> tracks = new ArrayList<>();
-        User iAmUser = new User(5L,"favorite","tracks","ComeBak",null);
-        TrackDTO track = new TrackDTO(899564654, 3,iAmUser,"gpx GPX gpx GPX");
-        tracks.add(track);
-        return tracks;
+    private List<TrackModel> getFavoriteTracks(){
+        List<TrackModel> tracks = new ArrayList<>();
+           retrofitManager.getJSONApi()
+                        .getMyFavoriteTracks(userAccountManager.getCookie(), userAccountManager.getUser().getId())
+                        .enqueue(new Callback<List<TrackModel>>() {
+                            @Override
+                            public void onResponse(Call<List<TrackModel>> call, Response<List<TrackModel>> response) {
+                                if(response.body()!=null){
+                                    tracks.addAll(response.body());
+                                }
+
+                                recyclerAdapter = new UserMenuRecyclerAdapter(getContext(), tracks);
+                                userMenuRecyclerView.setAdapter(recyclerAdapter);
+                            }
+
+                            @Override
+                            public void onFailure(Call<List<TrackModel>> call, Throwable t) {
+                                Log.d(t.getMessage(),"Error get favorite tracks");
+                            }
+                        });
+           return tracks;
     }
 
-    private List<TrackDTO> getAllUsedTracks(){
-        List<TrackDTO> tracks = new ArrayList<>();
-        User iAmUser = new User(5L,"all used","tracks","ComeBak",null);
-        TrackDTO track = new TrackDTO(899564654, 3,iAmUser,"gpx GPX gpx GPX");
-        TrackDTO track2 = new TrackDTO(12333123, 8,iAmUser,"gpx GPX gpx GPX");
-        tracks.add(track);
-        tracks.add(track2);
+
+    private List<TrackModel> getAllUsedTracks(){
+        List<TrackModel> tracks = new ArrayList<>();
+        retrofitManager.getJSONApi()
+                .getTracksByUser(userAccountManager.getCookie(), userAccountManager.getUser().getId())
+                .enqueue(new Callback<List<TrackModel>>() {
+                    @Override
+                    public void onResponse(Call<List<TrackModel>> call, Response<List<TrackModel>> response) {
+                        if(response.body()!=null){
+                            tracks.addAll(response.body());
+                        }
+
+                        recyclerAdapter = new UserMenuRecyclerAdapter(getContext(), tracks);
+                        userMenuRecyclerView.setAdapter(recyclerAdapter);
+                    }
+
+                    @Override
+                    public void onFailure(Call<List<TrackModel>> call, Throwable t) {
+                        Log.d(t.getMessage(), "Ошибка запроса треков юзера");
+                    }
+                });
         return tracks;
     }
 }
+
+/*
+    private List<TrackModel> getFavoriteTracks(){
+        List<TrackModel> tracks = new ArrayList<>();
+        retrofitManager.getJSONApi()
+                .getMyFavoriteTracks(userAccountManager.getCookie(), userAccountManager.getUser().getId())
+                .enqueue(new Callback<List<TrackModel>>() {
+                    @Override
+                    public void onResponse(Call<List<TrackModel>> call, Response<List<TrackModel>> response) {
+                        tracks.addAll(response.body());
+
+                    }
+
+                    @Override
+                    public void onFailure(Call<List<TrackModel>> call, Throwable t) {
+                        Log.d(t.getMessage(),"Error get favorite tracks");
+                    }
+                });
+        return tracks;
+    }*/

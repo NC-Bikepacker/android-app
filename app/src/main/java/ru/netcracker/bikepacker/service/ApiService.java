@@ -12,6 +12,7 @@ import retrofit2.http.Headers;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
 import ru.netcracker.bikepacker.model.AuthModel;
+import ru.netcracker.bikepacker.model.ImageModel;
 import ru.netcracker.bikepacker.model.SignUpModel;
 import ru.netcracker.bikepacker.model.FriendModel;
 import ru.netcracker.bikepacker.model.TrackModel;
@@ -32,9 +33,13 @@ public interface ApiService {
     @POST("/signup")
     Call<Void> signUp(@Body SignUpModel signUpModel);
 
-//  Post track request
+    //Post track request
     @POST("/tracks")
     public Call<ResponseBody> postTrack(@Header ("Cookie") String cookie, @Body TrackModel track);
+
+    //operations with usersApi
+    @GET("/tracks/{id}")
+    Call<List<TrackModel>> getTracksByUser(@Header ("Cookie") String cookie, @Path("id") long id);
 
     //operations with usersApi
     @GET("/users/{id}")
@@ -55,4 +60,13 @@ public interface ApiService {
 
     @HTTP(method = "DELETE", path = "/friends/delete", hasBody = true)
     Call<ResponseBody> deleteFriend(@Header ("Cookie") String cookie, @Body FriendModel friends);
+
+    //FAVORITE TRACKS
+    @GET("/favoritetracks/{idThisUser}")
+    Call<List<TrackModel>> getMyFavoriteTracks(@Header ("Cookie") String cookie, @Path("idThisUser") Long id);
+
+    //IMAGE
+    @GET("/image/track/{id}")
+    Call<ImageModel> getTrackImage(@Header ("Cookie") String cookie, @Path("id") Long id);
+
 }
