@@ -127,23 +127,3 @@ public class UserMenuRecycleViewFragment extends Fragment {
         return tracks;
     }
 }
-
-/*
-    private List<TrackModel> getFavoriteTracks(){
-        List<TrackModel> tracks = new ArrayList<>();
-        retrofitManager.getJSONApi()
-                .getMyFavoriteTracks(userAccountManager.getCookie(), userAccountManager.getUser().getId())
-                .enqueue(new Callback<List<TrackModel>>() {
-                    @Override
-                    public void onResponse(Call<List<TrackModel>> call, Response<List<TrackModel>> response) {
-                        tracks.addAll(response.body());
-
-                    }
-
-                    @Override
-                    public void onFailure(Call<List<TrackModel>> call, Throwable t) {
-                        Log.d(t.getMessage(),"Error get favorite tracks");
-                    }
-                });
-        return tracks;
-    }*/
