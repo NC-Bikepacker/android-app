@@ -31,6 +31,7 @@ public class RecordFragment extends Fragment {
     private boolean recording = false;
     private OnGpxCreatedListener onGpxCreatedListener;
     private OnStopBtnClickListener onStopBtnClickListener;
+    private TextView textView;
 
     public void setOnGpxCreatedListener(OnGpxCreatedListener onGpxCreatedListener) {
         this.onGpxCreatedListener = onGpxCreatedListener;
@@ -43,7 +44,6 @@ public class RecordFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
     }
 
     @Override
@@ -81,17 +81,17 @@ public class RecordFragment extends Fragment {
         );
 
         recordButton.setOnClickListener(
-            view1 -> {
-                if (recording) {
-                    trackRecorder.finishRecording();
-                } else {
-                    ((TextView) view.findViewById(R.id.textView2)).setText("Time: ");
-                    view.findViewById(R.id.favourite_tracks).setVisibility(View.GONE);
+                view1 -> {
+                    if (recording) {
+                        trackRecorder.finishRecording();
+                    } else {
+                        ((TextView) view.findViewById(R.id.textView2)).setText("Time: ");
+                        view.findViewById(R.id.favourite_tracks).setVisibility(View.GONE);
 
-                    trackRecorder.startRecording();
+                        trackRecorder.startRecording();
+                    }
+                    recording = !recording;
                 }
-                recording = !recording;
-            }
         );
     }
 

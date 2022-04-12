@@ -130,8 +130,6 @@ class MainNavigationActivity : AppCompatActivity() {
                             gpx?.tracks()?.collect(Collectors.toList())?.get(0)
                         )
                     )
-                    Toast.makeText(ctx,
-                        gpx?.tracks()?.collect(Collectors.toList())?.get(0)?.segments?.get(0)?.points?.get(0)?.description?.get(), Toast.LENGTH_LONG).show();
                     map.let {
                         it?.zoomToBoundingBox(userTrack?.boundingBox, true)
                         it?.overlayManager?.addAll(userTrack?.toList()!!)
@@ -139,7 +137,6 @@ class MainNavigationActivity : AppCompatActivity() {
                 }
             }
             initialFr.setOnStopBtnClickListener {
-
                 findViewById<FrameLayout>(R.id.start_new_route_container)?.startAnimation(downAnim)
                 supportFragmentManager.beginTransaction()
                     .setCustomAnimations(R.anim.up_alpha_trans, R.anim.down_alpha_trans)

@@ -22,8 +22,6 @@ public class UserTrack extends OverlayWithIW {
     private final Marker startMarker;
     private final Marker finishMarker;
 
-    UserTrack trackBuilder;
-
     private UserTrack(MapView map, Drawable startIcon, Drawable finishIcon, Polyline polyline) {
         RECORDED_TRACK_PAINT.setARGB(255, 93, 62, 168);
         RECORDED_TRACK_PAINT.setStrokeWidth(10F);
@@ -35,7 +33,7 @@ public class UserTrack extends OverlayWithIW {
         this.polyline = polyline;
 
         startMarker = new Marker(map);
-        startMarker.setAnchor(ANC_U,ANC_V);
+        startMarker.setAnchor(ANC_U, ANC_V);
         startMarker.setIcon(startIcon);
         startMarker.setSubDescription(RECORDED_TRACK_TAG);
         startMarker.setPosition(
@@ -45,19 +43,19 @@ public class UserTrack extends OverlayWithIW {
         startMarker.setId(RECORDED_TRACK_TAG);
 
         finishMarker = new Marker(map);
-        finishMarker.setAnchor(ANC_U,ANC_V);
+        finishMarker.setAnchor(ANC_U, ANC_V);
         finishMarker.setIcon(finishIcon);
         finishMarker.setSubDescription(RECORDED_TRACK_TAG);
         finishMarker.setPosition(
                 polyline.getActualPoints()
-                .get(polyline.getActualPoints().size() - 1)
+                        .get(polyline.getActualPoints().size() - 1)
         );
         finishMarker.setId(RECORDED_TRACK_TAG);
     }
 
     public static UserTrack newInstance(MapView map, Drawable startIcon, Drawable finishIcon, Polyline polyline
     ) {
-        return new UserTrack(map,startIcon,finishIcon,polyline);
+        return new UserTrack(map, startIcon, finishIcon, polyline);
     }
 
     public List<OverlayWithIW> toList() {

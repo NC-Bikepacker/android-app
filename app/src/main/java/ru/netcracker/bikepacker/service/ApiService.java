@@ -10,6 +10,7 @@ import retrofit2.http.HTTP;
 import retrofit2.http.Header;
 import retrofit2.http.Headers;
 import retrofit2.http.POST;
+import retrofit2.http.PUT;
 import retrofit2.http.Path;
 import ru.netcracker.bikepacker.model.AuthModel;
 import ru.netcracker.bikepacker.model.ImageModel;
@@ -20,7 +21,7 @@ import ru.netcracker.bikepacker.model.UserModel;
 
 public interface ApiService {
 
-//    Login and sign up requests
+    //    Login and sign up requests
     @Headers({
             "Content-Type: application/json;" +
                     "charset=UTF-8"})
@@ -33,13 +34,16 @@ public interface ApiService {
     @POST("/signup")
     Call<Void> signUp(@Body SignUpModel signUpModel);
 
-    //Post track request
+    //Track operations API
     @POST("/tracks")
-    public Call<ResponseBody> postTrack(@Header ("Cookie") String cookie, @Body TrackModel track);
+    public Call<ResponseBody> postTrack(@Header("Cookie") String cookie, @Body TrackModel track);
 
-    //operations with usersApi
     @GET("/tracks/{id}")
     Call<List<TrackModel>> getTracksByUser(@Header ("Cookie") String cookie, @Path("id") long id);
+
+    //Put track request
+    @PUT("/tracks/{id}")
+    public Call<ResponseBody> putTrack(@Header("Cookie") String cookie, @Path("id") long id, @Body TrackModel track);
 
     //operations with usersApi
     @GET("/users/{id}")

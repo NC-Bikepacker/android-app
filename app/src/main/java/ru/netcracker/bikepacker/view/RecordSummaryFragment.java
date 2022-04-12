@@ -16,10 +16,6 @@ import ru.netcracker.bikepacker.tracks.listeners.OnAcceptBtnClickListener;
 public class RecordSummaryFragment extends Fragment {
     private float ratingVal = 0;
 
-    public FragmentRecordSummaryBinding getRecordSummaryBinding() {
-        return recordSummaryBinding;
-    }
-
     private FragmentRecordSummaryBinding recordSummaryBinding;
     private Button acceptButton;
     private TrackRecorder trackRecorder;
@@ -55,7 +51,7 @@ public class RecordSummaryFragment extends Fragment {
         );
         recordSummaryBinding.acceptButton.setOnClickListener(
                 view -> {
-                    trackRecorder.sendData(ratingVal);
+                    trackRecorder.sendPutRequest(2,ratingVal);
                     onAcceptBtnClickListener.onClick();
                 }
         );
