@@ -40,7 +40,7 @@
                 app:layout_constraintStart_toEndOf="@+id/addNewsButton"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <SearchView
+            <androidx.appcompat.widget.SearchView
                 android:id="@+id/searchView"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
