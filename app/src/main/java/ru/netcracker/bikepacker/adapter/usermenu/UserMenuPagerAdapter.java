@@ -6,8 +6,8 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 
-import ru.netcracker.bikepacker.UserMenuInformationAccountFragment;
-import ru.netcracker.bikepacker.UserMenuRecycleViewFragment;
+import ru.netcracker.bikepacker.view.UserMenuInformationAccountFragment;
+import ru.netcracker.bikepacker.view.UserMenuRecycleViewFragment;
 
 public class UserMenuPagerAdapter extends FragmentStateAdapter {
 

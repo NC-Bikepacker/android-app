@@ -1,4 +1,4 @@
-package ru.netcracker.bikepacker;
+package ru.netcracker.bikepacker.view;
 
 import android.graphics.Bitmap;
 import android.os.Bundle;
@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
+import ru.netcracker.bikepacker.R;
 import ru.netcracker.bikepacker.manager.UserAccountManager;
 
 
@@ -39,7 +40,7 @@ public class UserMenuInformationAccountFragment extends Fragment {
         this.firstAndLastNames = userMenuInformationAccountFragmentView.findViewById(R.id.firstAndLastNamesInUserMenu);
         this.nickname = userMenuInformationAccountFragmentView.findViewById(R.id.nicknameInUserMenu);
         this.email = userMenuInformationAccountFragmentView.findViewById(R.id.emailInUserMenu);
-        this.editButton = userMenuInformationAccountFragmentView.findViewById(R.id.editButtonInUserMenu);
+        this.editButton = userMenuInformationAccountFragmentView.findViewById(R.id.editButtonInformationAccountUserMenuFragment);
 
         Picasso.get()
                 .load(userAccountManager.getUser().getUserPicLink())

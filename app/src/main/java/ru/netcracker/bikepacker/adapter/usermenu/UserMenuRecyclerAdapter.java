@@ -114,7 +114,6 @@ public class UserMenuRecyclerAdapter extends RecyclerView.Adapter<UserMenuRecycl
             this.uploadTrackButton = itemView.findViewById(R.id.uploadTrackButton);
             this.firstAndLastnameUserMenuItem = itemView.findViewById(R.id.firstAndLastnameUserMenuItem);
             this.dateUserMenuItem = itemView.findViewById(R.id.dateUserMenuItem);
-            this.trackNameTextView = itemView.findViewById(R.id.trackNameTextView);
             this.distanceTextViewUserMenu = itemView.findViewById(R.id.distanceTextViewUserMenu);
             this.avgSpeedTextViewUserMenu = itemView.findViewById(R.id.avgSpeedTextViewUserMenu);
             this.timeTextViewUserMenu = itemView.findViewById(R.id.timeTextViewUserMenu);

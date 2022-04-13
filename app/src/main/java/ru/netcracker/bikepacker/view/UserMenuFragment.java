@@ -1,4 +1,4 @@
-package ru.netcracker.bikepacker;
+package ru.netcracker.bikepacker.view;
 
 import android.os.Bundle;
 
@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 
+import ru.netcracker.bikepacker.R;
 import ru.netcracker.bikepacker.adapter.usermenu.UserMenuPagerAdapter;
 
 public class UserMenuFragment extends Fragment {

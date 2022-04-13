@@ -1,4 +1,4 @@
-package ru.netcracker.bikepacker;
+package ru.netcracker.bikepacker.view;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -20,6 +20,7 @@ import java.util.List;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import ru.netcracker.bikepacker.R;
 import ru.netcracker.bikepacker.adapter.usermenu.UserMenuRecyclerAdapter;
 import ru.netcracker.bikepacker.manager.RetrofitManager;
 import ru.netcracker.bikepacker.manager.UserAccountManager;
