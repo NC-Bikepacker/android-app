@@ -1,7 +1,9 @@
 package ru.netcracker.bikepacker.view;
 
+import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.ClipData;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -107,15 +109,21 @@ public class CreatePointFragment extends Fragment {
                     @Override
                     public void onActivityResult(Object r) {
                         ActivityResult result = (ActivityResult) r;
-                        if (result.getResultCode() == getActivity().RESULT_OK
-                                && null != result.getData()) {
-                            Bundle extras = result.getData().getExtras();
-                            Bitmap imageBitmap = (Bitmap) extras.get("data");
-                            imagesDecodedList.add(encodeImage(imageBitmap));
-                            right.setVisibility(View.INVISIBLE);
-                            left.setVisibility(View.INVISIBLE);
-                            imageView.setImageBitmap(imageBitmap);
+                        try {
+                            if (result.getResultCode() == getActivity().RESULT_OK
+                                    && null != result.getData()) {
+                                Bundle extras = result.getData().getExtras();
+                                Bitmap imageBitmap = (Bitmap) extras.get("data");
+                                imagesDecodedList.add(encodeImage(imageBitmap));
+                                right.setVisibility(View.INVISIBLE);
+                                left.setVisibility(View.INVISIBLE);
+                                imageView.setImageBitmap(imageBitmap);
+                            }
+                        }catch (NullPointerException e){
+                            Log.e("getActivity()", "getActivity is null");
+
                         }
+
                     }
                 });
         activityResultLauncherAddPhoto = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
@@ -124,29 +132,37 @@ public class CreatePointFragment extends Fragment {
                     public void onActivityResult(Object r) {
                         ActivityResult result = (ActivityResult) r;
                         try {
-                            if (result.getResultCode() == getActivity().RESULT_OK
+                            if (getActivity() != null && result.getResultCode() == getActivity().RESULT_OK
                                     && null != result.getData()) {
                                 String[] filePathColumn = {MediaStore.Images.Media.DATA};
                                 if (result.getData().getData() != null) {
                                     Uri mImageUri = result.getData().getData();
                                     Bitmap bitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), mImageUri);
                                     imagesDecodedList.add(encodeImage(bitmap));
-                                    Cursor cursor = getActivity().getContentResolver().query(mImageUri,
-                                            filePathColumn, null, null, null);
-                                    cursor.moveToFirst();
-                                    cursor.close();
+                                    try {
+                                        Cursor cursor = getActivity().getContentResolver().query(mImageUri,
+                                                filePathColumn, null, null, null);
+                                        cursor.moveToFirst();
+                                        cursor.close();
+                                    }catch (NullPointerException e){
+                                        Log.e("getActivity()", "getActivity is null");
+                                    }
                                 } else {
                                     if (result.getData().getClipData() != null) {
                                         ClipData mClipData = result.getData().getClipData();
                                         for (int i = 0; i < mClipData.getItemCount(); i++) {
                                             ClipData.Item item = mClipData.getItemAt(i);
                                             Uri uri = item.getUri();
-                                            Cursor cursor = getActivity().getContentResolver().query(uri, filePathColumn, null, null, null);
-                                            cursor.moveToFirst();
-                                            Bitmap bitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), uri);
-                                            String imageStr = encodeImage(bitmap);
-                                            imagesDecodedList.add(imageStr);
-                                            cursor.close();
+                                            try {
+                                                Cursor cursor = getActivity().getContentResolver().query(uri, filePathColumn, null, null, null);
+                                                cursor.moveToFirst();
+                                                Bitmap bitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), uri);
+                                                String imageStr = encodeImage(bitmap);
+                                                imagesDecodedList.add(imageStr);
+                                                cursor.close();
+                                            }catch (NullPointerException e){
+                                                Log.e("getActivity()", "getActivity is null");
+                                            }
                                         }
                                         Log.v("LOG_TAG", "Selected Images" + imagesDecodedList.size());
                                     }
@@ -197,20 +213,28 @@ public class CreatePointFragment extends Fragment {
         );
 
         buttonAccept.setOnClickListener(view -> {
-            Optional descriptionOpt = Optional.ofNullable(descriptionText.getText());
-            String description = descriptionOpt.orElse("").toString().trim();
+            String description = Optional.ofNullable(descriptionText.getText()).toString();
             long track_id = recordFragment.getTrackRecorder().getTrackId();
-            PointModel pointModel = new PointModel(description, track_id, recordFragment.getTrackRecorder().getLastLocation().getLatitude(),
-                    recordFragment.getTrackRecorder().getLastLocation().getLongitude(), imagesDecodedList);
-            recordFragment.getTrackRecorder().addPoint(description);
-            sendData(pointModel);
-            FragmentManager f = getActivity().getSupportFragmentManager();
-            buttonPoint.setVisibility(View.VISIBLE);
-            descriptionText.setText("");
-            f.beginTransaction()
-                    .remove(Objects.requireNonNull(f.findFragmentByTag("point")))
-                    .show(Objects.requireNonNull(f.findFragmentByTag("record")))
-                    .commit();
+            if (recordFragment.getTrackRecorder().getLastLocation() != null) {
+                PointModel pointModel = new PointModel(description, track_id, recordFragment.getTrackRecorder().getLastLocation().getLatitude(),
+                        recordFragment.getTrackRecorder().getLastLocation().getLongitude(), imagesDecodedList);
+
+                recordFragment.getTrackRecorder().addPoint(description);
+                sendData(pointModel);
+            } else {
+                Toast.makeText(getContext(), "Something went wrong: getLastLocation() is null", Toast.LENGTH_LONG).show();
+            }
+            if (getActivity() != null) {
+                FragmentManager f = getActivity().getSupportFragmentManager();
+                buttonPoint.setVisibility(View.VISIBLE);
+                descriptionText.setText("");
+                f.beginTransaction()
+                        .remove(Objects.requireNonNull(f.findFragmentByTag("point")))
+                        .show(Objects.requireNonNull(f.findFragmentByTag("record")))
+                        .commit();
+            } else {
+                Log.e("getActivity", "is null");
+            }
         });
 
         buttonAddPhoto.setOnClickListener(view -> {
@@ -265,6 +289,7 @@ public class CreatePointFragment extends Fragment {
                     public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
                         Log.d("Point sending callback", "SENDED");
                     }
+
                     @Override
                     public void onFailure(Call<ResponseBody> call, Throwable t) {
                         Log.d(t.getMessage(), "Ошибка добавления точки");
