@@ -1,7 +1,7 @@
 package ru.netcracker.bikepacker.adapter;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,7 +18,6 @@ import java.util.List;
 import ru.netcracker.bikepacker.R;
 import ru.netcracker.bikepacker.listholder.MyFriendsList;
 import ru.netcracker.bikepacker.model.UserModel;
-import ru.netcracker.bikepacker.adapter.OnFriendClickListener;
 
 public class FindFriendAdapter extends RecyclerView.Adapter<FindFriendAdapter.FindFriendViewHolder> {
 
@@ -45,9 +44,8 @@ public class FindFriendAdapter extends RecyclerView.Adapter<FindFriendAdapter.Fi
     @Override
     public void onBindViewHolder(@NonNull FindFriendViewHolder holder, int position) {
            UserModel user = findFriends.get(position);
-           holder.firstName.setText(findFriends.get(position).getFirstname());
-           holder.lastName.setText(findFriends.get(position).getLastname());
-           holder.nickName.setText(findFriends.get(position).getUsername());
+           holder.firstAndLastName.setText(findFriends.get(position).getFirstname()+ " " + findFriends.get(position).getLastname() );
+           holder.nickName.setText( "@" + findFriends.get(position).getUsername());
 
            Picasso.get()
                    .load(findFriends.get(holder.getAdapterPosition()).getUserPicLink())
@@ -80,15 +78,14 @@ public class FindFriendAdapter extends RecyclerView.Adapter<FindFriendAdapter.Fi
     public static final class FindFriendViewHolder extends RecyclerView.ViewHolder{
 
         private ImageView findFriend_pic;
-        private TextView firstName, lastName, nickName;
+        private TextView firstAndLastName, nickName;
         private ImageButton addFriendButton,deleteFriendButtton;
 
         public FindFriendViewHolder(@NonNull View itemView) {
             super(itemView);
 
             findFriend_pic = itemView.findViewById(R.id.findFriendPic);
-            firstName = itemView.findViewById(R.id.findFriend_firstName);
-            lastName = itemView.findViewById(R.id.findFriend_lastName);
+            firstAndLastName = itemView.findViewById(R.id.findFriend_firstAndLastName);
             nickName = itemView.findViewById(R.id.findFriend_nickName);
             addFriendButton = itemView.findViewById(R.id.findFriendAddButton);
             deleteFriendButtton = itemView.findViewById(R.id.deleteFriendButton);

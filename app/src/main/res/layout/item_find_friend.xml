@@ -3,7 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:background="@drawable/border_bottom">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -16,7 +17,9 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:paddingTop="4dp"
+            android:paddingBottom="8dp">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="wrap_content"
@@ -24,83 +27,103 @@
 
                 <ImageView
                     android:id="@+id/findFriendPic"
-                    android:layout_width="67dp"
-                    android:layout_height="67dp"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="16dp"
                     android:layout_marginEnd="4dp"
                     android:layout_marginBottom="16dp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.0"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="0.0"
                     app:srcCompat="@drawable/ic_userpic" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp">
 
                 <TextView
-                    android:id="@+id/findFriend_firstName"
+                    android:id="@+id/findFriend_firstAndLastName"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="4dp"
-                    android:text="firstName"
+                    android:layout_marginTop="8dp"
+                    android:fontFamily="@font/proxima_nova_semibold"
+                    android:text="First and Last name"
+                    android:textColor="@color/black"
+                    android:textSize="14sp"
                     app:layout_constraintBottom_toTopOf="@+id/findFriend_nickName"
-                    app:layout_constraintEnd_toStartOf="@+id/findFriend_lastName"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <TextView
-                    android:id="@+id/findFriend_lastName"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:text="lastName"
-                    app:layout_constraintBottom_toTopOf="@+id/findFriend_nickName"
-                    app:layout_constraintStart_toEndOf="@+id/findFriend_firstName"
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
                     android:id="@+id/findFriend_nickName"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="4dp"
-                    android:layout_marginEnd="4dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="100dp"
+                    android:fontFamily="@font/proxima_nova_regular"
                     android:text="nickName"
+                    android:textColor="@color/black"
+                    android:textSize="12sp"
                     app:layout_constraintBottom_toTopOf="@+id/findFriendAddButton"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/findFriend_lastName" />
+                    app:layout_constraintTop_toBottomOf="@+id/findFriend_firstAndLastName" />
 
                 <ImageButton
                     android:id="@+id/findFriendAddButton"
                     style="@style/whiteAndPurpleButton"
                     android:layout_width="36dp"
                     android:layout_height="36dp"
-                    android:layout_marginStart="4dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="16dp"
                     android:contentDescription="add fiend"
                     android:scaleType="fitCenter"
+                    android:scaleX="2"
+                    android:scaleY="2"
                     android:theme="@style/PurpleButton"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/friendLookTrackButton"
                     app:layout_constraintTop_toBottomOf="@+id/findFriend_nickName"
-                    app:srcCompat="@drawable/ic_add_user_svgrepo_com"
+                    app:srcCompat="@drawable/ic_user_add"
+                    tools:ignore="TouchTargetSizeCheck" />
+
+                <ImageButton
+                    android:id="@+id/friendLookTrackButton"
+                    style="@style/whiteAndPurpleButton"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:layout_marginStart="-4dp"
+                    android:adjustViewBounds="true"
+                    android:contentDescription="add fiend"
+                    android:scaleType="fitCenter"
+                    android:scaleX="2"
+                    android:scaleY="2"
+                    android:theme="@style/PurpleButton"
+                    app:layout_constraintBottom_toBottomOf="@+id/findFriendAddButton"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/findFriendAddButton"
+                    app:layout_constraintVertical_bias="0.875"
+                    app:srcCompat="@drawable/ic_line_fill"
                     tools:ignore="TouchTargetSizeCheck" />
 
                 <androidx.appcompat.widget.AppCompatImageButton
                     android:id="@+id/deleteFriendButton"
                     android:layout_width="36dp"
                     android:layout_height="36dp"
+                    android:layout_marginTop="8dp"
                     android:layout_weight="1"
                     android:contentDescription="add fiend"
+                    android:scaleType="fitCenter"
                     android:theme="@style/deleteButton"
                     android:visibility="invisible"
-                    app:layout_constraintBottom_toBottomOf="@+id/findFriendAddButton"
-                    app:layout_constraintEnd_toEndOf="@+id/findFriendAddButton"
-                    app:layout_constraintStart_toStartOf="@+id/findFriendAddButton"
-                    app:layout_constraintTop_toTopOf="@+id/findFriendAddButton"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
                     app:srcCompat="@drawable/ic_delete" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 

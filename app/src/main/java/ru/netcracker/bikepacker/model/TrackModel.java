@@ -23,12 +23,23 @@ public class TrackModel {
     @SerializedName("gpx")
     @Expose
     private String gpx;
+    @SerializedName("imageBase64")
+    @Expose
+    private String imageBase64;
 
     public TrackModel(long travelTime, long trackComplexity, UserModel user, String gpx) {
         this.travelTime = travelTime;
         this.trackComplexity = trackComplexity;
         this.user = user;
         this.gpx = gpx;
+    }
+
+    public TrackModel(long trackId, long travelTime, long trackComplexity, UserModel user, String gpx) {
+        this.travelTime = travelTime;
+        this.trackComplexity = trackComplexity;
+        this.user = user;
+        this.gpx = gpx;
+        this.trackId= trackId;
     }
 
     public TrackModel(UserModel user) {
@@ -74,4 +85,8 @@ public class TrackModel {
     public void setGpx(String gpx) {
         this.gpx = gpx;
     }
+
+    public String getImageBase64() { return imageBase64;}
+
+    public void setImageBase64(String imageBase64) {this.imageBase64 = imageBase64;}
 }

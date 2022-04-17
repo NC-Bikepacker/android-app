@@ -36,14 +36,14 @@ public interface ApiService {
 
     //Track operations API
     @POST("/tracks")
-    public Call<ResponseBody> postTrack(@Header("Cookie") String cookie, @Body TrackModel track);
+    Call<ResponseBody> postTrack(@Header("Cookie") String cookie, @Body TrackModel track);
 
     @GET("/tracks/{id}")
     Call<List<TrackModel>> getTracksByUser(@Header ("Cookie") String cookie, @Path("id") long id);
 
     //Put track request
-    @PUT("/tracks/{id}")
-    public Call<ResponseBody> putTrack(@Header("Cookie") String cookie, @Path("id") long id, @Body TrackModel track);
+    @PUT("/tracks/update/{id}")
+    Call<ResponseBody> putTrack(@Header("Cookie") String cookie, @Path("id") long id, @Body TrackModel track);
 
     //operations with usersApi
     @GET("/users/{id}")
