@@ -98,7 +98,7 @@ public class UserMenuRecycleViewFragment extends Fragment {
 
                             @Override
                             public void onFailure(Call<List<TrackModel>> call, Throwable t) {
-                                Log.d(t.getMessage(),"Error get favorite tracks");
+                                Log.e("UserMenuRecycleViewFragment error","Error get favorite tracks: " + t.getMessage(),t);
                             }
                         });
            return tracks;
@@ -122,7 +122,7 @@ public class UserMenuRecycleViewFragment extends Fragment {
 
                     @Override
                     public void onFailure(Call<List<TrackModel>> call, Throwable t) {
-                        Log.d(t.getMessage(), "Ошибка запроса треков юзера");
+                        Log.e("UserMenuRecycleViewFragment error","Error get user tracks: " + t.getMessage(),t);
                     }
                 });
         return tracks;

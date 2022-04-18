@@ -160,7 +160,7 @@ public class TrackRecorder {
 
             @Override
             public void onFailure(@NonNull Call<ResponseBody> call, @NonNull Throwable t) {
-                Log.d("Track sending callback", "NOT SENT");
+                Log.e("Track sending callback", "error send response. Error message: " + t.getMessage(),t);
             }
         });
     }
@@ -191,7 +191,7 @@ public class TrackRecorder {
 
                     @Override
                     public void onFailure(@NonNull Call<ResponseBody> call, @NonNull Throwable t) {
-                        Log.d("TrackPuttingCallback", "NOT PUT");
+                        Log.e("TrackPuttingCallback", "error put response. Error message: " + t.getMessage(),t);
                     }
                 });
     }
@@ -222,7 +222,7 @@ public class TrackRecorder {
 
                     @Override
                     public void onFailure(@NonNull Call<ResponseBody> call, @NonNull Throwable t) {
-                        Log.d("TrackPuttingCallback", "NOT PUT");
+                        Log.e("TrackPuttingCallback", "error put response. Error message: " + t.getMessage(),t);
                     }
                 });
     }

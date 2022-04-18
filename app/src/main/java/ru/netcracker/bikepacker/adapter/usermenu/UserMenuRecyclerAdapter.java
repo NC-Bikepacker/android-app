@@ -2,6 +2,7 @@ package ru.netcracker.bikepacker.adapter.usermenu;
 
 import android.content.Context;
 import android.os.Build;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -79,7 +80,7 @@ public class UserMenuRecyclerAdapter extends RecyclerView.Adapter<UserMenuRecycl
 
                             @Override
                             public void onFailure(Call<ImageModel> call, Throwable t) {
-
+                                Log.e(UserMenuRecyclerAdapter.class.getName(), "Error responce image model: " + t.getMessage(), t);
                             }
                         });
     }
