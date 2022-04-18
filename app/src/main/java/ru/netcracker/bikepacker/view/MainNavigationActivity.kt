@@ -36,6 +36,7 @@ class MainNavigationActivity : AppCompatActivity() {
         const val TAG_HOME = "home"
         const val TAG_FINDFRIEND = "findFriend"
         const val TAG_RECORD_SM = "record_summary"
+        const val TAG_USER_MENU = "user_menu"
     }
 
     private var downAnim: Animation? = null
@@ -105,6 +106,11 @@ class MainNavigationActivity : AppCompatActivity() {
         else FindFriendFragment()
     }
 
+    private val userMenuFragment: UserMenuFragment by lazy {
+        val fr = supportFragmentManager.findFragmentByTag(TAG_USER_MENU)
+        if (fr != null) fr as UserMenuFragment
+        else UserMenuFragment()
+    }
 
 
     private val recordFragment: RecordFragment by lazy {
@@ -189,6 +195,7 @@ class MainNavigationActivity : AppCompatActivity() {
             R.id.navigation_settings -> activeFragment = settingsFragment
             R.id.navigation_home -> activeFragment = homeFragment
             R.id.find_friends_fragment -> activeFragment = findFriend
+            R.id.navigation_account -> activeFragment = userMenuFragment
             //TODO: R.id.navigation_{required menu button} -> activeFragment = {required fragment}
         }
 
@@ -200,6 +207,7 @@ class MainNavigationActivity : AppCompatActivity() {
                 .add(R.id.fragment_container, settingsFragment, TAG_SETTINGS).hide(settingsFragment)
                 .add(R.id.fragment_container, homeFragment, TAG_HOME).hide(homeFragment)
                 .add(R.id.fragment_container, findFriend, TAG_FINDFRIEND).hide(findFriend)
+                .add(R.id.fragment_container, userMenuFragment, TAG_USER_MENU).hide(userMenuFragment)
                 //TODO: .add(R.id.fragment_container, {required fragment}, TAG_RECORD).hide({required fragment})
                 .show(activeFragment!!)
                 .commit()
@@ -249,6 +257,16 @@ class MainNavigationActivity : AppCompatActivity() {
                 mapFragment.mapController.animateTo(mapFragment.userLocation)
                 activeFragment = mapFragment
             }
+
+            R.id.navigation_account -> {
+                if (activeFragment !is UserMenuFragment) {
+                    supportFragmentManager.beginTransaction().hide(activeFragment!!)
+                        .show(userMenuFragment)
+                        .commit()
+                }
+                activeFragment = userMenuFragment
+            }
+
             R.id.navigation_home ->{
                 if (activeFragment is HomeFragment) return false
                 val findFriendButton: ImageButton = findViewById(R.id.findFriendsButton)

@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".view.UserMenuFragment">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/top_bar_layout"
+        android:layout_width="match_parent"
+        android:layout_height="60dp">
+
+        <ImageButton
+            android:id="@+id/addNewsButton"
+            style="@style/Widget.AppCompat.Button.Borderless.Colored"
+            android:layout_width="60dp"
+            android:layout_height="match_parent"
+            android:contentDescription="add news"
+            android:src="@drawable/ic_add_round_fill"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/findFriendsButtonInUserMenu"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:layout_editor_absoluteY="60dp" />
+
+        <ImageButton
+            android:id="@+id/findFriendsButtonInUserMenu"
+            style="@style/Widget.AppCompat.Button.Borderless.Colored"
+            android:layout_width="60dp"
+            android:layout_height="match_parent"
+            android:contentDescription="add friends"
+            android:src="@drawable/ic_user_add_duotone_line"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/addNewsButton"
+            app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/UserMenuNavigateLayout"
+            android:layout_width="match_parent"
+            android:layout_height="50dp">
+
+            <com.google.android.material.tabs.TabLayout
+                android:id="@+id/userMenuTableLayout"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                app:tabIndicatorGravity="stretch"
+                app:tabIndicatorFullWidth="true"
+                app:tabIndicatorColor="@color/tabIconColor"
+                app:tabIconTint="@color/tabIconColor"
+                app:tabIndicatorAnimationDuration="@integer/material_motion_duration_long_2"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.0">
+
+                <com.google.android.material.tabs.TabItem
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:icon="@drawable/ic_desk_fill" />
+
+                <com.google.android.material.tabs.TabItem
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:icon="@drawable/ic_star_small" />
+
+                <com.google.android.material.tabs.TabItem
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:icon="@drawable/ic_user_fill" />
+
+            </com.google.android.material.tabs.TabLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.viewpager2.widget.ViewPager2
+            android:id="@+id/userMenuViewPager"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+    </LinearLayout>
+
+</FrameLayout>
