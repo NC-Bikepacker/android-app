@@ -3,7 +3,7 @@ package ru.netcracker.bikepacker.view;
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.ClipData;
-import android.content.Context;
+import android.content.ContentResolver;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -75,7 +75,6 @@ public class CreatePointFragment extends Fragment {
 
     public CreatePointFragment() {
         this.userAccountManager = UserAccountManager.getInstance(getContext());
-
     }
 
     @Override
@@ -109,21 +108,15 @@ public class CreatePointFragment extends Fragment {
                     @Override
                     public void onActivityResult(Object r) {
                         ActivityResult result = (ActivityResult) r;
-                        try {
-                            if (result.getResultCode() == getActivity().RESULT_OK
-                                    && null != result.getData()) {
-                                Bundle extras = result.getData().getExtras();
-                                Bitmap imageBitmap = (Bitmap) extras.get("data");
-                                imagesDecodedList.add(encodeImage(imageBitmap));
-                                right.setVisibility(View.INVISIBLE);
-                                left.setVisibility(View.INVISIBLE);
-                                imageView.setImageBitmap(imageBitmap);
-                            }
-                        }catch (NullPointerException e){
-                            Log.e("getActivity()", "getActivity is null");
-
+                        if (result.getResultCode() == getActivity().RESULT_OK
+                                && null != result.getData()) {
+                            Bundle extras = result.getData().getExtras();
+                            Bitmap imageBitmap = (Bitmap) extras.get("data");
+                            imagesDecodedList.add(encodeImage(imageBitmap));
+                            right.setVisibility(View.INVISIBLE);
+                            left.setVisibility(View.INVISIBLE);
+                            imageView.setImageBitmap(imageBitmap);
                         }
-
                     }
                 });
         activityResultLauncherAddPhoto = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
@@ -137,31 +130,29 @@ public class CreatePointFragment extends Fragment {
                                 String[] filePathColumn = {MediaStore.Images.Media.DATA};
                                 if (result.getData().getData() != null) {
                                     Uri mImageUri = result.getData().getData();
-                                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), mImageUri);
-                                    imagesDecodedList.add(encodeImage(bitmap));
-                                    try {
+                                    Optional<ContentResolver> contentResolver = Optional.ofNullable(getActivity()).map(Activity::getContentResolver);
+                                    if (contentResolver.isPresent()){
+                                        Bitmap bitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), mImageUri);
+                                        imagesDecodedList.add(encodeImage(bitmap));
                                         Cursor cursor = getActivity().getContentResolver().query(mImageUri,
                                                 filePathColumn, null, null, null);
                                         cursor.moveToFirst();
                                         cursor.close();
-                                    }catch (NullPointerException e){
-                                        Log.e("getActivity()", "getActivity is null");
                                     }
                                 } else {
                                     if (result.getData().getClipData() != null) {
                                         ClipData mClipData = result.getData().getClipData();
                                         for (int i = 0; i < mClipData.getItemCount(); i++) {
                                             ClipData.Item item = mClipData.getItemAt(i);
+                                            Optional<ContentResolver> contentResolver = Optional.ofNullable(getActivity()).map(Activity::getContentResolver);
                                             Uri uri = item.getUri();
-                                            try {
+                                            if (contentResolver.isPresent()){
                                                 Cursor cursor = getActivity().getContentResolver().query(uri, filePathColumn, null, null, null);
                                                 cursor.moveToFirst();
                                                 Bitmap bitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), uri);
                                                 String imageStr = encodeImage(bitmap);
                                                 imagesDecodedList.add(imageStr);
                                                 cursor.close();
-                                            }catch (NullPointerException e){
-                                                Log.e("getActivity()", "getActivity is null");
                                             }
                                         }
                                         Log.v("LOG_TAG", "Selected Images" + imagesDecodedList.size());
@@ -215,9 +206,9 @@ public class CreatePointFragment extends Fragment {
         buttonAccept.setOnClickListener(view -> {
             String description = Optional.ofNullable(descriptionText.getText()).toString();
             long track_id = recordFragment.getTrackRecorder().getTrackId();
-            if (recordFragment.getTrackRecorder().getLastLocation() != null) {
-                PointModel pointModel = new PointModel(description, track_id, recordFragment.getTrackRecorder().getLastLocation().getLatitude(),
-                        recordFragment.getTrackRecorder().getLastLocation().getLongitude(), imagesDecodedList);
+            if (recordFragment.getTrackRecorder().getLastLocation().isPresent()) {
+                PointModel pointModel = new PointModel(description, track_id, recordFragment.getTrackRecorder().getLastLocation().get().getLatitude(),
+                        recordFragment.getTrackRecorder().getLastLocation().get().getLongitude(), imagesDecodedList);
 
                 recordFragment.getTrackRecorder().addPoint(description);
                 sendData(pointModel);

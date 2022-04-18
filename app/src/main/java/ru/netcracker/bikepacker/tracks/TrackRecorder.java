@@ -3,6 +3,7 @@ package ru.netcracker.bikepacker.tracks;
 import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.graphics.Path;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -17,6 +18,7 @@ import org.osmdroid.util.GeoPoint;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Timer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -74,16 +76,17 @@ public class TrackRecorder {
         this.onRecordingEventsListener = onRecordingEventsListener;
     }
 
-    public GeoPoint getLastLocation() {
+    public Optional<GeoPoint> getLastLocation() {
+
         if (ActivityCompat.checkSelfPermission(ctx, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(ctx, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            return null;
+            return Optional.empty();
         }
         Location userLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
         if (userLocation == null) {
-            Toast.makeText(ctx,"Recording start failed",Toast.LENGTH_LONG).show();
-            return null;
+            Toast.makeText(ctx,"No last location found",Toast.LENGTH_LONG).show();
+            Optional.empty();
         }
-        return new GeoPoint(userLocation);
+        return Optional.of(new GeoPoint(userLocation));
     }
     public void addPoint(String description) {
         if (ActivityCompat.checkSelfPermission(ctx, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(ctx, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
