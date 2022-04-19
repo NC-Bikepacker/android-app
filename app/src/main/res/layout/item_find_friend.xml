@@ -18,21 +18,20 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:paddingTop="4dp"
-            android:paddingBottom="8dp">
+            android:paddingTop="16dp"
+            android:paddingBottom="16dp"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
 
-                <ImageView
+                <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/findFriendPic"
-                    android:layout_width="80dp"
-                    android:layout_height="80dp"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginTop="16dp"
-                    android:layout_marginEnd="4dp"
-                    android:layout_marginBottom="16dp"
+                    android:layout_width="67dp"
+                    android:layout_height="67dp"
+                    app:layout_constraintDimensionRatio="1:1"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.0"
@@ -44,15 +43,14 @@
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:paddingLeft="16dp"
-                android:paddingRight="16dp">
+                android:layout_height="wrap_content"
+                android:paddingLeft="16dp">
 
                 <TextView
                     android:id="@+id/findFriend_firstAndLastName"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
+                    android:layout_marginRight="56dp"
                     android:fontFamily="@font/proxima_nova_semibold"
                     android:text="First and Last name"
                     android:textColor="@color/black"
@@ -69,7 +67,7 @@
                     android:layout_marginEnd="100dp"
                     android:fontFamily="@font/proxima_nova_regular"
                     android:text="nickName"
-                    android:textColor="@color/black"
+                    android:textColor="@color/grey_main"
                     android:textSize="12sp"
                     app:layout_constraintBottom_toTopOf="@+id/findFriendAddButton"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -109,22 +107,22 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="@+id/findFriendAddButton"
                     app:layout_constraintVertical_bias="0.875"
-                    app:srcCompat="@drawable/ic_line_fill"
+                    app:srcCompat="@drawable/ic_get_tracks"
                     tools:ignore="TouchTargetSizeCheck" />
 
                 <androidx.appcompat.widget.AppCompatImageButton
                     android:id="@+id/deleteFriendButton"
-                    android:layout_width="36dp"
-                    android:layout_height="36dp"
-                    android:layout_marginTop="8dp"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
                     android:layout_weight="1"
-                    android:contentDescription="add fiend"
+                    android:contentDescription="Remove friend"
                     android:scaleType="fitCenter"
                     android:theme="@style/deleteButton"
                     android:visibility="invisible"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:srcCompat="@drawable/ic_delete" />
+                    android:background="@drawable/circular"
+                    android:layout_centerVertical="true"/>
             </androidx.constraintlayout.widget.ConstraintLayout>
 
         </LinearLayout>

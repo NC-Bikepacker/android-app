@@ -64,20 +64,19 @@ public class RecordFragment extends Fragment {
         LocationManager locationManager = (LocationManager) ctx.getSystemService(Context.LOCATION_SERVICE);
         trackRecorder = new TrackRecorder(ctx, locationManager);
         trackRecorder.setOnRecordingListener(
-            new OnRecordingEventsListener() {
-                @Override
-                public void onStartRecording() {
-                    recordButton.setImageResource(R.drawable.ic_stop_recording);
-                }
+                new OnRecordingEventsListener() {
+                    @Override
+                    public void onStartRecording() {
+                        recordButton.setImageResource(R.drawable.ic_stop_recording);
+                    }
 
-                @Override
-                public void onFinishRecording() {
-                    recordButton.setImageResource(R.drawable.ic_start_new_track);
-                    onStopBtnClickListener.onClick();
-                    onGpxCreatedListener.onGpxCreated(trackRecorder.getGpx());
-
+                    @Override
+                    public void onFinishRecording() {
+                        recordButton.setImageResource(R.drawable.ic_start_new_track);
+                        onStopBtnClickListener.onClick();
+                        onGpxCreatedListener.onGpxCreated(trackRecorder.getGpx());
+                    }
                 }
-            }
         );
 
         recordButton.setOnClickListener(
@@ -86,7 +85,7 @@ public class RecordFragment extends Fragment {
                         trackRecorder.finishRecording();
                     } else {
                         ((TextView) view.findViewById(R.id.textView2)).setText("Time: ");
-                        view.findViewById(R.id.favourite_tracks).setVisibility(View.GONE);
+                        view.findViewById(R.id.start_starred_tracks).setVisibility(View.GONE);
 
                         trackRecorder.startRecording();
                     }
