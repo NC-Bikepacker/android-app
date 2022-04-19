@@ -108,7 +108,7 @@ public class CreatePointFragment extends Fragment {
                     @Override
                     public void onActivityResult(Object r) {
                         ActivityResult result = (ActivityResult) r;
-                        if (result.getResultCode() == getActivity().RESULT_OK
+                        if (result.getResultCode() == Activity.RESULT_OK
                                 && null != result.getData()) {
                             Bundle extras = result.getData().getExtras();
                             Bitmap imageBitmap = (Bitmap) extras.get("data");
@@ -125,7 +125,7 @@ public class CreatePointFragment extends Fragment {
                     public void onActivityResult(Object r) {
                         ActivityResult result = (ActivityResult) r;
                         try {
-                            if (getActivity() != null && result.getResultCode() == getActivity().RESULT_OK
+                            if (result.getResultCode() == Activity.RESULT_OK
                                     && null != result.getData()) {
                                 String[] filePathColumn = {MediaStore.Images.Media.DATA};
                                 if (result.getData().getData() != null) {
