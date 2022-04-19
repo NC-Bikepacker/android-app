@@ -163,9 +163,7 @@ public class FindFriendFragment extends Fragment {
                     @Override
                     public void onResponse(Call<List<UserModel>> call, Response<List<UserModel>> response) {
                         List<UserModel> friends = response.body();
-                        if (friends == null || friends.isEmpty()) {
-                            Toast.makeText(context, "у вас еще нет друзей", Toast.LENGTH_SHORT).show();
-                        } else {
+                        if (friends != null && !friends.isEmpty()) {
                             MyFriendsList.getInstance().updateMyFriends(friends);
                             findFriendsList.clear();
                             findFriendsList.addAll(friends);

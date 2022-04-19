@@ -13,9 +13,9 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.squareup.picasso.Picasso;
 
-import java.io.IOException;
 import java.util.List;
 
 import retrofit2.Call;
@@ -23,13 +23,12 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import ru.netcracker.bikepacker.R;
 import ru.netcracker.bikepacker.manager.RetrofitManager;
-import ru.netcracker.bikepacker.manager.SessionManager;
 import ru.netcracker.bikepacker.manager.UserAccountManager;
 import ru.netcracker.bikepacker.model.ImageModel;
 import ru.netcracker.bikepacker.model.TrackModel;
 import ru.netcracker.bikepacker.service.ImageConverter;
 
-public class UserMenuRecyclerAdapter extends RecyclerView.Adapter<UserMenuRecyclerAdapter.UserMenuRecyclerViewHolder>{
+public class UserMenuRecyclerAdapter extends RecyclerView.Adapter<UserMenuRecyclerAdapter.UserMenuRecyclerViewHolder> {
 
     private Context context;
     private List<TrackModel> tracks;
@@ -63,26 +62,41 @@ public class UserMenuRecyclerAdapter extends RecyclerView.Adapter<UserMenuRecycl
                 .into(holder.userPicItemUserMenu);
 
         holder.firstAndLastnameUserMenuItem.setText(tracks.get(position).getUser().getFirstname() +
-                                                    " " +
-                                                    tracks.get(position).getUser().getLastname());
-        holder.timeTextViewUserMenu.setText(String.valueOf(tracks.get(position).getTravelTime()));
+                " " +
+                tracks.get(position).getUser().getLastname());
+
+        /*Convert travel time in seconds to readable string in format HH:MM:SS*/
+        long travelTime = tracks.get(position).getTravelTime();
+        long sec = travelTime % 60;
+        long min = (travelTime / 60) % 60;
+        long hours = (travelTime / 60) / 60;
+
+        String trTimeSecons = (sec < 10) ? "0" + Long.toString(sec) : Long.toString(sec);
+        String trTimeMinutes = (min < 10) ? "0" + Long.toString(min) : Long.toString(min);
+        String trTimeHours = (hours < 10) ? "0" + Long.toString(hours) : Long.toString(hours);
+
+        String travelTimeString = trTimeHours + ":" + trTimeMinutes + ":" + trTimeSecons;
+
+
+        holder.timeTextViewUserMenu.setText(String.valueOf(travelTimeString));
 
         retrofitManager.getJSONApi()
-                        .getTrackImage(userAccountManager.getCookie(),tracks.get(position).getTrackId())
-                        .enqueue(new Callback<ImageModel>() {
-                            @RequiresApi(api = Build.VERSION_CODES.O)
-                            @Override
-                            public void onResponse(Call<ImageModel> call, Response<ImageModel> response) {
-                                if(response.isSuccessful() && response.body()!=null){
-                                    holder.itemUserMenuMapImage.setImageBitmap(imageConverter.decode(response.body().getImageBase64()));
-                                }
-                            }
+                .getTrackImage(userAccountManager.getCookie(), tracks.get(position).getTrackId())
+                .enqueue(new Callback<ImageModel>() {
+                    @RequiresApi(api = Build.VERSION_CODES.O)
+                    @Override
+                    public void onResponse(Call<ImageModel> call, Response<ImageModel> response) {
+                        if (response.isSuccessful() && response.body() != null) {
+                            holder.itemUserMenuMapImage.setImageBitmap(imageConverter.decode(response.body().getImageBase64()));
+//                                    holder.itemUserMenuMapImage.set
+                        }
+                    }
 
-                            @Override
-                            public void onFailure(Call<ImageModel> call, Throwable t) {
-                                Log.e(UserMenuRecyclerAdapter.class.getName(), "Error responce image model: " + t.getMessage(), t);
-                            }
-                        });
+                    @Override
+                    public void onFailure(Call<ImageModel> call, Throwable t) {
+                        Log.e(UserMenuRecyclerAdapter.class.getName(), "Error responce image model: " + t.getMessage(), t);
+                    }
+                });
     }
 
     @Override
@@ -90,19 +104,19 @@ public class UserMenuRecyclerAdapter extends RecyclerView.Adapter<UserMenuRecycl
         return tracks.size();
     }
 
-    public static final class UserMenuRecyclerViewHolder extends RecyclerView.ViewHolder{
+    public static final class UserMenuRecyclerViewHolder extends RecyclerView.ViewHolder {
         ImageView userPicItemUserMenu;
         ImageButton addFavoriteTrackButton,
-                    addImportantTrack,
-                    chatAltFillButton,
-                    uploadTrackButton;
+                addImportantTrack,
+                chatAltFillButton,
+                uploadTrackButton;
         TextView firstAndLastnameUserMenuItem,
-                    dateUserMenuItem,
-                    trackNameTextView,
-                    distanceTextViewUserMenu,
-                    avgSpeedTextViewUserMenu,
-                    timeTextViewUserMenu;
-        ImageView   itemUserMenuMapImage;
+                dateUserMenuItem,
+                trackNameTextView,
+                distanceTextViewUserMenu,
+                avgSpeedTextViewUserMenu,
+                timeTextViewUserMenu;
+        ImageView itemUserMenuMapImage;
 
 
         public UserMenuRecyclerViewHolder(@NonNull View itemView) {
@@ -112,7 +126,7 @@ public class UserMenuRecyclerAdapter extends RecyclerView.Adapter<UserMenuRecycl
             this.addFavoriteTrackButton = itemView.findViewById(R.id.addFavoriteTrackButton);
             this.addImportantTrack = itemView.findViewById(R.id.addImportantTrack);
             this.chatAltFillButton = itemView.findViewById(R.id.chatAltFillButton);
-            this.uploadTrackButton = itemView.findViewById(R.id.uploadTrackButton);
+            this.uploadTrackButton = itemView.findViewById(R.id.shareTrackButton);
             this.firstAndLastnameUserMenuItem = itemView.findViewById(R.id.firstAndLastnameUserMenuItem);
             this.dateUserMenuItem = itemView.findViewById(R.id.dateUserMenuItem);
             this.distanceTextViewUserMenu = itemView.findViewById(R.id.distanceTextViewUserMenu);
