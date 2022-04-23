@@ -1,5 +1,5 @@
 package ru.netcracker.bikepacker.tracks.listeners;
 
-public interface OnStopBtnClickListener {
+public interface OnRecordBtnClickListener {
     void onClick();
 }

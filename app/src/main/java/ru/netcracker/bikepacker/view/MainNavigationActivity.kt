@@ -1,24 +1,38 @@
 package ru.netcracker.bikepacker.view
 
 import android.content.Context
-import androidx.appcompat.app.AppCompatActivity
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.preference.PreferenceManager
+import android.util.Log
 import android.view.View
-import android.widget.ImageButton
-import android.widget.Toast
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
-import android.widget.*
+import android.widget.FrameLayout
+import android.widget.ImageButton
+import android.widget.LinearLayout
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import org.osmdroid.config.Configuration
 import org.osmdroid.views.overlay.OverlayWithIW
-import ru.netcracker.bikepacker.*
+import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider
+import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay
+import ru.netcracker.bikepacker.R
 import ru.netcracker.bikepacker.databinding.ActivityMainNavigationBinding
-import ru.netcracker.bikepacker.tracks.UserTrack
 import ru.netcracker.bikepacker.tracks.GpxUtil
+import ru.netcracker.bikepacker.tracks.UserTrack
+import java.lang.String
 import java.util.stream.Collectors
+import kotlin.Boolean
+import kotlin.Int
+import kotlin.getValue
+import kotlin.lazy
+import kotlin.let
+import kotlin.run
+import kotlin.with
+
 
 class MainNavigationActivity : AppCompatActivity() {
     companion object {
@@ -43,6 +57,7 @@ class MainNavigationActivity : AppCompatActivity() {
     private var upAnim: Animation? = null
     private var userTrack: UserTrack? = null
     private var binding: ActivityMainNavigationBinding? = null
+    private var bitmap: Bitmap? = null
 
     //fragments
     private val recordSummaryFragment: RecordSummaryFragment by lazy {
@@ -64,11 +79,6 @@ class MainNavigationActivity : AppCompatActivity() {
                     overlay is OverlayWithIW &&
                             overlay.id == UserTrack.RECORDED_TRACK_TAG
                 }
-                Toast.makeText(
-                    ctx,
-                    mapFragment.map.overlayManager.overlays().toString(),
-                    Toast.LENGTH_LONG
-                ).show()
                 findViewById<LinearLayout>(R.id.btn_container).let {
                     it.translationX = 0f
                     it.translationY = 0f
@@ -105,6 +115,7 @@ class MainNavigationActivity : AppCompatActivity() {
         if (fr != null) fr as FindFriendFragment
         else FindFriendFragment()
     }
+
 
     private val userMenuFragment: UserMenuFragment by lazy {
         val fr = supportFragmentManager.findFragmentByTag(TAG_USER_MENU)
@@ -152,6 +163,12 @@ class MainNavigationActivity : AppCompatActivity() {
                     mapFragment.switchOnClickAnim()
                 }
             }
+            initialFr.setOnStartBtnClickListener {
+                mapFragment.map.overlays.removeIf { overlay ->
+                    overlay is OverlayWithIW &&
+                            overlay.id == UserTrack.RECORDED_TRACK_TAG
+                }
+            }
             initialFr
         }
     }
@@ -164,6 +181,7 @@ class MainNavigationActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainNavigationBinding.inflate(layoutInflater)
         ctx = applicationContext
+        bitmap = BitmapFactory.decodeResource(resources, R.drawable.ic_menu_compass)
         downAnim = AnimationUtils.loadAnimation(ctx, R.anim.down_alpha_trans)
         upAnim = AnimationUtils.loadAnimation(ctx, R.anim.up_alpha_trans)
 
@@ -175,7 +193,7 @@ class MainNavigationActivity : AppCompatActivity() {
                     supportFragmentManager
                         .beginTransaction()
                         .remove(recordFragment)
-                        .show(homeFragment)
+                        .show(mapFragment)
                         .commit()
                 }
             })
@@ -205,8 +223,7 @@ class MainNavigationActivity : AppCompatActivity() {
                 .add(R.id.fragment_container, settingsFragment, TAG_SETTINGS).hide(settingsFragment)
                 .add(R.id.fragment_container, homeFragment, TAG_HOME).hide(homeFragment)
                 .add(R.id.fragment_container, findFriend, TAG_FINDFRIEND).hide(findFriend)
-                .add(R.id.fragment_container, userMenuFragment, TAG_USER_MENU)
-                .hide(userMenuFragment)
+                .add(R.id.fragment_container, userMenuFragment, TAG_USER_MENU).hide(userMenuFragment)
                 //TODO: .add(R.id.fragment_container, {required fragment}, TAG_RECORD).hide({required fragment})
                 .show(activeFragment!!)
                 .commit()
@@ -220,29 +237,15 @@ class MainNavigationActivity : AppCompatActivity() {
             setFragment(it.itemId)
         }
 
+        bitmap = BitmapFactory.decodeResource(resources, R.drawable.ic_menu_compass)
+        Log.d("!!!!!!!!!!", String.valueOf(bitmap))
+
     }
 
     private fun setFragment(itemId: Int): Boolean {
         selectedFragment = itemId
 
         when (itemId) {
-            R.id.navigation_home -> {
-                if (activeFragment is MapFragment) {
-                    return if (supportFragmentManager.findFragmentByTag(
-                            TAG_RECORD
-                        ) == null
-                    ) false
-                    else {
-                        findViewById<FrameLayout>(R.id.start_new_route_container)?.startAnimation(
-                            downAnim
-                        )
-                        true
-                    }
-                }
-                supportFragmentManager.beginTransaction().hide(activeFragment!!).show(homeFragment)
-                    .commit()
-                activeFragment = mapFragment
-            }
             R.id.navigation_record -> {
                 if (activeFragment !is MapFragment) {
                     supportFragmentManager.beginTransaction().hide(activeFragment!!)
@@ -312,6 +315,4 @@ class MainNavigationActivity : AppCompatActivity() {
         super.onSaveInstanceState(outState)
         outState.putInt(CURRENT_FRAGMENT, selectedFragment)
     }
-
-
 }
