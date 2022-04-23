@@ -46,6 +46,12 @@
     </style>
 
     <style name="whiteAndPurpleButton" parent="@style/Widget.AppCompat.Button.Borderless.Colored">
-        <item name="colorControlHighlight">@color/purple_700</item>
+        <item name="colorControlHighlight">@color/tabIconColor</item>
+    </style>
+
+    <!--Tab theme-->
+    <style name="MyCustomTextAppearance" parent="TextAppearance.Design.Tab">
+        <item name="textAllCaps">false</item>
+        <item name="android:textAllCaps">false</item>
     </style>
 </resources>

@@ -76,7 +76,7 @@ public class RecordFragment extends Fragment {
                 new OnRecordingEventsListener() {
                     @Override
                     public void onStartRecording() {
-                        view.findViewById(R.id.favourite_tracks).setVisibility(View.GONE);
+                        view.findViewById(R.id.start_starred_tracks).setVisibility(View.GONE);
                         recordButton.setImageResource(R.drawable.ic_stop_recording);
                     }
 

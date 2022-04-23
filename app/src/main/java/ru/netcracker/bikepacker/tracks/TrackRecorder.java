@@ -24,8 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+
 import java.util.stream.Stream;
 
 import io.jenetics.jpx.GPX;
@@ -69,7 +68,7 @@ public class TrackRecorder {
     //region Objects for making and editing tracks
     private static final GPX.Builder gpxBuilder = GPX.builder();
     private static final Track.Builder trackBuilder = Track.builder();
-    private int trackId;
+    private Long trackId;
     //endregion
     private final TextView textView;
 
@@ -160,25 +159,15 @@ public class TrackRecorder {
         TrackModel trackToPost = new TrackModel(userAccountManager.getUser());
         RetrofitManager.getInstance(ctx).getJSONApi().postTrack(userAccountManager.getCookie(), trackToPost).enqueue(new Callback<ResponseBody>() {
             @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+            public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
                 try {
                     if (response.isSuccessful()) {
                         String temp;
                         assert response.body() != null;
                         temp = response.body().string();
                         Log.d("CALLBACK", temp);
-
-                        Matcher matcher = Pattern.compile("(\"trackId\":)(\\d+)")
-                                .matcher(temp.replaceAll("\\p{C}", "").trim());
-                        if (matcher.find()) {
-                            temp = matcher.group(2);
-                            assert temp != null;
-                            trackId = Integer.parseInt(temp);
-
-                            Log.d("TrackPostingCallback", "TRACK №" + trackId + " SENT");
-                        } else {
-                            Log.e("IpNotFoundError", "IP parsing failed");
-                        }
+                        trackId = Long.parseLong(temp);
+                        Log.d("TrackPostingCallback", "TRACK №" + trackId + " SENT");
 
                     } else {
                         Log.e("PostingTrackError", String.format("Error response: %d %s", response.code(), response.message()));
@@ -194,21 +183,21 @@ public class TrackRecorder {
             }
 
             @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
-                Log.d("Track sending callback", "NOT SENT");
+            public void onFailure(@NonNull Call<ResponseBody> call, @NonNull Throwable t) {
+                Log.e("Track sending callback", "error send response. Error message: " + t.getMessage(),t);
             }
         });
     }
 
     public void sendPutRequest(long travelTime, float complexity) {
         //TODO: Change complexity to float
-        TrackModel trackToPut = new TrackModel(travelTime, (long) complexity, userAccountManager.getUser(), GpxUtil.gpxToString(getGpx()));
+        TrackModel trackToPut = new TrackModel(trackId, travelTime, (long) complexity, userAccountManager.getUser(), GpxUtil.gpxToString(getGpx()));
 
         RetrofitManager.getInstance(ctx).getJSONApi()
                 .putTrack(userAccountManager.getCookie(), trackId, trackToPut)
                 .enqueue(new Callback<ResponseBody>() {
                     @Override
-                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                    public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
                         if (response.isSuccessful()) {
                             Log.d("TrackPuttingCallback", "PUT");
                         } else {
@@ -225,8 +214,8 @@ public class TrackRecorder {
                     }
 
                     @Override
-                    public void onFailure(Call<ResponseBody> call, Throwable t) {
-                        Log.d("TrackPuttingCallback", "NOT PUT");
+                    public void onFailure(@NonNull Call<ResponseBody> call, @NonNull Throwable t) {
+                        Log.e("TrackPuttingCallback", "error put response. Error message: " + t.getMessage(),t);
                     }
                 });
     }
@@ -234,11 +223,12 @@ public class TrackRecorder {
     public void sendPutRequest() {
         TrackModel trackToPut = new TrackModel(userAccountManager.getUser());
         trackToPut.setGpx(GpxUtil.gpxToString(getGpx()));
+        trackToPut.setTrackId(trackId);
         RetrofitManager.getInstance(ctx).getJSONApi()
                 .putTrack(userAccountManager.getCookie(), trackId, trackToPut)
                 .enqueue(new Callback<ResponseBody>() {
                     @Override
-                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                    public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
                         if (response.isSuccessful()) {
                             Log.d("TrackPuttingCallback", "PUT");
                         } else {
@@ -255,8 +245,8 @@ public class TrackRecorder {
                     }
 
                     @Override
-                    public void onFailure(Call<ResponseBody> call, Throwable t) {
-                        Log.d("TrackPuttingCallback", "NOT PUT");
+                    public void onFailure(@NonNull Call<ResponseBody> call, @NonNull Throwable t) {
+                        Log.e("TrackPuttingCallback", "error put response. Error message: " + t.getMessage(),t);
                     }
                 });
     }

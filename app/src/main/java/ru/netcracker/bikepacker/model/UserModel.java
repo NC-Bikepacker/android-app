@@ -34,7 +34,11 @@ public class UserModel implements Serializable {
         this.id = id;
     }
 
+    public UserModel(long l, String favorite, String tracks, String comeBak, Object o) {
+    }
+
     public UserModel() {
+
     }
 
     public String getFirstname() {

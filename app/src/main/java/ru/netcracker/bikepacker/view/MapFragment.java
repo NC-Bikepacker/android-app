@@ -24,7 +24,11 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import org.osmdroid.api.IMapController;
+import org.osmdroid.tileprovider.tilesource.OnlineTileSourceBase;
+import org.osmdroid.tileprovider.tilesource.ThunderforestTileSource;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
+import org.osmdroid.tileprovider.tilesource.TileSourcePolicy;
+import org.osmdroid.tileprovider.tilesource.XYTileSource;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.CustomZoomButtonsController;
 import org.osmdroid.views.MapView;
@@ -58,7 +62,7 @@ public class MapFragment extends Fragment {
                 ActivityCompat.checkSelfPermission(ctx, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return DEFAULT_POINT;
         }
-        Location imHere = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        @SuppressLint("MissingPermission") Location imHere = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
         userLocation = imHere != null ? new GeoPoint(imHere) : DEFAULT_POINT;
         return userLocation;
     }
@@ -95,8 +99,20 @@ public class MapFragment extends Fragment {
         assert ctx != null;
         GpsMyLocationProvider gpsMyLocationProvider = new GpsMyLocationProvider(ctx);
 
+
+        OnlineTileSourceBase OPENCYCLEMAP = new XYTileSource("Open Cycle Map",
+                0, 19, 512, ".png?apikey=063953b0deb84048a549eb28ee778db3", new String[]{
+                "https://a.tile.openstreetmap.org/",
+                "https://b.tile.openstreetmap.org/",
+                "https://c.tile.openstreetmap.org/"}, "© OpenStreetMap contributors",
+                new TileSourcePolicy(2,
+                        TileSourcePolicy.FLAG_NO_BULK
+                                | TileSourcePolicy.FLAG_NO_PREVENTIVE
+                                | TileSourcePolicy.FLAG_USER_AGENT_MEANINGFUL
+                                | TileSourcePolicy.FLAG_USER_AGENT_NORMALIZED
+                ));
         //setting map backdrop
-        map.setTileSource(TileSourceFactory.MAPNIK);
+        map.setTileSource(OPENCYCLEMAP);
         //setting visibility for map zoom controllers
         map.getZoomController().setVisibility(CustomZoomButtonsController.Visibility.NEVER);
         //setting hand gestures for zoom in/out
