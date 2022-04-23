@@ -98,9 +98,6 @@ public class RecordFragment extends Fragment {
                         requireActivity().runOnUiThread(
                                 new Thread(() -> trackRecorder.startRecording())
                         );
-//                        ((TextView) view.findViewById(R.id.textView2)).setText("Time: ");
-
-
                     }
                     recording = !recording;
                 }

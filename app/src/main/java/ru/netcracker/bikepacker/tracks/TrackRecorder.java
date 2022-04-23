@@ -64,33 +64,7 @@ public class TrackRecorder {
     private final List<WayPoint> wayPoints;
     private final List<Double> speeds;
     private final LocationManager locationManager;
-    private final LocationListener recorderListener = new LocationListener() {
-        @RequiresApi(api = Build.VERSION_CODES.O)
-        @Override
-        public void onLocationChanged(@NonNull Location location) {
-            WayPoint prev = wayPoints.get(wayPoints.size() - 1);
-            double lat = location.getLatitude();
-            double lon = location.getLongitude();
-            int actualTime = seconds;
-
-            WayPoint currentPoint = WayPoint.builder()
-                    .lat(lat)
-                    .lon(lon)
-                    .time(actualTime)
-                    .build();
-
-            double len = Geoid.WGS84.distance(currentPoint, prev).doubleValue();
-            AtomicInteger time = new AtomicInteger();
-            prev.getTime().ifPresent(zonedDateTime -> time.set(actualTime - zonedDateTime.toLocalTime().toSecondOfDay()));
-
-            double countedSpeed = len / time.doubleValue() * 36 / 10;
-            speed = Double.isInfinite(countedSpeed) || Double.isNaN(countedSpeed) ? speed : countedSpeed;
-            currentPoint = currentPoint.toBuilder().speed(Speed.of(speed, Speed.Unit.KILOMETERS_PER_HOUR)).build();
-
-            if (speed != 0) speeds.add(speed);
-            wayPoints.add(currentPoint);
-        }
-    };
+    private final RecordingLocationListener recorderListener = new RecordingLocationListener();
     //endregion
     //region Objects for making and editing tracks
     private static final GPX.Builder gpxBuilder = GPX.builder();
@@ -151,14 +125,11 @@ public class TrackRecorder {
                 if (hours >= 1) timeString = hours + ":" + timeString;
 
                 String speedStr = String.format(Locale.getDefault(), "%.1f", speed) + " Km/h";
-//                Toast.makeText(ctx, String.valueOf(speed), Toast.LENGTH_SHORT).show();
                 textView.setText(timeString + ' ' + speedStr);
                 seconds++;
                 if (isRecording) handler.postDelayed(this, UPDATE_TIME_DURATION);
             }
         });
-
-//        timer.schedule(timeRecorder,0, UPDATE_TIME_DURATION);
 
         wayPoints.add(WayPoint.builder().lat(start.getLatitude()).lon(start.getLongitude()).build());
         sendPostRequest();
@@ -318,5 +289,33 @@ public class TrackRecorder {
 
     public int getSeconds() {
         return seconds;
+    }
+
+    class RecordingLocationListener implements LocationListener {
+        @RequiresApi(api = Build.VERSION_CODES.O)
+        @Override
+        public void onLocationChanged(@NonNull Location location) {
+            WayPoint prev = wayPoints.get(wayPoints.size() - 1);
+            double lat = location.getLatitude();
+            double lon = location.getLongitude();
+            int actualTime = seconds;
+
+            WayPoint currentPoint = WayPoint.builder()
+                    .lat(lat)
+                    .lon(lon)
+                    .time(actualTime)
+                    .build();
+
+            double len = Geoid.WGS84.distance(currentPoint, prev).doubleValue();
+            AtomicInteger time = new AtomicInteger();
+            prev.getTime().ifPresent(zonedDateTime -> time.set(actualTime - zonedDateTime.toLocalTime().toSecondOfDay()));
+
+            double countedSpeed = len / time.doubleValue() * 36 / 10;
+            speed = Double.isInfinite(countedSpeed) || Double.isNaN(countedSpeed) ? speed : countedSpeed;
+            currentPoint = currentPoint.toBuilder().speed(Speed.of(speed, Speed.Unit.KILOMETERS_PER_HOUR)).build();
+
+            if (speed != 0) speeds.add(speed);
+            wayPoints.add(currentPoint);
+        }
     }
 }
