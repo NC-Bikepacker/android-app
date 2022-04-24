@@ -204,7 +204,7 @@ public class CreatePointFragment extends Fragment {
         );
 
         buttonAccept.setOnClickListener(view -> {
-            String description = Optional.ofNullable(descriptionText.getText()).toString();
+            String description = descriptionText.getText().toString();
             long track_id = recordFragment.getTrackRecorder().getTrackId();
             if (recordFragment.getTrackRecorder().getLastLocation().isPresent()) {
                 PointModel pointModel = new PointModel(description, track_id, recordFragment.getTrackRecorder().getLastLocation().get().getLatitude(),
