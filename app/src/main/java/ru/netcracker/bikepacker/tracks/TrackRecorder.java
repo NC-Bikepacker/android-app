@@ -84,10 +84,11 @@ public class TrackRecorder {
         Location userLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
         if (userLocation == null) {
             Toast.makeText(ctx,"No last location found",Toast.LENGTH_LONG).show();
-            Optional.empty();
+            return Optional.empty();
         }
         return Optional.of(new GeoPoint(userLocation));
     }
+
     public void addPoint(String description) {
         if (ActivityCompat.checkSelfPermission(ctx, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(ctx, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
