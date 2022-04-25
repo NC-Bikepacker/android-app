@@ -22,14 +22,14 @@ import ru.netcracker.bikepacker.tracks.TrackRecorder;
 import ru.netcracker.bikepacker.tracks.listeners.OnCreatePointListener;
 import ru.netcracker.bikepacker.tracks.listeners.OnGpxCreatedListener;
 import ru.netcracker.bikepacker.tracks.listeners.OnRecordingEventsListener;
-import ru.netcracker.bikepacker.tracks.listeners.OnStopBtnClickListener;
 import ru.netcracker.bikepacker.tracks.listeners.OnRecordBtnClickListener;
-
+import ru.netcracker.bikepacker.tracks.listeners.OnStopBtnClickListener;
 
 
 public class RecordFragment extends Fragment {
     public RecordFragment() {
     }
+
     public TrackRecorder getTrackRecorder() {
         return trackRecorder;
     }
@@ -40,31 +40,24 @@ public class RecordFragment extends Fragment {
     private OnGpxCreatedListener onGpxCreatedListener;
     private OnRecordBtnClickListener onStopBtnClickListener;
     private OnRecordBtnClickListener onStartBtnClickListener;
+    private OnCreatePointListener onCreatePointListener;
     private TextView textView;
-    private OnStopBtnClickListener onStopBtnClickListener;
-//    private TextView textView;
-private OnCreatePointListener onCreatePointListener;
-
     private Button btnPoint;
+
+    public void setOnStopBtnClickListener(OnRecordBtnClickListener onStopBtnClickListener) {
+        this.onStopBtnClickListener = onStopBtnClickListener;
+    }
 
     public void setBtnPoint(Button btnPoint) {
         this.btnPoint = btnPoint;
     }
+
     public void setOnCreatePointListener(OnCreatePointListener onCreatePointListener) {
         this.onCreatePointListener = onCreatePointListener;
     }
 
     public void setOnGpxCreatedListener(OnGpxCreatedListener onGpxCreatedListener) {
         this.onGpxCreatedListener = onGpxCreatedListener;
-    }
-
-
-    public void setOnStopBtnClickListener(OnStopBtnClickListener onStopBtnClickListener) {
-        this.onStopBtnClickListener = onStopBtnClickListener;
-    }
-
-    public void setOnStopBtnClickListener(OnRecordBtnClickListener onStopBtnClickListener) {
-        this.onStopBtnClickListener = onStopBtnClickListener;
     }
 
     public void setOnStartBtnClickListener(OnRecordBtnClickListener onStartBtnClickListener) {
@@ -96,24 +89,24 @@ private OnCreatePointListener onCreatePointListener;
         textView = view.findViewById(R.id.textView2);
         trackRecorder = new TrackRecorder(ctx, locationManager, textView);
         trackRecorder.setOnRecordingListener(
-            new OnRecordingEventsListener() {
-                @Override
-                public void onStartRecording() {
-                    view.findViewById(R.id.start_starred_tracks).setVisibility(View.GONE);
-                    recordButton.setImageResource(R.drawable.ic_stop_recording);
-                    btnPoint.setVisibility(View.VISIBLE);
-                }
+                new OnRecordingEventsListener() {
+                    @Override
+                    public void onStartRecording() {
+                        view.findViewById(R.id.start_starred_tracks).setVisibility(View.GONE);
+                        recordButton.setImageResource(R.drawable.ic_stop_recording);
+                        btnPoint.setVisibility(View.VISIBLE);
+                    }
 
-                @Override
-                public void onFinishRecording() {
-                    recordButton.setImageResource(R.drawable.ic_start_new_track);
-                    onStopBtnClickListener.onClick();
-                    onGpxCreatedListener.onGpxCreated(trackRecorder.getGpx());
-                    btnPoint.setVisibility(View.INVISIBLE);
+                    @Override
+                    public void onFinishRecording() {
+                        recordButton.setImageResource(R.drawable.ic_start_new_track);
+                        onStopBtnClickListener.onClick();
+                        onGpxCreatedListener.onGpxCreated(trackRecorder.getGpx());
+                        btnPoint.setVisibility(View.INVISIBLE);
+                    }
                 }
-            }
         );
-
+        btnPoint.setOnClickListener(view1 -> onCreatePointListener.onClick());
         recordButton.setOnClickListener(
                 view1 -> {
                     if (recording) {

@@ -74,8 +74,6 @@ public interface ApiService {
     @GET("/image/track/{id}")
     Call<ImageModel> getTrackImage(@Header ("Cookie") String cookie, @Path("id") Long id);
 
-    Call<ResponseBody> deleteFriend(@Header ("Cookie") String cookie, @Body FriendModel friends);
-
     @POST("/points/point")
     Call<ResponseBody> addPoint(@Header ("Cookie") String cookie, @Body PointModel point);
 }

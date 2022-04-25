@@ -69,9 +69,7 @@ public class TrackRecorder {
     private static final int UPDATE_TIME_DURATION = 1000;
     //endregion
     //region Objects for track recording
-    private final List<WayPoint> wayPoints;
     private final List<Double> speeds;
-    private final LocationManager locationManager;
     private final RecordingLocationListener recorderListener = new RecordingLocationListener();
     //endregion
     //region Objects for making and editing tracks
@@ -81,12 +79,9 @@ public class TrackRecorder {
     //endregion
     private final TextView textView;
 
-    public int getTrackId() {
+    public Long getTrackId() {
         return trackId;
     }
-
-    private int trackId;
-    private static final int UPDATE_TIME_DURATION = 1000;
 
     public void setOnRecordingListener(OnRecordingEventsListener onRecordingEventsListener) {
         this.onRecordingEventsListener = onRecordingEventsListener;
@@ -119,7 +114,7 @@ public class TrackRecorder {
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
-    public TrackRecorder(Context ctx, LocationManager locationManager) {
+    public TrackRecorder(Context ctx, LocationManager locationManager, TextView textView) {
         this.ctx = ctx;
         this.locationManager = locationManager;
         this.wayPoints = new ArrayList<>();
