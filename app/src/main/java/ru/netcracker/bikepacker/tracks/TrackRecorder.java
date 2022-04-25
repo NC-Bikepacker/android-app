@@ -4,6 +4,7 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.graphics.Path;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -22,6 +23,10 @@ import org.osmdroid.util.GeoPoint;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.Timer;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.Locale;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -47,22 +52,22 @@ import ru.netcracker.bikepacker.tracks.listeners.OnRecordingEventsListener;
 public class TrackRecorder {
     private final UserAccountManager userAccountManager;
     private OnRecordingEventsListener onRecordingEventsListener;
+    private final LocationManager locationManager;
+    private final List<WayPoint> wayPoints;
+    private final List<WayPoint> points;
     private final Context ctx;
     private final Handler handler = new Handler();
     private int seconds = 0;
     private double speed = 0;
     private boolean isRecording = false;
     private String timeString;
-
     //region Constants
     public static final long MIN_TIME_MS = 5000;
     public static final float MIN_DISTANCE_M = 5;
     private static final int UPDATE_TIME_DURATION = 1000;
     //endregion
     //region Objects for track recording
-    private final List<WayPoint> wayPoints;
     private final List<Double> speeds;
-    private final LocationManager locationManager;
     private final RecordingLocationListener recorderListener = new RecordingLocationListener();
     //endregion
     //region Objects for making and editing tracks
@@ -72,8 +77,38 @@ public class TrackRecorder {
     //endregion
     private final TextView textView;
 
+    public Long getTrackId() {
+        return trackId;
+    }
+
     public void setOnRecordingListener(OnRecordingEventsListener onRecordingEventsListener) {
         this.onRecordingEventsListener = onRecordingEventsListener;
+    }
+
+    public Optional<GeoPoint> getLastLocation() {
+
+        if (ActivityCompat.checkSelfPermission(ctx, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(ctx, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return Optional.empty();
+        }
+        Location userLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        if (userLocation == null) {
+            Toast.makeText(ctx,"No last location found",Toast.LENGTH_LONG).show();
+            return Optional.empty();
+        }
+        return Optional.of(new GeoPoint(userLocation));
+    }
+
+    public void addPoint(String description) {
+        if (ActivityCompat.checkSelfPermission(ctx, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(ctx, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+        Location userLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        if (userLocation == null) {
+            Toast.makeText(ctx,"Recording start failed",Toast.LENGTH_LONG).show();
+            return;
+        }
+        GeoPoint start = new GeoPoint(userLocation);
+        points.add(WayPoint.builder().lat(start.getLatitude()).lon(start.getLongitude()).desc(description).build());
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -83,6 +118,7 @@ public class TrackRecorder {
         this.wayPoints = new ArrayList<>();
         this.speeds = new ArrayList<>();
         this.userAccountManager = UserAccountManager.getInstance(ctx);
+        this.points = new ArrayList<>();
         this.textView = textView;
     }
 
@@ -159,10 +195,10 @@ public class TrackRecorder {
         TrackModel trackToPost = new TrackModel(userAccountManager.getUser());
         RetrofitManager.getInstance(ctx).getJSONApi().postTrack(userAccountManager.getCookie(), trackToPost).enqueue(new Callback<ResponseBody>() {
             @Override
-            public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 try {
                     if (response.isSuccessful()) {
-                        String temp;
+                        String temp = null;
                         assert response.body() != null;
                         temp = response.body().string();
                         Log.d("CALLBACK", temp);
@@ -249,6 +285,9 @@ public class TrackRecorder {
                         Log.e("TrackPuttingCallback", "error put response. Error message: " + t.getMessage(),t);
                     }
                 });
+    }
+    public List<WayPoint> getPoints() {
+        return points;
     }
 
     public String getStatistics(StatisticType statisticType) {
