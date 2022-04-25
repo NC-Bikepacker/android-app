@@ -1,5 +1,6 @@
 package ru.netcracker.bikepacker.view;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import ru.netcracker.bikepacker.databinding.FragmentRecordSummaryBinding;
+import ru.netcracker.bikepacker.tracks.StatisticType;
 import ru.netcracker.bikepacker.tracks.TrackRecorder;
 import ru.netcracker.bikepacker.tracks.listeners.OnAcceptBtnClickListener;
 
@@ -18,7 +20,7 @@ public class RecordSummaryFragment extends Fragment {
 
     private FragmentRecordSummaryBinding recordSummaryBinding;
     private Button acceptButton;
-    private TrackRecorder trackRecorder;
+    private final TrackRecorder trackRecorder;
     private OnAcceptBtnClickListener onAcceptBtnClickListener;
 
     public void setOnAcceptBtnClickListener(OnAcceptBtnClickListener onAcceptBtnClickListener) {
@@ -35,6 +37,7 @@ public class RecordSummaryFragment extends Fragment {
         super.onCreate(savedInstanceState);
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -49,12 +52,26 @@ public class RecordSummaryFragment extends Fragment {
                     recordSummaryBinding.acceptButton.setVisibility(View.VISIBLE);
                 }
         );
+
+        recordSummaryBinding.distanse.setText("Distance: "
+                + trackRecorder.getStatistics(StatisticType.Distanse)
+        );
+        recordSummaryBinding.time.setText("Time: "
+                + trackRecorder.getStatistics(StatisticType.Time)
+        );
+        recordSummaryBinding.avgSpeed.setText("Average speed: "
+                + trackRecorder.getStatistics(StatisticType.AverageSpeed));
+
         recordSummaryBinding.acceptButton.setOnClickListener(
                 view -> {
-                    trackRecorder.sendPutRequest(2,ratingVal);
+                    trackRecorder.sendPutRequest(trackRecorder.getSeconds(),
+                            ratingVal
+                    );
                     onAcceptBtnClickListener.onClick();
                 }
         );
+
+
         return recordSummaryBinding.getRoot();
     }
 

@@ -14,6 +14,7 @@ import retrofit2.http.PUT;
 import retrofit2.http.Path;
 import ru.netcracker.bikepacker.model.AuthModel;
 import ru.netcracker.bikepacker.model.PointModel;
+import ru.netcracker.bikepacker.model.ImageModel;
 import ru.netcracker.bikepacker.model.SignUpModel;
 import ru.netcracker.bikepacker.model.FriendModel;
 import ru.netcracker.bikepacker.model.TrackModel;
@@ -21,7 +22,7 @@ import ru.netcracker.bikepacker.model.UserModel;
 
 public interface ApiService {
 
-//    Login and sign up requests
+    //    Login and sign up requests
     @Headers({
             "Content-Type: application/json;" +
                     "charset=UTF-8"})
@@ -34,32 +35,45 @@ public interface ApiService {
     @POST("/signup")
     Call<Void> signUp(@Body SignUpModel signUpModel);
 
-    //Post track request
+    //Track operations API
     @POST("/tracks")
-    public Call<ResponseBody> postTrack(@Header("Cookie") String cookie, @Body TrackModel track);
+    Call<ResponseBody> postTrack(@Header("Cookie") String cookie, @Body TrackModel track);
+
+    @GET("/tracks/{id}")
+    Call<List<TrackModel>> getTracksByUser(@Header ("Cookie") String cookie, @Path("id") long id);
 
     //Put track request
-    @PUT("/tracks/{id}")
-    public Call<ResponseBody> putTrack(@Header("Cookie") String cookie, @Path("id") long id, @Body TrackModel track);
+    @PUT("/tracks/update/{id}")
+    Call<ResponseBody> putTrack(@Header("Cookie") String cookie, @Path("id") long id, @Body TrackModel track);
 
     //operations with usersApi
     @GET("/users/{id}")
-    Call<UserModel> getUserWithID(@Header("Cookie") String cookie, @Path("id") long id);
+    Call<UserModel> getUserWithID(@Header ("Cookie") String cookie, @Path("id") long id);
 
     @GET("/users/user/getbyusername/{userNickName}")
-    Call<UserModel> getFriendWithNickName(@Header("Cookie") String cookie, @Path("userNickName") String nickName);
+    Call<UserModel> getFriendWithNickName(@Header ("Cookie") String cookie, @Path("userNickName") String nickName);
 
     @POST("/users")
-    Call<UserModel> postRequestUser(@Header("Cookie") String cookie, @Body UserModel findFriendEntity);
+    Call<UserModel> postRequestUser(@Header ("Cookie") String cookie, @Body UserModel findFriendEntity);
 
     //operations with friendsApi
     @GET("/friends/{nicknameThisUser}")
-    Call<List<UserModel>> getMyFriends(@Header("Cookie") String cookie, @Path("nicknameThisUser") String nickName);
+    Call<List<UserModel>> getMyFriends(@Header ("Cookie") String cookie, @Path("nicknameThisUser") String nickName);
 
     @POST("/friends/add")
-    Call<ResponseBody> postRequestFriend(@Header("Cookie") String cookie, @Body FriendModel friends);
+    Call<ResponseBody> postRequestFriend(@Header ("Cookie") String cookie, @Body FriendModel friends);
 
     @HTTP(method = "DELETE", path = "/friends/delete", hasBody = true)
+    Call<ResponseBody> deleteFriend(@Header ("Cookie") String cookie, @Body FriendModel friends);
+
+    //FAVORITE TRACKS
+    @GET("/favoritetracks/{idThisUser}")
+    Call<List<TrackModel>> getMyFavoriteTracks(@Header ("Cookie") String cookie, @Path("idThisUser") Long id);
+
+    //IMAGE
+    @GET("/image/track/{id}")
+    Call<ImageModel> getTrackImage(@Header ("Cookie") String cookie, @Path("id") Long id);
+
     Call<ResponseBody> deleteFriend(@Header ("Cookie") String cookie, @Body FriendModel friends);
 
     @POST("/points/point")

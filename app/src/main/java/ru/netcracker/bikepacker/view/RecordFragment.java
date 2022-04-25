@@ -3,6 +3,7 @@ package ru.netcracker.bikepacker.view;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,6 +14,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 
 import ru.netcracker.bikepacker.R;
@@ -21,6 +23,8 @@ import ru.netcracker.bikepacker.tracks.listeners.OnCreatePointListener;
 import ru.netcracker.bikepacker.tracks.listeners.OnGpxCreatedListener;
 import ru.netcracker.bikepacker.tracks.listeners.OnRecordingEventsListener;
 import ru.netcracker.bikepacker.tracks.listeners.OnStopBtnClickListener;
+import ru.netcracker.bikepacker.tracks.listeners.OnRecordBtnClickListener;
+
 
 
 public class RecordFragment extends Fragment {
@@ -34,6 +38,9 @@ public class RecordFragment extends Fragment {
     private Context ctx;
     private boolean recording = false;
     private OnGpxCreatedListener onGpxCreatedListener;
+    private OnRecordBtnClickListener onStopBtnClickListener;
+    private OnRecordBtnClickListener onStartBtnClickListener;
+    private TextView textView;
     private OnStopBtnClickListener onStopBtnClickListener;
 //    private TextView textView;
 private OnCreatePointListener onCreatePointListener;
@@ -51,8 +58,17 @@ private OnCreatePointListener onCreatePointListener;
         this.onGpxCreatedListener = onGpxCreatedListener;
     }
 
+
     public void setOnStopBtnClickListener(OnStopBtnClickListener onStopBtnClickListener) {
         this.onStopBtnClickListener = onStopBtnClickListener;
+    }
+
+    public void setOnStopBtnClickListener(OnRecordBtnClickListener onStopBtnClickListener) {
+        this.onStopBtnClickListener = onStopBtnClickListener;
+    }
+
+    public void setOnStartBtnClickListener(OnRecordBtnClickListener onStartBtnClickListener) {
+        this.onStartBtnClickListener = onStartBtnClickListener;
     }
 
     @Override
@@ -68,6 +84,7 @@ private OnCreatePointListener onCreatePointListener;
         return inflater.inflate(R.layout.fragment_record, container, false);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @SuppressLint("SetTextI18n")
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
@@ -76,11 +93,13 @@ private OnCreatePointListener onCreatePointListener;
 
         ImageButton recordButton = view.findViewById(R.id.record);
         LocationManager locationManager = (LocationManager) ctx.getSystemService(Context.LOCATION_SERVICE);
-        trackRecorder = new TrackRecorder(ctx, locationManager);
+        textView = view.findViewById(R.id.textView2);
+        trackRecorder = new TrackRecorder(ctx, locationManager, textView);
         trackRecorder.setOnRecordingListener(
             new OnRecordingEventsListener() {
                 @Override
                 public void onStartRecording() {
+                    view.findViewById(R.id.start_starred_tracks).setVisibility(View.GONE);
                     recordButton.setImageResource(R.drawable.ic_stop_recording);
                     btnPoint.setVisibility(View.VISIBLE);
                 }
@@ -94,16 +113,15 @@ private OnCreatePointListener onCreatePointListener;
                 }
             }
         );
-        btnPoint.setOnClickListener(view1 -> onCreatePointListener.onClick());
+
         recordButton.setOnClickListener(
                 view1 -> {
                     if (recording) {
                         trackRecorder.finishRecording();
                     } else {
-                        ((TextView) view.findViewById(R.id.textView2)).setText("Time: ");
-                        view.findViewById(R.id.favourite_tracks).setVisibility(View.GONE);
-
-                        trackRecorder.startRecording();
+                        requireActivity().runOnUiThread(
+                                new Thread(() -> trackRecorder.startRecording())
+                        );
                     }
                     recording = !recording;
                 }

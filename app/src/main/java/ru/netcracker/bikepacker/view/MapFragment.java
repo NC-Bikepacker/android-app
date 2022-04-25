@@ -4,6 +4,8 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.location.LocationManager;
@@ -22,7 +24,11 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import org.osmdroid.api.IMapController;
+import org.osmdroid.tileprovider.tilesource.OnlineTileSourceBase;
+import org.osmdroid.tileprovider.tilesource.ThunderforestTileSource;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
+import org.osmdroid.tileprovider.tilesource.TileSourcePolicy;
+import org.osmdroid.tileprovider.tilesource.XYTileSource;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.CustomZoomButtonsController;
 import org.osmdroid.views.MapView;
@@ -58,7 +64,7 @@ public class MapFragment extends Fragment {
                 ActivityCompat.checkSelfPermission(ctx, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return DEFAULT_POINT;
         }
-        Location imHere = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        @SuppressLint("MissingPermission") Location imHere = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
         userLocation = imHere != null ? new GeoPoint(imHere) : DEFAULT_POINT;
         return userLocation;
     }
@@ -95,8 +101,20 @@ public class MapFragment extends Fragment {
         assert ctx != null;
         GpsMyLocationProvider gpsMyLocationProvider = new GpsMyLocationProvider(ctx);
 
+
+        OnlineTileSourceBase OPENCYCLEMAP = new XYTileSource("Open Cycle Map",
+                0, 19, 512, ".png?apikey=063953b0deb84048a549eb28ee778db3", new String[]{
+                "https://a.tile.openstreetmap.org/",
+                "https://b.tile.openstreetmap.org/",
+                "https://c.tile.openstreetmap.org/"}, "© OpenStreetMap contributors",
+                new TileSourcePolicy(2,
+                        TileSourcePolicy.FLAG_NO_BULK
+                                | TileSourcePolicy.FLAG_NO_PREVENTIVE
+                                | TileSourcePolicy.FLAG_USER_AGENT_MEANINGFUL
+                                | TileSourcePolicy.FLAG_USER_AGENT_NORMALIZED
+                ));
         //setting map backdrop
-        map.setTileSource(TileSourceFactory.MAPNIK);
+        map.setTileSource(OPENCYCLEMAP);
         //setting visibility for map zoom controllers
         map.getZoomController().setVisibility(CustomZoomButtonsController.Visibility.NEVER);
         //setting hand gestures for zoom in/out
@@ -121,15 +139,19 @@ public class MapFragment extends Fragment {
         //setting center on user location
         mapController.setCenter(getUserLocation());
 
-        //user location arrow setup
-        MyLocationNewOverlay mLocationOverlay = new MyLocationNewOverlay(gpsMyLocationProvider, map);
-        mLocationOverlay.enableMyLocation();
-        //TODO: custom user arrow using drawable/ic_user_location_icon.xml (issue in getting drawable:
-        // most likely that getting drawable should be in another method)
-        map.getOverlays().add(mLocationOverlay);
-
         setupButtons(view, onClickAnim);
 
+        MyLocationNewOverlay locationOverlay = new MyLocationNewOverlay(new GpsMyLocationProvider(ctx),map);
+
+        Drawable drawable = getResources().getDrawable(R.drawable.ic_directional_arrow);
+        Bitmap bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+        drawable.draw(canvas);
+
+        locationOverlay.setPersonIcon(bitmap);
+        locationOverlay.setDirectionArrow(bitmap,bitmap);
+        map.getOverlays().add(locationOverlay);
         map.invalidate();
     }
 
