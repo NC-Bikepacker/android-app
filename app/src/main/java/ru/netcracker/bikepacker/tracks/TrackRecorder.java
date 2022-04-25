@@ -52,7 +52,6 @@ import ru.netcracker.bikepacker.tracks.listeners.OnRecordingEventsListener;
 public class TrackRecorder {
     private final UserAccountManager userAccountManager;
     private OnRecordingEventsListener onRecordingEventsListener;
-
     private final LocationManager locationManager;
     private final List<WayPoint> wayPoints;
     private final List<WayPoint> points;
@@ -62,7 +61,6 @@ public class TrackRecorder {
     private double speed = 0;
     private boolean isRecording = false;
     private String timeString;
-
     //region Constants
     public static final long MIN_TIME_MS = 5000;
     public static final float MIN_DISTANCE_M = 5;

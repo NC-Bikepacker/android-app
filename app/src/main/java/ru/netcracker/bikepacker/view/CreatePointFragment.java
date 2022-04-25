@@ -32,7 +32,6 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -89,7 +88,6 @@ public class CreatePointFragment extends Fragment {
         buttonCancel.setOnClickListener(view1 -> onCancelButtonListener.onClick());
     }
 
-
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -131,7 +129,7 @@ public class CreatePointFragment extends Fragment {
                                 if (result.getData().getData() != null) {
                                     Uri mImageUri = result.getData().getData();
                                     Optional<ContentResolver> contentResolver = Optional.ofNullable(getActivity()).map(Activity::getContentResolver);
-                                    if (contentResolver.isPresent()){
+                                    if (contentResolver.isPresent()) {
                                         Bitmap bitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), mImageUri);
                                         imagesDecodedList.add(encodeImage(bitmap));
                                         Cursor cursor = getActivity().getContentResolver().query(mImageUri,
@@ -146,7 +144,7 @@ public class CreatePointFragment extends Fragment {
                                             ClipData.Item item = mClipData.getItemAt(i);
                                             Optional<ContentResolver> contentResolver = Optional.ofNullable(getActivity()).map(Activity::getContentResolver);
                                             Uri uri = item.getUri();
-                                            if (contentResolver.isPresent()){
+                                            if (contentResolver.isPresent()) {
                                                 Cursor cursor = getActivity().getContentResolver().query(uri, filePathColumn, null, null, null);
                                                 cursor.moveToFirst();
                                                 Bitmap bitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), uri);
@@ -162,7 +160,6 @@ public class CreatePointFragment extends Fragment {
                                 Toast.makeText(getContext(), "You haven't picked Image",
                                         Toast.LENGTH_LONG).show();
                             }
-
                             if (imagesDecodedList != null && imagesDecodedList.size() > 0) {
                                 imageView.setImageBitmap(decodeImage(imagesDecodedList.get(0)));
                                 final String[] currIm = {imagesDecodedList.get(0)};
@@ -191,7 +188,6 @@ public class CreatePointFragment extends Fragment {
                                             left.setVisibility(View.INVISIBLE);
                                         }
                                     }
-
                                 });
                             }
                         } catch (
@@ -283,7 +279,7 @@ public class CreatePointFragment extends Fragment {
 
                     @Override
                     public void onFailure(Call<ResponseBody> call, Throwable t) {
-                        Log.d(t.getMessage(), "Ошибка добавления точки");
+                        Log.d(t.getMessage(), "Error adding a point");
                     }
                 });
     }

@@ -93,26 +93,22 @@
             tools:layout_editor_absoluteX="168dp"
             tools:layout_editor_absoluteY="166dp"
             android:layout_gravity="center"
-
             />
-
 
         <FrameLayout
             android:id="@+id/start_new_route_container"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="320dp"
+            android:layout_height="180dp"
+            app:layout_constraintDimensionRatio="2.04:1"
+            app:layout_constraintWidth_percent="0.87"
+            tools:ignore="MissingConstraints"
             android:layout_marginBottom="16dp"
             app:layout_constraintBottom_toBottomOf="@+id/map"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@+id/map"
-            android:layout_gravity="center"
-
-            >
-
+            android:layout_gravity="center">
         </FrameLayout>
     </LinearLayout>
-
-
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/verGuideline1"
