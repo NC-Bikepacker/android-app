@@ -4,12 +4,19 @@ import android.content.Context;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 
 import ru.netcracker.bikepacker.view.UserMenuInformationAccountFragment;
 import ru.netcracker.bikepacker.view.UserMenuRecycleViewFragment;
 
 public class UserMenuPagerAdapter extends FragmentStateAdapter {
+
+    public void setFragmentManager(FragmentManager fragmentManager) {
+        this.fragmentManager = fragmentManager;
+    }
+
+    private FragmentManager fragmentManager;
 
     public UserMenuPagerAdapter(@NonNull Fragment fragment, Context context) {
         super(fragment);
@@ -22,10 +29,14 @@ public class UserMenuPagerAdapter extends FragmentStateAdapter {
         switch (position){
             //all used tracks
             case 0:
-                return new UserMenuRecycleViewFragment(position);
+                UserMenuRecycleViewFragment userMenuRecycleViewFragment = new UserMenuRecycleViewFragment(position);
+                userMenuRecycleViewFragment.setFragmentManager(fragmentManager);
+                return userMenuRecycleViewFragment;
             //favorite tracks
             case 1:
-                return new UserMenuRecycleViewFragment(position);
+                UserMenuRecycleViewFragment userMenuRecycleViewFragment1 = new UserMenuRecycleViewFragment(position);
+                userMenuRecycleViewFragment1.setFragmentManager(fragmentManager);
+                return userMenuRecycleViewFragment1;
             //user information
             case 2:
                 return new UserMenuInformationAccountFragment();

@@ -50,6 +50,7 @@ class MainNavigationActivity : AppCompatActivity() {
         const val TAG_RECORD_SM = "record_summary"
         const val TAG_USER_MENU = "user_menu"
         const val TAG_POINT = "point"
+        const val TAG_OPEN = "openTrack"
     }
 
     private var downAnim: Animation? = null
@@ -141,7 +142,11 @@ class MainNavigationActivity : AppCompatActivity() {
     private val userMenuFragment: UserMenuFragment by lazy {
         val fr = supportFragmentManager.findFragmentByTag(TAG_USER_MENU)
         if (fr != null) fr as UserMenuFragment
-        else UserMenuFragment()
+        else {
+            val userFr = UserMenuFragment()
+            userFr.fragmentManager = supportFragmentManager
+            userFr
+        }
     }
 
     private val recordFragment: RecordFragment by lazy {
@@ -205,6 +210,27 @@ class MainNavigationActivity : AppCompatActivity() {
         }
     }
 
+    private val openTrackFragment: OpenTrackFragment by lazy {
+        val fr = supportFragmentManager.findFragmentByTag(TAG_OPEN)
+        if (fr != null) fr as OpenTrackFragment
+        else{
+            val fr = OpenTrackFragment()
+            fr.fragmentManager = supportFragmentManager
+            fr.setOnStartRouteBtnListener {
+                supportFragmentManager.beginTransaction()
+                    .hide(openTrackFragment)
+                    .show(mapFragment)
+                    .commit()
+                supportFragmentManager.beginTransaction()
+                    .setCustomAnimations(R.anim.up_alpha_trans, R.anim.down_alpha_trans)
+                    .replace(R.id.start_new_route_container, recordFragment, TAG_RECORD)
+                    .commit()
+            }
+            fr
+        }
+
+    }
+
     private var ctx: Context? = null
     private var selectedFragment: Int = R.id.navigation_home
     private var activeFragment: Fragment? = null
@@ -256,6 +282,7 @@ class MainNavigationActivity : AppCompatActivity() {
                 .add(R.id.fragment_container, homeFragment, TAG_HOME).hide(homeFragment)
                 .add(R.id.fragment_container, findFriend, TAG_FINDFRIEND).hide(findFriend)
                 .add(R.id.fragment_container, userMenuFragment, TAG_USER_MENU).hide(userMenuFragment)
+                .add(R.id.fragment_container, openTrackFragment, TAG_OPEN).hide(openTrackFragment)
                 //TODO: .add(R.id.fragment_container, {required fragment}, TAG_RECORD).hide({required fragment})
                 .show(activeFragment!!)
                 .commit()
@@ -348,85 +375,3 @@ class MainNavigationActivity : AppCompatActivity() {
         outState.putInt(CURRENT_FRAGMENT, selectedFragment)
     }
 }
-//    private val createPointFragment: CreatePointFragment by lazy {
-//        val fr = supportFragmentManager.findFragmentByTag(TAG_POINT)
-//        if (fr != null) fr as CreatePointFragment
-//        else {
-//            val createPoint = CreatePointFragment()
-//            createPoint.setOnCancelButtonListener {
-//                findViewById<ImageButton>(R.id.locationBtn).visibility = View.VISIBLE;
-//                findViewById<ImageButton>(R.id.zoomInBtn).visibility = View.VISIBLE;
-//                findViewById<ImageButton>(R.id.zoomOutBtn).visibility = View.VISIBLE;
-//                findViewById<Button>(R.id.buttonPoint).visibility = View.VISIBLE
-//                findViewById<EditText>(R.id.description).setText("")
-//                supportFragmentManager.beginTransaction()
-//                    .show(recordFragment)
-//                    .remove(createPointFragment)
-//                    .commit();
-//            }
-//            createPoint.setButtonPoint(findViewById<Button>(R.id.buttonPoint))
-//            createPoint.setRecordFragment(recordFragment)
-//            createPoint
-//        }
-//    }
-//
-//    private val recordFragment: RecordFragment by lazy {
-//        val fr = supportFragmentManager.findFragmentByTag(TAG_RECORD)
-//
-//        if (fr != null) fr as RecordFragment
-//        else {
-//            val initialFr = ru.netcracker.bikepacker.view.RecordFragment()
-//            initialFr.setOnGpxCreatedListener { gpx ->
-//                run {
-//                    val map = mapFragment.map
-//                    userTrack = UserTrack.newInstance(
-//                        map,
-//                        mapFragment.startIcon,
-//                        mapFragment.finishIcon,
-//                        GpxUtil.trackToPolyline(
-//                            gpx?.tracks()?.collect(Collectors.toList())?.get(0)
-//                        )
-//                    )
-//                    map.let {
-//                        it?.zoomToBoundingBox(userTrack?.boundingBox, true)
-//                        it?.overlayManager?.addAll(userTrack?.toList()!!)
-//                    }
-//                }
-//            }
-////            initialFr.setOnCreatePointListener {
-////                findViewById<Button>(R.id.buttonPoint).visibility = View.INVISIBLE
-////                findViewById<ImageButton>(R.id.locationBtn).visibility = View.INVISIBLE;
-////                findViewById<ImageButton>(R.id.zoomInBtn).visibility = View.INVISIBLE;
-////                findViewById<ImageButton>(R.id.zoomOutBtn).visibility = View.INVISIBLE;
-////                supportFragmentManager.beginTransaction()
-////                    .replace(R.id.create_point_container, createPointFragment, TAG_POINT)
-////                    .hide(recordFragment)
-////                    .commit();
-////            }
-//            initialFr.setOnStopBtnClickListener {
-//                findViewById<FrameLayout>(R.id.start_new_route_container)?.startAnimation(downAnim)
-//                supportFragmentManager.beginTransaction()
-//                    .setCustomAnimations(R.anim.up_alpha_trans, R.anim.down_alpha_trans)
-//                    .replace(R.id.record_summary_container, recordSummaryFragment, TAG_RECORD_SM)
-//                    .commit()
-//
-//                binding!!.bottomNavigView.visibility = View.GONE
-//                findViewById<LinearLayout>(R.id.btn_container).orientation = LinearLayout.HORIZONTAL
-//                findViewById<LinearLayout>(R.id.btn_container).let {
-//                    it.translationX =
-//                        findViewById<FrameLayout>(R.id.start_new_route_container).paddingLeft - it.width - it.height / 2f
-//                    it.translationY =
-//                        binding!!.mainConstLayout.bottom - it.bottom + 0.0f
-//                    mapFragment.switchOnClickAnim()
-//                }
-//            }
-//            initialFr.setOnStartBtnClickListener {
-//                mapFragment.map.overlays.removeIf { overlay ->
-//                    overlay is OverlayWithIW &&
-//                            overlay.id == UserTrack.RECORDED_TRACK_TAG
-//                }
-//            }
-//            initialFr
-//        }
-//    }
-

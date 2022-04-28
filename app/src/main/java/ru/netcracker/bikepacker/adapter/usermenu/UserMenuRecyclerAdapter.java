@@ -8,15 +8,18 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
+import java.util.Objects;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -35,6 +38,12 @@ public class UserMenuRecyclerAdapter extends RecyclerView.Adapter<UserMenuRecycl
     private RetrofitManager retrofitManager;
     private UserAccountManager userAccountManager;
     private ImageConverter imageConverter;
+    FragmentManager fragmentManager;
+
+    public void setFragmentManager(FragmentManager fragmentManager) {
+        this.fragmentManager = fragmentManager;
+    }
+
 
     public UserMenuRecyclerAdapter(Context context, List<TrackModel> tracks) {
         this.context = context;
@@ -61,6 +70,7 @@ public class UserMenuRecyclerAdapter extends RecyclerView.Adapter<UserMenuRecycl
                 .error(R.drawable.ic_userpic)
                 .into(holder.userPicItemUserMenu);
 
+        holder.setFragmentManager(fragmentManager);
         holder.firstAndLastnameUserMenuItem.setText(tracks.get(position).getUser().getFirstname() +
                 " " +
                 tracks.get(position).getUser().getLastname());
@@ -117,6 +127,12 @@ public class UserMenuRecyclerAdapter extends RecyclerView.Adapter<UserMenuRecycl
                 avgSpeedTextViewUserMenu,
                 timeTextViewUserMenu;
         ImageView itemUserMenuMapImage;
+        LinearLayout trackLinearLayout;
+        FragmentManager fragmentManager;
+
+        public void setFragmentManager(FragmentManager fragmentManager) {
+            this.fragmentManager = fragmentManager;
+        }
 
 
         public UserMenuRecyclerViewHolder(@NonNull View itemView) {
@@ -133,6 +149,17 @@ public class UserMenuRecyclerAdapter extends RecyclerView.Adapter<UserMenuRecycl
             this.avgSpeedTextViewUserMenu = itemView.findViewById(R.id.avgSpeedTextViewUserMenu);
             this.timeTextViewUserMenu = itemView.findViewById(R.id.timeTextViewUserMenu);
             this.itemUserMenuMapImage = itemView.findViewById(R.id.itemUserMenuMapImage);
+            this.trackLinearLayout = itemView.findViewById(R.id.trackLinearLayout);
+            this.trackLinearLayout.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    //open route
+                    fragmentManager.beginTransaction()
+                            .hide(Objects.requireNonNull(fragmentManager.findFragmentByTag("user_menu")))
+                            .show(Objects.requireNonNull(fragmentManager.findFragmentByTag("openTrack")))
+                            .commit();;
+                }
+            });
         }
     }
 

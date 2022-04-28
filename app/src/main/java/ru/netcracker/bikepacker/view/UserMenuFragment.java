@@ -20,6 +20,11 @@ import ru.netcracker.bikepacker.adapter.usermenu.UserMenuPagerAdapter;
 public class UserMenuFragment extends Fragment {
 
     private Fragment fragment;
+
+    public void setFragmentManager(FragmentManager fragmentManager) {
+        this.fragmentManager = fragmentManager;
+    }
+
     private FragmentManager fragmentManager;
     private ViewPager2 viewPager;
     private View viewUserMenu;
@@ -34,7 +39,9 @@ public class UserMenuFragment extends Fragment {
         viewUserMenu = inflater.inflate(R.layout.fragment_user_menu, container, false);
 
         viewPager = viewUserMenu.findViewById(R.id.userMenuViewPager);
-        viewPager.setAdapter(new UserMenuPagerAdapter(this,this.getContext()));
+        UserMenuPagerAdapter userMenuPagerAdapter = new UserMenuPagerAdapter(this,this.getContext());
+        userMenuPagerAdapter.setFragmentManager(fragmentManager);
+        viewPager.setAdapter(userMenuPagerAdapter);
         tabLayoutUserMenu = viewUserMenu.findViewById(R.id.userMenuTableLayout);
 
         this.listener = new TabLayout.OnTabSelectedListener() {
