@@ -39,12 +39,17 @@ public class TrackModel {
         this.trackComplexity = trackComplexity;
         this.user = user;
         this.gpx = gpx;
-        this.trackId= trackId;
+        this.trackId = trackId;
     }
 
     public TrackModel(UserModel user) {
         this.user = user;
     }
+
+    public TrackModel() {
+    }
+
+    ;
 
     public long getTrackId() {
         return trackId;
