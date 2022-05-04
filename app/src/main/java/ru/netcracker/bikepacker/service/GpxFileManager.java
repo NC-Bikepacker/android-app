@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Writer;
+import java.nio.charset.StandardCharsets;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -33,7 +34,7 @@ public class GpxFileManager {
     private final Context context;
     private Writer writer;
     private String absolutePath;
-    private UserAccountManager userAccountManager;
+    private final UserAccountManager userAccountManager;
 
     public GpxFileManager(Context context) {
         super();
@@ -47,8 +48,7 @@ public class GpxFileManager {
 
         if (file.exists() && filePath != null) {
             try (FileInputStream fin = new FileInputStream(file)) {
-                stringFromFile = IOUtils.toString(fin, "UTF-8");
-                ;
+                stringFromFile = IOUtils.toString(fin, StandardCharsets.UTF_8);
                 fin.close();
                 return stringFromFile;
             } catch (FileNotFoundException e) {
@@ -76,26 +76,26 @@ public class GpxFileManager {
         return sb.toString();
     }
 
-    public void importGpx() {
-        FileDialogOpener FolderChooseDialog = new FileDialogOpener(context, "FileOpen",
+    public void importGpx(Context ctx) {
+        FileDialogOpener FolderChooseDialog = new FileDialogOpener(ctx, "FileOpen",
                 new FileDialogOpener.FileDialogOpenerListener() {
                     @Override
                     public void onChosenDir(String chosenDir, String chosenFilename) {
                         try {
-                            String importedGPX = importGpxFromFile(context, chosenDir, chosenFilename);
+                            String importedGPX = importGpxFromFile(ctx, chosenDir, chosenFilename);
                             TrackModel importedTrack = new TrackModel();
                             importedTrack.setUser(userAccountManager.getUser());
                             importedTrack.setGpx(importedGPX);
                             importedTrack.setTrackComplexity(0);
                             importedTrack.setTravelTime(0);
-                            RetrofitManager.getInstance(context).getJSONApi().postTrack(userAccountManager.getCookie(), importedTrack).enqueue(new Callback<ResponseBody>() {
+                            RetrofitManager.getInstance(ctx).getJSONApi().postTrack(userAccountManager.getCookie(), importedTrack).enqueue(new Callback<ResponseBody>() {
                                 @Override
                                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                                     if (response.isSuccessful()) {
-                                        Toast.makeText(context, "GPX file was imported successfully!", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(ctx, "GPX file was imported successfully!", Toast.LENGTH_SHORT).show();
                                         Log.d("GPX importing", "File was imported successfully");
                                     } else {
-                                        Toast.makeText(context, "GPX file importing was failed!", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(ctx, "GPX file importing was failed!", Toast.LENGTH_SHORT).show();
                                         Log.e("GPX importing", String.format("Importing error response: %d %s", response.code(), response.message()));
                                     }
                                 }
@@ -106,7 +106,7 @@ public class GpxFileManager {
                                 }
                             });
                         } catch (Exception e) {
-                            Toast.makeText(context, "GPX file importing was failed!", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(ctx, "GPX file importing was failed!", Toast.LENGTH_SHORT).show();
                             e.printStackTrace();
                         }
                     }
@@ -115,16 +115,16 @@ public class GpxFileManager {
         FolderChooseDialog.chooseFile_or_Dir();
     }
 
-    public void exportGpx(String exportingGpx) {
-        FileDialogOpener FileOpenDialog = new FileDialogOpener(context, "FileSave",
+    public void exportGpx(Context ctx, String exportingGpx) {
+        FileDialogOpener FileOpenDialog = new FileDialogOpener(ctx, "FileSave",
                 new FileDialogOpener.FileDialogOpenerListener() {
                     @Override
                     public void onChosenDir(String chosenDir, String chosenFilename) {
                         try {
-                            exportGpxToFile(context, chosenDir, chosenFilename, exportingGpx);
-                            Toast.makeText(context, "GPX file was exported successfully!", Toast.LENGTH_SHORT).show();
+                            exportGpxToFile(ctx, chosenDir, chosenFilename, exportingGpx);
+                            Toast.makeText(ctx, "GPX file was exported successfully!", Toast.LENGTH_SHORT).show();
                         } catch (Exception e) {
-                            Toast.makeText(context, "GPX file exporting was failed!", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(ctx, "GPX file exporting was failed!", Toast.LENGTH_SHORT).show();
                             e.printStackTrace();
                         }
                     }

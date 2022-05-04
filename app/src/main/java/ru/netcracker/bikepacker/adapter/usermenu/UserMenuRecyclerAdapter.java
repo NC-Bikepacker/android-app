@@ -108,7 +108,7 @@ public class UserMenuRecyclerAdapter extends RecyclerView.Adapter<UserMenuRecycl
             @Override
             public void onClick(View view) {
                 String exportingGpx = tracks.get(position).getGpx();
-                gpxFileManager.exportGpx(exportingGpx);
+                gpxFileManager.exportGpx(context, exportingGpx);
             }
         });
     }
