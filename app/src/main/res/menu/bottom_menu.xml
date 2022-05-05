@@ -7,7 +7,7 @@
 
     <item
         android:id="@+id/navigation_friends"
-        android:icon="@drawable/ic_user_add_grey"
+        android:icon="@drawable/ic_user_add_thin_grey"
         android:title="" />
 
     <item
