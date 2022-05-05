@@ -1,24 +1,36 @@
 package ru.netcracker.bikepacker.view
 
 import android.content.Context
-import androidx.appcompat.app.AppCompatActivity
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.preference.PreferenceManager
+import android.util.Log
 import android.view.View
-import android.widget.ImageButton
-import android.widget.Toast
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.*
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import org.osmdroid.config.Configuration
 import org.osmdroid.views.overlay.OverlayWithIW
-import ru.netcracker.bikepacker.*
+import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider
+import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay
+import ru.netcracker.bikepacker.R
 import ru.netcracker.bikepacker.databinding.ActivityMainNavigationBinding
-import ru.netcracker.bikepacker.tracks.UserTrack
 import ru.netcracker.bikepacker.tracks.GpxUtil
+import ru.netcracker.bikepacker.tracks.UserTrack
+import java.lang.String
 import java.util.stream.Collectors
+import kotlin.Boolean
+import kotlin.Int
+import kotlin.getValue
+import kotlin.lazy
+import kotlin.let
+import kotlin.run
+import kotlin.with
+
 
 class MainNavigationActivity : AppCompatActivity() {
     companion object {
@@ -37,6 +49,7 @@ class MainNavigationActivity : AppCompatActivity() {
         const val TAG_RECORD_SM = "record_summary"
         const val TAG_USER_MENU = "user_menu"
         const val TAG_TRACK_MENU = "track_menu"
+        const val TAG_POINT = "point"
 
         public var activeFragment: Fragment? = null
     }
@@ -45,6 +58,7 @@ class MainNavigationActivity : AppCompatActivity() {
     private var upAnim: Animation? = null
     private var userTrack: UserTrack? = null
     private var binding: ActivityMainNavigationBinding? = null
+    private var bitmap: Bitmap? = null
 
     //fragments
     private val recordSummaryFragment: RecordSummaryFragment by lazy {
@@ -66,11 +80,6 @@ class MainNavigationActivity : AppCompatActivity() {
                     overlay is OverlayWithIW &&
                             overlay.id == UserTrack.RECORDED_TRACK_TAG
                 }
-                Toast.makeText(
-                    ctx,
-                    mapFragment.map.overlayManager.overlays().toString(),
-                    Toast.LENGTH_LONG
-                ).show()
                 findViewById<LinearLayout>(R.id.btn_container).let {
                     it.translationX = 0f
                     it.translationY = 0f
@@ -97,13 +106,33 @@ class MainNavigationActivity : AppCompatActivity() {
 
     private val findFriend: FindFriendFragment by lazy {
         val fr = supportFragmentManager.findFragmentByTag(TAG_FINDFRIEND)
-        if (fr != null){
-            fr as FindFriendFragment
-
-        }
+        if (fr != null){ fr as FindFriendFragment  }
 
         else FindFriendFragment()
     }
+
+    private val createPointFragment: CreatePointFragment by lazy {
+        val fr = supportFragmentManager.findFragmentByTag(TAG_POINT)
+        if (fr != null) fr as CreatePointFragment
+        else {
+            val createPoint = CreatePointFragment()
+            createPoint.setOnCancelButtonListener {
+                findViewById<ImageButton>(R.id.locationBtn).visibility = View.VISIBLE;
+                findViewById<ImageButton>(R.id.zoomInBtn).visibility = View.VISIBLE;
+                findViewById<ImageButton>(R.id.zoomOutBtn).visibility = View.VISIBLE;
+                findViewById<Button>(R.id.buttonPoint).visibility = View.VISIBLE
+                findViewById<EditText>(R.id.description).setText("")
+                supportFragmentManager.beginTransaction()
+                    .show(recordFragment)
+                    .remove(createPointFragment)
+                    .commit();
+            }
+            createPoint.setButtonPoint(findViewById<Button>(R.id.buttonPoint))
+            createPoint.setRecordFragment(recordFragment)
+            createPoint
+        }
+    }
+
 
     private val userMenuFragment: UserMenuInformationAccountFragment by lazy {
         val fr = supportFragmentManager.findFragmentByTag(TAG_USER_MENU)
@@ -123,6 +152,7 @@ class MainNavigationActivity : AppCompatActivity() {
         if (fr != null) fr as RecordFragment
         else {
             val initialFr = ru.netcracker.bikepacker.view.RecordFragment()
+            initialFr.setBtnPoint(findViewById<Button>(R.id.buttonPoint));
             initialFr.setOnGpxCreatedListener { gpx ->
                 run {
                     val map = mapFragment.map
@@ -139,6 +169,16 @@ class MainNavigationActivity : AppCompatActivity() {
                         it?.overlayManager?.addAll(userTrack?.toList()!!)
                     }
                 }
+            }
+            initialFr.setOnCreatePointListener {
+                findViewById<Button>(R.id.buttonPoint).visibility = View.INVISIBLE
+                findViewById<ImageButton>(R.id.locationBtn).visibility = View.INVISIBLE;
+                findViewById<ImageButton>(R.id.zoomInBtn).visibility = View.INVISIBLE;
+                findViewById<ImageButton>(R.id.zoomOutBtn).visibility = View.INVISIBLE;
+                supportFragmentManager.beginTransaction()
+                    .replace(R.id.create_point_container, createPointFragment, TAG_POINT)
+                    .hide(recordFragment)
+                    .commit();
             }
             initialFr.setOnStopBtnClickListener {
                 findViewById<FrameLayout>(R.id.start_new_route_container)?.startAnimation(downAnim)
@@ -157,17 +197,25 @@ class MainNavigationActivity : AppCompatActivity() {
                     mapFragment.switchOnClickAnim()
                 }
             }
+            initialFr.setOnStartBtnClickListener {
+                mapFragment.map.overlays.removeIf { overlay ->
+                    overlay is OverlayWithIW &&
+                            overlay.id == UserTrack.RECORDED_TRACK_TAG
+                }
+            }
             initialFr
         }
     }
 
     private var ctx: Context? = null
     private var selectedFragment: Int = R.id.navigation_home
+    private var activeFragment: Fragment? = null
 
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainNavigationBinding.inflate(layoutInflater)
         ctx = applicationContext
+        bitmap = BitmapFactory.decodeResource(resources, R.drawable.ic_menu_compass)
         downAnim = AnimationUtils.loadAnimation(ctx, R.anim.down_alpha_trans)
         upAnim = AnimationUtils.loadAnimation(ctx, R.anim.up_alpha_trans)
 
@@ -179,7 +227,7 @@ class MainNavigationActivity : AppCompatActivity() {
                     supportFragmentManager
                         .beginTransaction()
                         .remove(recordFragment)
-                        .show(homeFragment)
+                        .show(mapFragment)
                         .commit()
                 }
             })
@@ -211,6 +259,7 @@ class MainNavigationActivity : AppCompatActivity() {
                 .add(R.id.fragment_container, findFriend, TAG_FINDFRIEND).hide(findFriend)
                 .add(R.id.fragment_container, userMenuFragment, TAG_USER_MENU).hide(userMenuFragment)
                 .add(R.id.fragment_container, trackMenuFragment, TAG_TRACK_MENU).hide(trackMenuFragment)
+                .add(R.id.fragment_container, userMenuFragment, TAG_USER_MENU).hide(userMenuFragment)
                 //TODO: .add(R.id.fragment_container, {required fragment}, TAG_RECORD).hide({required fragment})
                 .show(activeFragment!!)
                 .commit()
@@ -223,6 +272,9 @@ class MainNavigationActivity : AppCompatActivity() {
         bottomNav.setOnItemSelectedListener {
             setFragment(it.itemId)
         }
+
+        bitmap = BitmapFactory.decodeResource(resources, R.drawable.ic_menu_compass)
+        Log.d("!!!!!!!!!!", String.valueOf(bitmap))
 
     }
 
@@ -294,15 +346,6 @@ class MainNavigationActivity : AppCompatActivity() {
                 activeFragment = findFriend
             }
 
-/*            R.id.navigation_home -> {
-                if (activeFragment !is HomeFragment) {
-                    supportFragmentManager.beginTransaction().hide(activeFragment!!)
-                        .show(homeFragment)
-                        .commit()
-                }
-                activeFragment = homeFragment
-            }*/
-
             else -> {
                 if (activeFragment is UserMenuInformationAccountFragment) return false
                 supportFragmentManager.beginTransaction().hide(activeFragment!!)
@@ -327,5 +370,4 @@ class MainNavigationActivity : AppCompatActivity() {
         super.onSaveInstanceState(outState)
         outState.putInt(CURRENT_FRAGMENT, selectedFragment)
     }
-
 }

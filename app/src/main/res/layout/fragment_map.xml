@@ -10,13 +10,15 @@
         android:id="@+id/btn_container"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginTop="298dp"
+        android:layout_marginEnd="5dp"
+        android:layout_marginBottom="204dp"
         android:background="@android:color/transparent"
         android:elevation="1dp"
         android:orientation="vertical"
-        app:layout_constraintBottom_toTopOf="@+id/start_new_route_container"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="32dp">
+        app:layout_constraintTop_toTopOf="parent">
 
         <ImageButton
             android:id="@+id/locationBtn"
@@ -73,20 +75,40 @@
 
     </org.osmdroid.views.MapView>
 
-    <FrameLayout
-        android:id="@+id/start_new_route_container"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
 
-        app:layout_constraintDimensionRatio="2.04:1"
-        app:layout_constraintWidth_percent="0.87"
-        tools:ignore="MissingConstraints"
-        android:layout_marginBottom="16dp"
-        app:layout_constraintBottom_toBottomOf="@+id/map"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/map">
+        >
 
-    </FrameLayout>
+        <Button
+            android:id="@+id/buttonPoint"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/create_point"
+            android:visibility="invisible"
+            tools:ignore="MissingConstraints"
+            tools:layout_editor_absoluteX="168dp"
+            tools:layout_editor_absoluteY="166dp"
+            android:layout_gravity="center"
+            />
+
+        <FrameLayout
+            android:id="@+id/start_new_route_container"
+            android:layout_width="320dp"
+            android:layout_height="180dp"
+            app:layout_constraintDimensionRatio="2.04:1"
+            app:layout_constraintWidth_percent="0.87"
+            tools:ignore="MissingConstraints"
+            android:layout_marginBottom="16dp"
+            app:layout_constraintBottom_toBottomOf="@+id/map"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/map"
+            android:layout_gravity="center">
+        </FrameLayout>
+    </LinearLayout>
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/verGuideline1"
@@ -110,6 +132,14 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
+
+    </FrameLayout>
+    <FrameLayout
+        android:id="@+id/create_point_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:ignore="InvalidId"
+        >
 
     </FrameLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

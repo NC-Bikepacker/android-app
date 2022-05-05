@@ -15,7 +15,6 @@ import retrofit2.http.PUT;
 import retrofit2.http.Path;
 import ru.netcracker.bikepacker.model.AuthModel;
 import ru.netcracker.bikepacker.model.ImageModel;
-import ru.netcracker.bikepacker.model.NewsCardModel;
 import ru.netcracker.bikepacker.model.SignUpModel;
 import ru.netcracker.bikepacker.model.FriendModel;
 import ru.netcracker.bikepacker.model.TrackModel;
@@ -77,6 +76,9 @@ public interface ApiService {
     //IMAGE
     @GET("/image/track/{id}")
     Call<ImageModel> getTrackImage(@Header ("Cookie") String cookie, @Path("id") Long id);
+
+    @POST("/points/point")
+    Call<ResponseBody> addPoint(@Header ("Cookie") String cookie, @Body PointModel point);
 
     //NEWS
     @GET("/news/getnews/{userid}")
