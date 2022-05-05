@@ -86,6 +86,10 @@ public class HomeMenuRecycleViewFragment extends Fragment {
                         if(response.isSuccessful()){
                             news.clear();
                             news.addAll(Objects.requireNonNull(response.body()));
+
+                            homeMenuRecyclerAdapter = new HomeMenuRecyclerAdapter(getContext(), news);
+                            homeMenuRecyclerView.setAdapter(homeMenuRecyclerAdapter);
+
                         }
                         else {
                             Toast.makeText(getContext(), "Проверьте соединение интернет", Toast.LENGTH_SHORT).show();
@@ -99,9 +103,6 @@ public class HomeMenuRecycleViewFragment extends Fragment {
                         Log.e("RetrofitError", "Error in HomeMenuRecycleViewFragment.class. Error: "+ t.getMessage() , t);
                     }
                 });
-
-        homeMenuRecyclerAdapter = new HomeMenuRecyclerAdapter(getContext(), news);
-        homeMenuRecyclerView.setAdapter(homeMenuRecyclerAdapter);
     }
 
     private void getFriendTracks(){
@@ -116,6 +117,9 @@ public class HomeMenuRecycleViewFragment extends Fragment {
                             tracks.clear();
                             assert response.body() != null;
                             tracks.addAll(response.body());
+
+                            tracksRecyclerAdapter = new TracksRecyclerAdapter(getContext(), tracks);
+                            homeMenuRecyclerView.setAdapter(tracksRecyclerAdapter);
                         }
                         else {
                             Toast.makeText(getContext(), "Проверьте соединение интернет", Toast.LENGTH_SHORT).show();
@@ -129,9 +133,6 @@ public class HomeMenuRecycleViewFragment extends Fragment {
                         Log.e("Error show last tracks friends in homeMenu fragment", "Error friend track response. Error message: "+ t.getMessage(), t);
                     }
                 });
-
-        tracksRecyclerAdapter = new TracksRecyclerAdapter(getContext(), tracks);
-        homeMenuRecyclerView.setAdapter(tracksRecyclerAdapter);
     }
 
 }

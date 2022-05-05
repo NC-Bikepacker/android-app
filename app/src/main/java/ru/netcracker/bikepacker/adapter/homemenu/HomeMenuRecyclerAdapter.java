@@ -66,7 +66,7 @@ public class HomeMenuRecyclerAdapter extends RecyclerView.Adapter<HomeMenuRecycl
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public void onBindViewHolder(@NonNull HomeMenuRecyclerViewHolder holder, int position) {
-        Toast.makeText(context, news.size(), Toast.LENGTH_SHORT).show();
+        //Toast.makeText(context, news.size(), Toast.LENGTH_SHORT).show();
         NewsCardModel newsCardModel = news.get(position);
         UserModel user = newsCardModel.getUser();
         TrackModel track = newsCardModel.getTrack();
@@ -88,10 +88,10 @@ public class HomeMenuRecyclerAdapter extends RecyclerView.Adapter<HomeMenuRecycl
         holder.usernameHomeMenuItem.setText(newsCardModel.getUser().getUsername());
         holder.firstAndLastnameHomeMenuItem.setText(user.getFirstname() + " " + user.getLastname());
         holder.bodyDescriptionTextView.setText(newsCardModel.getDescription());
-        holder.distanceTextViewNewspaperCard.setText(random.nextInt(0) + String.valueOf(random.nextDouble())+1);
+        holder.distanceTextViewNewspaperCard.setText("12");
         holder.complexityTextViewNewspaperCard.setText(Long.toString(track.getTrackComplexity()));
         holder.timeTextViewNewspaperCard.setText("00:43:14");
-        holder.dateHomeMenuItem.setText("July 25, 2020 at 8:58 AM");
+        holder.dateHomeMenuItem.setText(newsCardModel.getDate());
 
         if(track.getImageBase64()!=null) {
             holder.imageTrackItemNewspaperCard.setImageBitmap(imageConverter.decode(track.getImageBase64()));

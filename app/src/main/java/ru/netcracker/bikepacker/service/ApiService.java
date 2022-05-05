@@ -15,6 +15,8 @@ import retrofit2.http.PUT;
 import retrofit2.http.Path;
 import ru.netcracker.bikepacker.model.AuthModel;
 import ru.netcracker.bikepacker.model.ImageModel;
+import ru.netcracker.bikepacker.model.NewsCardModel;
+import ru.netcracker.bikepacker.model.PointModel;
 import ru.netcracker.bikepacker.model.SignUpModel;
 import ru.netcracker.bikepacker.model.FriendModel;
 import ru.netcracker.bikepacker.model.TrackModel;
