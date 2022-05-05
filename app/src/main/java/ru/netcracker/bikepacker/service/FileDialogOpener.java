@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.os.Environment;
 import android.text.Editable;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +18,8 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -58,6 +61,7 @@ public class FileDialogOpener {
         try {
             sdcardDirectory = new File(sdcardDirectory).getCanonicalPath();
         } catch (IOException ioe) {
+            Log.e("FileDialogOpener Error", ioe.getMessage());
         }
     }
 
@@ -65,7 +69,7 @@ public class FileDialogOpener {
 //  default sdcard directory
     public void chooseFile_or_Dir() {
         // Initial directory is sdcard directory
-        if (dir.equals("")) chooseFile_or_Dir(sdcardDirectory);
+        if (!StringUtils.isBlank(dir)) chooseFile_or_Dir(sdcardDirectory);
         else chooseFile_or_Dir(dir);
     }
 
@@ -146,7 +150,7 @@ public class FileDialogOpener {
             File dirFile = new File(dir);
 
             // if directory is not the base sd card directory add ".." for going up one directory
-            if (!this.dir.equals(sdcardDirectory)) dirs.add("..");
+            if (!StringUtils.equals(this.dir, sdcardDirectory)) dirs.add("..");
 
             if (!dirFile.exists() || !dirFile.isDirectory()) {
                 return dirs;
@@ -162,6 +166,7 @@ public class FileDialogOpener {
                 }
             }
         } catch (Exception e) {
+            Log.e("Getting directories error", e.getMessage());
         }
 
         Collections.sort(dirs, new Comparator<String>() {

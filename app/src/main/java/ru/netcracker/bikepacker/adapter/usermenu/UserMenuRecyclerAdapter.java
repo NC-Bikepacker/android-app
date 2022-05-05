@@ -68,8 +68,6 @@ public class UserMenuRecyclerAdapter extends RecyclerView.Adapter<UserMenuRecycl
                 " " +
                 tracks.get(position).getUser().getLastname());
 
-        String trackGpx = tracks.get(position).getGpx();
-
         /*Convert travel time in seconds to readable string in format HH:MM:SS*/
         long travelTime = tracks.get(position).getTravelTime();
         long sec = travelTime % 60;
@@ -108,6 +106,7 @@ public class UserMenuRecyclerAdapter extends RecyclerView.Adapter<UserMenuRecycl
             @Override
             public void onClick(View view) {
                 String exportingGpx = tracks.get(position).getGpx();
+                if (exportingGpx == null) exportingGpx = "";
                 gpxFileManager.exportGpx(context, exportingGpx);
             }
         });

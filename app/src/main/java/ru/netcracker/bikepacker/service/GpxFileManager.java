@@ -43,20 +43,23 @@ public class GpxFileManager {
     }
 
     private static String getStringFromFile(String filePath) {
-        File file = new File(filePath);
         String stringFromFile = null;
 
-        if (file.exists() && filePath != null) {
-            try (FileInputStream fin = new FileInputStream(file)) {
-                stringFromFile = IOUtils.toString(fin, StandardCharsets.UTF_8);
-                fin.close();
-                return stringFromFile;
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (Exception e) {
-                e.printStackTrace();
+        if (filePath != null) {
+            File file = new File(filePath);
+
+            if (file.exists() && filePath != null) {
+                try (FileInputStream fin = new FileInputStream(file)) {
+                    stringFromFile = IOUtils.toString(fin, StandardCharsets.UTF_8);
+                    fin.close();
+                    return stringFromFile;
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         }
 
