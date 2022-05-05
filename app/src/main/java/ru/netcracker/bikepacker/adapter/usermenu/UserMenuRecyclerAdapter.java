@@ -26,15 +26,17 @@ import ru.netcracker.bikepacker.manager.RetrofitManager;
 import ru.netcracker.bikepacker.manager.UserAccountManager;
 import ru.netcracker.bikepacker.model.ImageModel;
 import ru.netcracker.bikepacker.model.TrackModel;
+import ru.netcracker.bikepacker.service.GpxFileManager;
 import ru.netcracker.bikepacker.service.ImageConverter;
 
 public class UserMenuRecyclerAdapter extends RecyclerView.Adapter<UserMenuRecyclerAdapter.UserMenuRecyclerViewHolder> {
 
-    private Context context;
-    private List<TrackModel> tracks;
-    private RetrofitManager retrofitManager;
-    private UserAccountManager userAccountManager;
-    private ImageConverter imageConverter;
+    private final Context context;
+    private final List<TrackModel> tracks;
+    private final RetrofitManager retrofitManager;
+    private final UserAccountManager userAccountManager;
+    private final ImageConverter imageConverter;
+    private final GpxFileManager gpxFileManager;
 
     public UserMenuRecyclerAdapter(Context context, List<TrackModel> tracks) {
         this.context = context;
@@ -42,6 +44,7 @@ public class UserMenuRecyclerAdapter extends RecyclerView.Adapter<UserMenuRecycl
         this.retrofitManager = RetrofitManager.getInstance(context);
         this.userAccountManager = UserAccountManager.getInstance(context);
         this.imageConverter = new ImageConverter();
+        this.gpxFileManager = new GpxFileManager(context);
     }
 
     @NonNull
@@ -71,14 +74,14 @@ public class UserMenuRecyclerAdapter extends RecyclerView.Adapter<UserMenuRecycl
         long min = (travelTime / 60) % 60;
         long hours = (travelTime / 60) / 60;
 
-        String trTimeSecons = (sec < 10) ? "0" + Long.toString(sec) : Long.toString(sec);
-        String trTimeMinutes = (min < 10) ? "0" + Long.toString(min) : Long.toString(min);
-        String trTimeHours = (hours < 10) ? "0" + Long.toString(hours) : Long.toString(hours);
+        String trTimeSeconds = (sec < 10) ? "0" + sec : Long.toString(sec);
+        String trTimeMinutes = (min < 10) ? "0" + min : Long.toString(min);
+        String trTimeHours = (hours < 10) ? "0" + hours : Long.toString(hours);
 
-        String travelTimeString = trTimeHours + ":" + trTimeMinutes + ":" + trTimeSecons;
+        String travelTimeString = trTimeHours + ":" + trTimeMinutes + ":" + trTimeSeconds;
 
+        holder.timeTextViewUserMenu.setText(travelTimeString);
 
-        holder.timeTextViewUserMenu.setText(String.valueOf(travelTimeString));
 
         retrofitManager.getJSONApi()
                 .getTrackImage(userAccountManager.getCookie(), tracks.get(position).getTrackId())
@@ -88,7 +91,6 @@ public class UserMenuRecyclerAdapter extends RecyclerView.Adapter<UserMenuRecycl
                     public void onResponse(Call<ImageModel> call, Response<ImageModel> response) {
                         if (response.isSuccessful() && response.body() != null) {
                             holder.itemUserMenuMapImage.setImageBitmap(imageConverter.decode(response.body().getImageBase64()));
-//                                    holder.itemUserMenuMapImage.set
                         }
                     }
 
@@ -97,6 +99,17 @@ public class UserMenuRecyclerAdapter extends RecyclerView.Adapter<UserMenuRecycl
                         Log.e(UserMenuRecyclerAdapter.class.getName(), "Error responce image model: " + t.getMessage(), t);
                     }
                 });
+
+
+        holder.exportGpxButton.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View view) {
+                String exportingGpx = tracks.get(position).getGpx();
+                if (exportingGpx == null) exportingGpx = "";
+                gpxFileManager.exportGpx(context, exportingGpx);
+            }
+        });
     }
 
     @Override
@@ -109,7 +122,8 @@ public class UserMenuRecyclerAdapter extends RecyclerView.Adapter<UserMenuRecycl
         ImageButton addFavoriteTrackButton,
                 addImportantTrack,
                 chatAltFillButton,
-                uploadTrackButton;
+                shareTrackButton,
+                exportGpxButton;
         TextView firstAndLastnameUserMenuItem,
                 dateUserMenuItem,
                 trackNameTextView,
@@ -126,7 +140,8 @@ public class UserMenuRecyclerAdapter extends RecyclerView.Adapter<UserMenuRecycl
             this.addFavoriteTrackButton = itemView.findViewById(R.id.addFavoriteTrackButton);
             this.addImportantTrack = itemView.findViewById(R.id.addImportantTrack);
             this.chatAltFillButton = itemView.findViewById(R.id.chatAltFillButton);
-            this.uploadTrackButton = itemView.findViewById(R.id.shareTrackButton);
+            this.shareTrackButton = itemView.findViewById(R.id.shareTrackButton);
+            this.exportGpxButton = itemView.findViewById(R.id.exportTrackButton);
             this.firstAndLastnameUserMenuItem = itemView.findViewById(R.id.firstAndLastnameUserMenuItem);
             this.dateUserMenuItem = itemView.findViewById(R.id.dateUserMenuItem);
             this.distanceTextViewUserMenu = itemView.findViewById(R.id.distanceTextViewUserMenu);
@@ -135,5 +150,4 @@ public class UserMenuRecyclerAdapter extends RecyclerView.Adapter<UserMenuRecycl
             this.itemUserMenuMapImage = itemView.findViewById(R.id.itemUserMenuMapImage);
         }
     }
-
 }
