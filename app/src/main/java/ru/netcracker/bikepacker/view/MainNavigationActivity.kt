@@ -26,17 +26,19 @@ class MainNavigationActivity : AppCompatActivity() {
         const val CURRENT_FRAGMENT = "current_fragment"
 
         private const val REQUEST_PERMISSIONS_REQUEST_CODE = 1
-        private val settingsFragment = SettingsFragment()
+        private val homeFragment = HomeFragment()
         const val INITIAL_SELECTED_ITEM: Int = R.id.navigation_home
 
         //tag for each fragment
         const val TAG_MAP = "map"
-        const val TAG_SETTINGS = "settings"
         const val TAG_RECORD = "record"
         const val TAG_HOME = "home"
         const val TAG_FINDFRIEND = "findFriend"
         const val TAG_RECORD_SM = "record_summary"
         const val TAG_USER_MENU = "user_menu"
+        const val TAG_TRACK_MENU = "track_menu"
+
+        public var activeFragment: Fragment? = null
     }
 
     private var downAnim: Animation? = null
@@ -83,33 +85,36 @@ class MainNavigationActivity : AppCompatActivity() {
     private val mapFragment: MapFragment by lazy {
         val fr = supportFragmentManager.findFragmentByTag(TAG_MAP)
         if (fr != null) fr as MapFragment
-        else ru.netcracker.bikepacker.view.MapFragment()
-    }
-
-    private val settingsFragment: SettingsFragment by lazy {
-        val fr = supportFragmentManager.findFragmentByTag(TAG_SETTINGS)
-        if (fr != null) fr as SettingsFragment
-        else SettingsFragment()
+        else MapFragment()
     }
 
     private val homeFragment: HomeFragment by lazy {
         val fr = supportFragmentManager.findFragmentByTag(TAG_HOME)
         if (fr != null) fr as HomeFragment
-        else {
-            HomeFragment()
-        }
+        else HomeFragment()
+
     }
 
     private val findFriend: FindFriendFragment by lazy {
         val fr = supportFragmentManager.findFragmentByTag(TAG_FINDFRIEND)
-        if (fr != null) fr as FindFriendFragment
+        if (fr != null){
+            fr as FindFriendFragment
+
+        }
+
         else FindFriendFragment()
     }
 
-    private val userMenuFragment: UserMenuFragment by lazy {
+    private val userMenuFragment: UserMenuInformationAccountFragment by lazy {
         val fr = supportFragmentManager.findFragmentByTag(TAG_USER_MENU)
-        if (fr != null) fr as UserMenuFragment
-        else UserMenuFragment()
+        if (fr != null) fr as UserMenuInformationAccountFragment
+        else UserMenuInformationAccountFragment()
+    }
+
+    private val trackMenuFragment: TrackMenuFragment by lazy {
+        val fr = supportFragmentManager.findFragmentByTag(TAG_TRACK_MENU)
+        if (fr != null) fr as TrackMenuFragment
+        else TrackMenuFragment()
     }
 
     private val recordFragment: RecordFragment by lazy {
@@ -158,7 +163,6 @@ class MainNavigationActivity : AppCompatActivity() {
 
     private var ctx: Context? = null
     private var selectedFragment: Int = R.id.navigation_home
-    private var activeFragment: Fragment? = null
 
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -194,6 +198,7 @@ class MainNavigationActivity : AppCompatActivity() {
             R.id.navigation_home -> activeFragment = homeFragment
             R.id.find_friends_fragment -> activeFragment = findFriend
             R.id.navigation_account -> activeFragment = userMenuFragment
+            R.id.navigation_tracks -> activeFragment = trackMenuFragment
             //TODO: R.id.navigation_{required menu button} -> activeFragment = {required fragment}
         }
 
@@ -202,11 +207,10 @@ class MainNavigationActivity : AppCompatActivity() {
             //active fragment
             supportFragmentManager.beginTransaction()
                 .add(R.id.fragment_container, mapFragment, TAG_MAP).hide(mapFragment)
-                .add(R.id.fragment_container, settingsFragment, TAG_SETTINGS).hide(settingsFragment)
                 .add(R.id.fragment_container, homeFragment, TAG_HOME).hide(homeFragment)
                 .add(R.id.fragment_container, findFriend, TAG_FINDFRIEND).hide(findFriend)
-                .add(R.id.fragment_container, userMenuFragment, TAG_USER_MENU)
-                .hide(userMenuFragment)
+                .add(R.id.fragment_container, userMenuFragment, TAG_USER_MENU).hide(userMenuFragment)
+                .add(R.id.fragment_container, trackMenuFragment, TAG_TRACK_MENU).hide(trackMenuFragment)
                 //TODO: .add(R.id.fragment_container, {required fragment}, TAG_RECORD).hide({required fragment})
                 .show(activeFragment!!)
                 .commit()
@@ -226,23 +230,6 @@ class MainNavigationActivity : AppCompatActivity() {
         selectedFragment = itemId
 
         when (itemId) {
-            R.id.navigation_home -> {
-                if (activeFragment is MapFragment) {
-                    return if (supportFragmentManager.findFragmentByTag(
-                            TAG_RECORD
-                        ) == null
-                    ) false
-                    else {
-                        findViewById<FrameLayout>(R.id.start_new_route_container)?.startAnimation(
-                            downAnim
-                        )
-                        true
-                    }
-                }
-                supportFragmentManager.beginTransaction().hide(activeFragment!!).show(homeFragment)
-                    .commit()
-                activeFragment = mapFragment
-            }
             R.id.navigation_record -> {
                 if (activeFragment !is MapFragment) {
                     supportFragmentManager.beginTransaction().hide(activeFragment!!)
@@ -258,12 +245,21 @@ class MainNavigationActivity : AppCompatActivity() {
             }
 
             R.id.navigation_account -> {
-                if (activeFragment !is UserMenuFragment) {
+                if (activeFragment !is UserMenuInformationAccountFragment) {
                     supportFragmentManager.beginTransaction().hide(activeFragment!!)
                         .show(userMenuFragment)
                         .commit()
                 }
                 activeFragment = userMenuFragment
+            }
+
+            R.id.navigation_tracks -> {
+                if (activeFragment !is TrackMenuFragment) {
+                    supportFragmentManager.beginTransaction().hide(activeFragment!!)
+                        .show(trackMenuFragment)
+                        .commit()
+                }
+                activeFragment = trackMenuFragment
             }
 
             R.id.navigation_home -> {
@@ -279,7 +275,6 @@ class MainNavigationActivity : AppCompatActivity() {
 
                         activeFragment = findFriend
                     }
-
                 })
                 supportFragmentManager
                     .beginTransaction()
@@ -288,12 +283,32 @@ class MainNavigationActivity : AppCompatActivity() {
 
                 activeFragment = homeFragment
             }
-            else -> {
-                if (activeFragment is SettingsFragment) return false
-                supportFragmentManager.beginTransaction().hide(activeFragment!!)
-                    .show(settingsFragment).commit()
 
-                activeFragment = settingsFragment
+            R.id.navigation_friends -> {
+                if (activeFragment !is FindFriendFragment) {
+                    supportFragmentManager.beginTransaction()
+                        .hide(activeFragment!!)
+                        .show(findFriend)
+                        .commit()
+                }
+                activeFragment = findFriend
+            }
+
+/*            R.id.navigation_home -> {
+                if (activeFragment !is HomeFragment) {
+                    supportFragmentManager.beginTransaction().hide(activeFragment!!)
+                        .show(homeFragment)
+                        .commit()
+                }
+                activeFragment = homeFragment
+            }*/
+
+            else -> {
+                if (activeFragment is UserMenuInformationAccountFragment) return false
+                supportFragmentManager.beginTransaction().hide(activeFragment!!)
+                    .show(userMenuFragment).commit()
+
+                activeFragment = userMenuFragment
             }
         }
         return true
@@ -312,6 +327,5 @@ class MainNavigationActivity : AppCompatActivity() {
         super.onSaveInstanceState(outState)
         outState.putInt(CURRENT_FRAGMENT, selectedFragment)
     }
-
 
 }

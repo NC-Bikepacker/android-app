@@ -15,12 +15,10 @@ import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 
 import ru.netcracker.bikepacker.R;
-import ru.netcracker.bikepacker.adapter.usermenu.UserMenuPagerAdapter;
+import ru.netcracker.bikepacker.adapter.trackmenu.TrackMenuPagerAdapter;
 
-public class UserMenuFragment extends Fragment {
 
-    private Fragment fragment;
-    private FragmentManager fragmentManager;
+public class TrackMenuFragment extends Fragment {
     private ViewPager2 viewPager;
     private View viewUserMenu;
     private TabLayout tabLayoutUserMenu;
@@ -29,13 +27,12 @@ public class UserMenuFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
 
-        viewUserMenu = inflater.inflate(R.layout.fragment_user_menu, container, false);
+        viewUserMenu = inflater.inflate(R.layout.fragment_track_menu, container, false);
 
-        viewPager = viewUserMenu.findViewById(R.id.userMenuViewPager);
-        viewPager.setAdapter(new UserMenuPagerAdapter(this,this.getContext()));
-        tabLayoutUserMenu = viewUserMenu.findViewById(R.id.userMenuTableLayout);
+        viewPager = viewUserMenu.findViewById(R.id.trackMenuViewPager);
+        viewPager.setAdapter(new TrackMenuPagerAdapter(this,this.getContext()));
+        tabLayoutUserMenu = viewUserMenu.findViewById(R.id.trackMenuTableLayout);
 
         this.listener = new TabLayout.OnTabSelectedListener() {
             @Override
@@ -66,18 +63,11 @@ public class UserMenuFragment extends Fragment {
                         tab.setIcon(R.drawable.ic_star_small);
                         tab.getIcon().setTint(viewUserMenu.getContext().getColor(R.color.tabIconColor));
                         break;
-                    case 2:
-                        tab.setIcon(R.drawable.ic_user_fill);
-                        tab.getIcon().setTint(viewUserMenu.getContext().getColor(R.color.tabIconColor));
-                        break;
                 }
             }
         });
-
         tabLayoutUserMenu.addOnTabSelectedListener(listener);
-
         tabLayoutMediator.attach();
-
         return viewUserMenu;
     }
 }

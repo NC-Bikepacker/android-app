@@ -5,6 +5,7 @@ import java.util.List;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
+import retrofit2.http.DELETE;
 import retrofit2.http.GET;
 import retrofit2.http.HTTP;
 import retrofit2.http.Header;
@@ -14,6 +15,7 @@ import retrofit2.http.PUT;
 import retrofit2.http.Path;
 import ru.netcracker.bikepacker.model.AuthModel;
 import ru.netcracker.bikepacker.model.ImageModel;
+import ru.netcracker.bikepacker.model.NewsCardModel;
 import ru.netcracker.bikepacker.model.SignUpModel;
 import ru.netcracker.bikepacker.model.FriendModel;
 import ru.netcracker.bikepacker.model.TrackModel;
@@ -40,6 +42,9 @@ public interface ApiService {
 
     @GET("/tracks/{id}")
     Call<List<TrackModel>> getTracksByUser(@Header ("Cookie") String cookie, @Path("id") long id);
+
+    @GET("/tracks/getlastfriendtracks/{id}")
+    Call<List<TrackModel>> getLastFriendTrack(@Header ("Cookie") String cookie, @Path("id") long id);
 
     //Put track request
     @PUT("/tracks/update/{id}")
@@ -73,4 +78,13 @@ public interface ApiService {
     @GET("/image/track/{id}")
     Call<ImageModel> getTrackImage(@Header ("Cookie") String cookie, @Path("id") Long id);
 
+    //NEWS
+    @GET("/news/getnews/{userid}")
+    Call<List<NewsCardModel>> getNews(@Header ("Cookie") String cookie, @Path("userid") Long userid);
+
+    @POST("/news")
+    Call<ResponseBody> postNews(@Header ("Cookie") String cookie, @Body FriendModel friends);
+
+    @DELETE("/news/delete/{id}")
+    Call<ResponseBody> deleteNews(@Header ("Cookie") String cookie, @Path("id") Long id);
 }

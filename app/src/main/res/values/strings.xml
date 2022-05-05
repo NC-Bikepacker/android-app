@@ -1,5 +1,5 @@
 <resources>
-<!--    <string name="server_ip">http://37.140.241.224:8085</string>-->
+    <!--    <string name="server_ip">http://37.140.241.224:8085</string>-->
     <string name="server_ip">http://192.168.56.1:8085</string>
 
     <string name="action_settings">Settings</string>
@@ -47,5 +47,6 @@
     <string name="accept">Accept</string>
     <string name="track_recorded">Track recorded!</string>
     <string name="distance">Distance:</string>
+    <string name="save">save</string>
     <string name="average_speed">Average speed:</string>
 </resources>

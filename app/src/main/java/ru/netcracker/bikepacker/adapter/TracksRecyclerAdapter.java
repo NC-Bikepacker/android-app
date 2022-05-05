@@ -1,4 +1,4 @@
-package ru.netcracker.bikepacker.adapter.usermenu;
+package ru.netcracker.bikepacker.adapter;
 
 import android.content.Context;
 import android.os.Build;
@@ -28,7 +28,7 @@ import ru.netcracker.bikepacker.model.ImageModel;
 import ru.netcracker.bikepacker.model.TrackModel;
 import ru.netcracker.bikepacker.service.ImageConverter;
 
-public class UserMenuRecyclerAdapter extends RecyclerView.Adapter<UserMenuRecyclerAdapter.UserMenuRecyclerViewHolder> {
+public class TracksRecyclerAdapter extends RecyclerView.Adapter<TracksRecyclerAdapter.UserMenuRecyclerViewHolder> {
 
     private Context context;
     private List<TrackModel> tracks;
@@ -36,7 +36,7 @@ public class UserMenuRecyclerAdapter extends RecyclerView.Adapter<UserMenuRecycl
     private UserAccountManager userAccountManager;
     private ImageConverter imageConverter;
 
-    public UserMenuRecyclerAdapter(Context context, List<TrackModel> tracks) {
+    public TracksRecyclerAdapter(Context context, List<TrackModel> tracks) {
         this.context = context;
         this.tracks = tracks;
         this.retrofitManager = RetrofitManager.getInstance(context);
@@ -47,8 +47,8 @@ public class UserMenuRecyclerAdapter extends RecyclerView.Adapter<UserMenuRecycl
     @NonNull
     @Override
     public UserMenuRecyclerViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View tracksItem = LayoutInflater.from(context).inflate(R.layout.item_track_user_menu, parent, false);
-        return new UserMenuRecyclerAdapter.UserMenuRecyclerViewHolder(tracksItem);
+        View tracksItem = LayoutInflater.from(context).inflate(R.layout.item_track_menu, parent, false);
+        return new TracksRecyclerAdapter.UserMenuRecyclerViewHolder(tracksItem);
     }
 
     @Override
@@ -88,13 +88,12 @@ public class UserMenuRecyclerAdapter extends RecyclerView.Adapter<UserMenuRecycl
                     public void onResponse(Call<ImageModel> call, Response<ImageModel> response) {
                         if (response.isSuccessful() && response.body() != null) {
                             holder.itemUserMenuMapImage.setImageBitmap(imageConverter.decode(response.body().getImageBase64()));
-//                                    holder.itemUserMenuMapImage.set
                         }
                     }
 
                     @Override
                     public void onFailure(Call<ImageModel> call, Throwable t) {
-                        Log.e(UserMenuRecyclerAdapter.class.getName(), "Error responce image model: " + t.getMessage(), t);
+                        Log.e(TracksRecyclerAdapter.class.getName(), "Error responce image model: " + t.getMessage(), t);
                     }
                 });
     }

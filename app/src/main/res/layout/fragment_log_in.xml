@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/fragment_log_in_constraint"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:background="@color/white">
 
     <LinearLayout
@@ -84,20 +84,20 @@
                     android:minHeight="50dp"
                     android:paddingHorizontal="16dp"
                     android:paddingVertical="16dp"
+                    android:singleLine="true"
                     android:textColor="@color/black"
                     android:textColorHighlight="@color/purple_opacity_25"
                     android:textColorHint="@color/grey_main"
                     android:textSize="14sp"
                     app:passwordToggleEnabled="true"
-                    app:passwordToggleTint="@color/purple_main"
-                    android:singleLine="true"/>
+                    app:passwordToggleTint="@color/purple_main" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                app:passwordToggleEnabled="true"
-                app:passwordToggleDrawable="@drawable/show_password_selector">
+                app:passwordToggleDrawable="@drawable/show_password_selector"
+                app:passwordToggleEnabled="true">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/layout_signin_password_field_textField"
@@ -120,58 +120,58 @@
                     android:textColorHint="@color/grey_main"
                     android:textSize="14sp"
                     app:passwordToggleEnabled="true"
-                    app:passwordToggleTint="@color/purple_main"/>
+                    app:passwordToggleTint="@color/purple_main" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <!--            <LinearLayout-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_marginBottom="32dp"-->
-<!--                android:minHeight="24dp"-->
-<!--                android:orientation="horizontal"-->
-<!--                android:paddingHorizontal="0dp">-->
+            <!--                android:layout_width="match_parent"-->
+            <!--                android:layout_height="wrap_content"-->
+            <!--                android:layout_marginBottom="32dp"-->
+            <!--                android:minHeight="24dp"-->
+            <!--                android:orientation="horizontal"-->
+            <!--                android:paddingHorizontal="0dp">-->
 
-<!--                <CheckBox-->
-<!--                    android:id="@+id/layout_signin_remember_me_checkbox"-->
-<!--                    android:layout_width="wrap_content"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:layout_marginStart="-8dp"-->
-<!--                    android:layout_weight="1"-->
-<!--                    android:height="32dp"-->
-<!--                    android:buttonTint="@drawable/check_box_tint"-->
-<!--                    android:fontFamily="@font/proxima_nova_regular"-->
-<!--                    android:letterSpacing="0"-->
-<!--                    android:lines="1"-->
-<!--                    android:maxHeight="32dp"-->
-<!--                    android:minWidth="48dp"-->
-<!--                    android:minHeight="24dp"-->
-<!--                    android:text="@string/remember_me"-->
-<!--                    android:textAlignment="textStart"-->
-<!--                    android:textColor="@color/grey_main"-->
-<!--                    android:textColorHighlight="@color/purple_main"-->
-<!--                    android:textColorHint="@color/purple_main"-->
-<!--                    android:textColorLink="@color/purple_main"-->
-<!--                    android:textSize="14sp" />-->
+            <!--                <CheckBox-->
+            <!--                    android:id="@+id/layout_signin_remember_me_checkbox"-->
+            <!--                    android:layout_width="wrap_content"-->
+            <!--                    android:layout_height="wrap_content"-->
+            <!--                    android:layout_marginStart="-8dp"-->
+            <!--                    android:layout_weight="1"-->
+            <!--                    android:height="32dp"-->
+            <!--                    android:buttonTint="@drawable/check_box_tint"-->
+            <!--                    android:fontFamily="@font/proxima_nova_regular"-->
+            <!--                    android:letterSpacing="0"-->
+            <!--                    android:lines="1"-->
+            <!--                    android:maxHeight="32dp"-->
+            <!--                    android:minWidth="48dp"-->
+            <!--                    android:minHeight="24dp"-->
+            <!--                    android:text="@string/remember_me"-->
+            <!--                    android:textAlignment="textStart"-->
+            <!--                    android:textColor="@color/grey_main"-->
+            <!--                    android:textColorHighlight="@color/purple_main"-->
+            <!--                    android:textColorHint="@color/purple_main"-->
+            <!--                    android:textColorLink="@color/purple_main"-->
+            <!--                    android:textSize="14sp" />-->
 
-<!--                <TextView-->
-<!--                    android:id="@+id/layout_signin_forgot_password_textField"-->
-<!--                    android:layout_width="wrap_content"-->
-<!--                    android:layout_height="match_parent"-->
-<!--                    android:layout_weight="1"-->
-<!--                    android:height="32dp"-->
-<!--                    android:clickable="true"-->
-<!--                    android:focusable="true"-->
-<!--                    android:fontFamily="@font/proxima_nova_semibold"-->
-<!--                    android:gravity="center_vertical"-->
-<!--                    android:maxHeight="32dp"-->
-<!--                    android:minHeight="24dp"-->
-<!--                    android:text="@string/forgot_password"-->
-<!--                    android:textAlignment="textEnd"-->
-<!--                    android:textColor="@color/purple_main"-->
-<!--                    android:textSize="16sp"-->
-<!--                    app:lineHeight="20sp"-->
-<!--                    tools:ignore="RtlCompat" />-->
-<!--            </LinearLayout>-->
+            <!--                <TextView-->
+            <!--                    android:id="@+id/layout_signin_forgot_password_textField"-->
+            <!--                    android:layout_width="wrap_content"-->
+            <!--                    android:layout_height="match_parent"-->
+            <!--                    android:layout_weight="1"-->
+            <!--                    android:height="32dp"-->
+            <!--                    android:clickable="true"-->
+            <!--                    android:focusable="true"-->
+            <!--                    android:fontFamily="@font/proxima_nova_semibold"-->
+            <!--                    android:gravity="center_vertical"-->
+            <!--                    android:maxHeight="32dp"-->
+            <!--                    android:minHeight="24dp"-->
+            <!--                    android:text="@string/forgot_password"-->
+            <!--                    android:textAlignment="textEnd"-->
+            <!--                    android:textColor="@color/purple_main"-->
+            <!--                    android:textSize="16sp"-->
+            <!--                    app:lineHeight="20sp"-->
+            <!--                    tools:ignore="RtlCompat" />-->
+            <!--            </LinearLayout>-->
         </LinearLayout>
 
         <Button

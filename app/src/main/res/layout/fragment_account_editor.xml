@@ -279,7 +279,7 @@
                 android:fontFamily="@font/proxima_nova_semibold"
                 android:letterSpacing="0"
                 android:minHeight="60dp"
-                android:text="@string/edit"
+                android:text="@string/save"
                 android:textAlignment="center"
                 android:textAllCaps="false"
                 android:textSize="18sp"

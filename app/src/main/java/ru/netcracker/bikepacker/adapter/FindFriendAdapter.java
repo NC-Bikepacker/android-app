@@ -1,6 +1,5 @@
 package ru.netcracker.bikepacker.adapter;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,25 +16,27 @@ import com.squareup.picasso.Picasso;
 import java.util.List;
 import ru.netcracker.bikepacker.R;
 import ru.netcracker.bikepacker.listholder.MyFriendsList;
+import ru.netcracker.bikepacker.manager.UserAccountManager;
 import ru.netcracker.bikepacker.model.UserModel;
 
 public class FindFriendAdapter extends RecyclerView.Adapter<FindFriendAdapter.FindFriendViewHolder> {
 
     private Context context;
     private List<UserModel> findFriends;
-
+    private UserAccountManager userAccountManager;
     private final OnFriendClickListener onClickListener;
 
     public FindFriendAdapter(Context context, List<UserModel> findFriends, OnFriendClickListener onClickListener) {
         this.context = context;
         this.findFriends = findFriends;
         this.onClickListener = onClickListener;
+        this.userAccountManager = UserAccountManager.getInstance(context);
     }
 
     @NonNull
     @Override
     public FindFriendViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View findFriendsItem = LayoutInflater.from(context).inflate(R.layout.item_find_friend, parent, false);
+        View findFriendsItem = LayoutInflater.from(context).inflate(R.layout.item_friend_profile, parent, false);
         return new FindFriendViewHolder(findFriendsItem);
     }
 
@@ -56,6 +57,7 @@ public class FindFriendAdapter extends RecyclerView.Adapter<FindFriendAdapter.Fi
         //обработчик кнопки
         holder.addFriendButton.setOnClickListener(view -> onClickListener.addFriendClick(user, position));
         holder.deleteFriendButtton.setOnClickListener(view -> onClickListener.deleteFriendClick(user, position));
+        holder.lookFriendTracks.setOnClickListener(view -> onClickListener.showUserTracks(user, userAccountManager));
 
         //меняем кнопку на нужную, в зависимости от того, пользователь добавлен или удален
            if(MyFriendsList.getInstance().containsFriend(user.getId())){

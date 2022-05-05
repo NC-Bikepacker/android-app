@@ -4,7 +4,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
-import androidx.loader.content.AsyncTaskLoader;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -12,7 +11,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,23 +19,22 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import ru.netcracker.bikepacker.R;
-import ru.netcracker.bikepacker.adapter.usermenu.UserMenuRecyclerAdapter;
+import ru.netcracker.bikepacker.adapter.TracksRecyclerAdapter;
 import ru.netcracker.bikepacker.manager.RetrofitManager;
 import ru.netcracker.bikepacker.manager.UserAccountManager;
 import ru.netcracker.bikepacker.model.TrackModel;
-import ru.netcracker.bikepacker.model.UserModel;
 
 
-public class UserMenuRecycleViewFragment extends Fragment {
+public class TrackMenuRecycleViewFragment extends Fragment {
 
     private View view;
     private int position;
     private RecyclerView userMenuRecyclerView;
-    private UserMenuRecyclerAdapter recyclerAdapter;
+    private TracksRecyclerAdapter recyclerAdapter;
     private RetrofitManager retrofitManager;
     private UserAccountManager userAccountManager;
 
-    public UserMenuRecycleViewFragment(int position) {
+    public TrackMenuRecycleViewFragment(int position) {
         this.position = position;
         this.retrofitManager = RetrofitManager.getInstance(this.getContext());
         this.userAccountManager = UserAccountManager.getInstance(this.getContext());
@@ -46,16 +43,16 @@ public class UserMenuRecycleViewFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.fragment_user_menu_recycle_view, container, false);
+        view = inflater.inflate(R.layout.fragment_track_menu_recycle_view, container, false);
 
         switch (position){
             //all used tracks
             case 0:
-                setUserMenuRecyclerFragment(getAllUsedTracks(),view);
+                setTrackMenuRecyclerFragment(getAllUsedTracks(),view);
                 break;
             // favorite tracks
             case 1:
-                setUserMenuRecyclerFragment(getFavoriteTracks(),view);
+                setTrackMenuRecyclerFragment(getFavoriteTracks(),view);
                 break;
         }
 
@@ -63,22 +60,14 @@ public class UserMenuRecycleViewFragment extends Fragment {
 
     }
 
-    private class DownloadTracks extends AsyncTask<View,Void,TrackModel>{
 
-        @Override
-        protected TrackModel doInBackground(View... views) {
-            return null;
-        }
-    }
 
-    private void setUserMenuRecyclerFragment(List<TrackModel> tracks, View view) {
+    private void setTrackMenuRecyclerFragment(List<TrackModel> tracks, View view) {
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
 
         userMenuRecyclerView = view.findViewById(R.id.userMenuRecyclerView);
         userMenuRecyclerView.setLayoutManager(layoutManager);
 
-        recyclerAdapter = new UserMenuRecyclerAdapter(getContext(), tracks);
-        userMenuRecyclerView.setAdapter(recyclerAdapter);
     }
 
     private List<TrackModel> getFavoriteTracks(){
@@ -91,8 +80,7 @@ public class UserMenuRecycleViewFragment extends Fragment {
                                 if(response.body()!=null){
                                     tracks.addAll(response.body());
                                 }
-
-                                recyclerAdapter = new UserMenuRecyclerAdapter(getContext(), tracks);
+                                recyclerAdapter = new TracksRecyclerAdapter(getContext(), tracks);
                                 userMenuRecyclerView.setAdapter(recyclerAdapter);
                             }
 
@@ -115,8 +103,7 @@ public class UserMenuRecycleViewFragment extends Fragment {
                         if(response.body()!=null){
                             tracks.addAll(response.body());
                         }
-
-                        recyclerAdapter = new UserMenuRecyclerAdapter(getContext(), tracks);
+                        recyclerAdapter = new TracksRecyclerAdapter(getContext(), tracks);
                         userMenuRecyclerView.setAdapter(recyclerAdapter);
                     }
 
