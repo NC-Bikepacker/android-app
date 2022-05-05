@@ -70,13 +70,16 @@ public class HomeMenuRecyclerAdapter extends RecyclerView.Adapter<HomeMenuRecycl
         NewsCardModel newsCardModel = news.get(position);
         UserModel user = newsCardModel.getUser();
         TrackModel track = newsCardModel.getTrack();
-        List<ImageModel> images = new ArrayList<>();
+        List<String> images = new ArrayList<>();
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
         ImageSliderAdapter adapter;
         Random random = new Random();
 
         ////////////////////////////
-        images = newsCardModel.getImages();
+        images.add("https://bikepacking.com/wp-content/uploads/2022/05/Old-Man-Mountain-Elkhorn-Rack-Review_4.jpg");
+        images.add("https://bikepacking.com/wp-content/uploads/2022/05/Old-Man-Mountain-Elkhorn-Rack-Review_9.jpg");
+        images.add("https://bikepacking.com/wp-content/uploads/2022/05/Old-Man-Mountain-Elkhorn-Rack-Review_22.jpg");
+        images.add("https://bikepacking.com/wp-content/uploads/2022/05/Old-Man-Mountain-Elkhorn-Rack-Review_19.jpg");
         ///////////////////////////////
 
         Picasso.get()
@@ -90,15 +93,25 @@ public class HomeMenuRecyclerAdapter extends RecyclerView.Adapter<HomeMenuRecycl
         holder.bodyDescriptionTextView.setText(newsCardModel.getDescription());
         holder.distanceTextViewNewspaperCard.setText("12");
         holder.complexityTextViewNewspaperCard.setText(Long.toString(track.getTrackComplexity()));
-        holder.timeTextViewNewspaperCard.setText("00:43:14");
+
+        /*Convert travel time in seconds to readable string in format HH:MM:SS*/
+        long travelTime = track.getTravelTime();
+        long sec = travelTime % 60;
+        long min = (travelTime / 60) % 60;
+        long hours = (travelTime / 60) / 60;
+
+        String trTimeSeconds = (sec < 10) ? "0" + sec : Long.toString(sec);
+        String trTimeMinutes = (min < 10) ? "0" + min : Long.toString(min);
+        String trTimeHours = (hours < 10) ? "0" + hours : Long.toString(hours);
+
+        String travelTimeString = trTimeHours + ":" + trTimeMinutes + ":" + trTimeSeconds;
+
+        holder.timeTextViewNewspaperCard.setText(travelTimeString);
         holder.dateHomeMenuItem.setText(newsCardModel.getDate());
 
         if(track.getImageBase64()!=null) {
             holder.imageTrackItemNewspaperCard.setImageBitmap(imageConverter.decode(track.getImageBase64()));
         }
-//        holder.imagesNewspaperCardRecycleView.setLayoutManager(layoutManager);
-//        holder.imagesNewspaperCardRecycleView.setAdapter(getImageRecyclerAdapter(images));
-
         adapter = new ImageSliderAdapter(context, images);
         holder.imageSliderView.setSliderAdapter(adapter);
         holder.imageSliderView.setIndicatorAnimation(IndicatorAnimationType.WORM); //set indicator animation by using IndicatorAnimationType. :WORM or THIN_WORM or COLOR or DROP or FILL or NONE or SCALE or SCALE_DOWN or SLIDE and SWAP!!
@@ -108,7 +121,6 @@ public class HomeMenuRecyclerAdapter extends RecyclerView.Adapter<HomeMenuRecycl
         holder.imageSliderView.setIndicatorUnselectedColor(Color.GRAY);
         holder.imageSliderView.setScrollTimeInSec(3); //set scroll delay in seconds :
         holder.imageSliderView.startAutoCycle();
-        //////////////////
     }
 
     private ImageRecyclerAdapter getImageRecyclerAdapter(List<String> images){

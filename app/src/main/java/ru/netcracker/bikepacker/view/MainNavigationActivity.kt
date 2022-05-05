@@ -209,7 +209,6 @@ class MainNavigationActivity : AppCompatActivity() {
 
     private var ctx: Context? = null
     private var selectedFragment: Int = R.id.navigation_home
-    private var activeFragment: Fragment? = null
 
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -336,6 +335,7 @@ class MainNavigationActivity : AppCompatActivity() {
             }
 
             R.id.navigation_friends -> {
+                findFriend.disp();
                 if (activeFragment !is FindFriendFragment) {
                     supportFragmentManager.beginTransaction()
                         .hide(activeFragment!!)

@@ -149,8 +149,6 @@ public class FindFriendFragment extends Fragment {
                                             .show(showTracksFragment)
                                             .commit();
                                     MainNavigationActivity.Companion.setActiveFragment(showTracksFragment);
-
-                                    Toast.makeText(getContext(), "сейчас должен был показаться фрагмент", Toast.LENGTH_SHORT).show();
                                 }
                                 else {
                                     Toast.makeText(getContext(), "Проверьте соединение интернет", Toast.LENGTH_SHORT).show();

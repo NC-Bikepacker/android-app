@@ -27,15 +27,15 @@ public class ImageSliderAdapter extends
         SliderViewAdapter<ImageSliderAdapter.SliderAdapterVH> {
 
     private Context context;
-    private List<ImageModel> mSliderItems = new ArrayList<>();
+    private List<String> mSliderItems = new ArrayList<>();
     private ImageConverter imageConverter = new ImageConverter();
 
-    public ImageSliderAdapter(Context context, List<ImageModel> mSliderItems) {
+    public ImageSliderAdapter(Context context, List<String> mSliderItems) {
         this.context = context;
         this.mSliderItems = mSliderItems;
     }
 
-    public void renewItems(List<ImageModel> sliderItems) {
+    public void renewItems(List<String> sliderItems) {
         this.mSliderItems = sliderItems;
         notifyDataSetChanged();
     }
@@ -45,7 +45,7 @@ public class ImageSliderAdapter extends
         notifyDataSetChanged();
     }
 
-    public void addItem(ImageModel sliderItem) {
+    public void addItem(String sliderItem) {
         this.mSliderItems.add(sliderItem);
         notifyDataSetChanged();
     }
@@ -61,9 +61,14 @@ public class ImageSliderAdapter extends
     @Override
     public void onBindViewHolder(SliderAdapterVH viewHolder, int position) {
 
-        ImageModel sliderItem = mSliderItems.get(position);
+        String sliderItem = mSliderItems.get(position);
 
-        viewHolder.imageViewBackground.setImageBitmap(imageConverter.decode(sliderItem.getImageBase64()));
+        Picasso.get()
+                .load(sliderItem)
+                .fit().centerCrop()
+                .into(viewHolder.imageViewBackground);
+
+        //viewHolder.imageViewBackground.setImageBitmap(imageConverter.decode(sliderItem.getImageBase64()));
 
        /* viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
