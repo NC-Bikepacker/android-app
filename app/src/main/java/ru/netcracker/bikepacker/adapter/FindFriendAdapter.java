@@ -25,7 +25,6 @@ public class FindFriendAdapter extends RecyclerView.Adapter<FindFriendAdapter.Fi
     private List<UserModel> findFriends;
     private UserAccountManager userAccountManager;
     private final OnFriendClickListener onClickListener;
-
     public FindFriendAdapter(Context context, List<UserModel> findFriends, OnFriendClickListener onClickListener) {
         this.context = context;
         this.findFriends = findFriends;
