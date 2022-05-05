@@ -156,13 +156,17 @@ public class FileDialogOpener {
                 return dirs;
             }
 
-            for (File file : dirFile.listFiles()) {
-                if (file.isDirectory()) {
-                    // Add "/" to directory names to identify them in the list
-                    dirs.add(file.getName() + "/");
-                } else if (selectModeType == fileSaveMode || selectModeType == fileOpenMode) {
-                    // Add file names to the list if we are doing a file save or file open operation
-                    dirs.add(file.getName());
+            File[] listFiles = dirFile.listFiles();
+
+            if (listFiles != null) {
+                for (File file : listFiles) {
+                    if (file.isDirectory()) {
+                        // Add "/" to directory names to identify them in the list
+                        dirs.add(file.getName() + "/");
+                    } else if (selectModeType == fileSaveMode || selectModeType == fileOpenMode) {
+                        // Add file names to the list if we are doing a file save or file open operation
+                        dirs.add(file.getName());
+                    }
                 }
             }
         } catch (Exception e) {
@@ -218,7 +222,12 @@ public class FileDialogOpener {
                                                             setView(input).setPositiveButton("OK", new DialogInterface.OnClickListener() {
                                                         public void onClick(DialogInterface dialog, int whichButton) {
                                                             Editable newDir = input.getText();
-                                                            String newDirName = newDir.toString();
+                                                            String newDirName = "";
+
+                                                            if (newDir != null) {
+                                                                newDirName = newDir.toString();
+                                                            }
+
                                                             // Create new directory
                                                             if (createSubDir(dir + "/" + newDirName)) {
                                                                 // Navigate into the new directory
