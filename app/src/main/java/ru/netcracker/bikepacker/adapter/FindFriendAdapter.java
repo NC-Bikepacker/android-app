@@ -80,7 +80,7 @@ public class FindFriendAdapter extends RecyclerView.Adapter<FindFriendAdapter.Fi
 
         private ImageView findFriend_pic;
         private TextView firstAndLastName, nickName;
-        private ImageButton addFriendButton,deleteFriendButtton;
+        private ImageButton addFriendButton,deleteFriendButtton, lookFriendTracks;
 
         public FindFriendViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -90,6 +90,7 @@ public class FindFriendAdapter extends RecyclerView.Adapter<FindFriendAdapter.Fi
             nickName = itemView.findViewById(R.id.findFriend_nickName);
             addFriendButton = itemView.findViewById(R.id.findFriendAddButton);
             deleteFriendButtton = itemView.findViewById(R.id.deleteFriendButton);
+            lookFriendTracks = itemView.findViewById(R.id.friendLookTrackButton);
         }
     }
 }

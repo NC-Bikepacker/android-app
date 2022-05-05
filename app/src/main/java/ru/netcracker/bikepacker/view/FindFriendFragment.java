@@ -32,10 +32,14 @@ import retrofit2.Response;
 import ru.netcracker.bikepacker.R;
 import ru.netcracker.bikepacker.adapter.FindFriendAdapter;
 import ru.netcracker.bikepacker.adapter.OnFriendClickListener;
+import ru.netcracker.bikepacker.adapter.TracksRecyclerAdapter;
+import ru.netcracker.bikepacker.databinding.ActivityMainNavigationBinding;
 import ru.netcracker.bikepacker.listholder.MyFriendsList;
 import ru.netcracker.bikepacker.manager.RetrofitManager;
 import ru.netcracker.bikepacker.manager.SessionManager;
+import ru.netcracker.bikepacker.manager.UserAccountManager;
 import ru.netcracker.bikepacker.model.FriendModel;
+import ru.netcracker.bikepacker.model.TrackModel;
 import ru.netcracker.bikepacker.model.UserModel;
 
 
@@ -70,7 +74,7 @@ public class FindFriendFragment extends Fragment {
         //инициализаруем session manager
         sessionManager = SessionManager.getInstance(context);
 
-        cookie = "JSESSIONID=" + sessionManager.getSessionId() + "; Path=/; HttpOnly;";
+        cookie = UserAccountManager.getInstance(context).getCookie();
 
         //получаем sessionUser
         iAmUser = sessionManager.getSessionUser();
@@ -118,6 +122,46 @@ public class FindFriendFragment extends Fragment {
                                 Toast.makeText(getContext(), "Ошибка удаления", Toast.LENGTH_SHORT).show();
                                 displayMyFriend(viewFindFriendFragment);
                                 Log.d(t.getMessage(), "Ошибка удаления друга");
+                            }
+                        });
+            }
+
+            @Override
+            public void showUserTracks(UserModel user, UserAccountManager userAccountManager) {
+                List<TrackModel> tracks = new ArrayList<>();
+                RetrofitManager.getInstance(getContext())
+                        .getJSONApi()
+                        .getTracksByUser(userAccountManager.getCookie(), user.getId())
+                        .enqueue(new Callback<List<TrackModel>>() {
+                            @Override
+                            public void onResponse(Call<List<TrackModel>> call, Response<List<TrackModel>> response) {
+                                if(response.isSuccessful()){
+                                    tracks.clear();
+                                    tracks.addAll(response.body());
+
+                                    ShowTracksFragment showTracksFragment = new ShowTracksFragment(tracks);
+
+                                    FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+
+                                    getActivity().getSupportFragmentManager().beginTransaction()
+                                            .add(R.id.fragment_container, showTracksFragment, "TAG_SHOW_TRACKS")
+                                            .hide(MainNavigationActivity.Companion.getActiveFragment())
+                                            .show(showTracksFragment)
+                                            .commit();
+                                    MainNavigationActivity.Companion.setActiveFragment(showTracksFragment);
+
+                                    Toast.makeText(getContext(), "сейчас должен был показаться фрагмент", Toast.LENGTH_SHORT).show();
+                                }
+                                else {
+                                    Toast.makeText(getContext(), "Проверьте соединение интернет", Toast.LENGTH_SHORT).show();
+                                    Log.e("Error show friend tracks", "Error response successful response. Error message: "+ response.message() + ". Error code: " + response.code());
+                                }
+                            }
+
+                            @Override
+                            public void onFailure(Call<List<TrackModel>> call, Throwable t) {
+                                Toast.makeText(getContext(), "Ошибка вывода треков пользователя " + "@" + user.getUsername() + ". Проверьте соединение интернет", Toast.LENGTH_SHORT).show();
+                                Log.e("Error show friend tracks", "Error user track response. Error message: "+ t.getMessage(), t);
                             }
                         });
             }
