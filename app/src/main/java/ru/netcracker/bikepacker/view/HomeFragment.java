@@ -20,15 +20,10 @@ import ru.netcracker.bikepacker.adapter.homemenu.HomeMenuPagerAdapter;
 import ru.netcracker.bikepacker.adapter.trackmenu.TrackMenuPagerAdapter;
 
 public class HomeFragment extends Fragment {
-
-    private Fragment fragment;
-    private FragmentManager fragmentManager;
-    private ImageButton findFriends;
-    private ViewPager2 viewPager;
     private View viewHomeMenu;
+    private ViewPager2 viewPager;
     private TabLayout tabLayoutHomeMenu;
     private TabLayout.OnTabSelectedListener listener;
-
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -38,7 +33,7 @@ public class HomeFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View viewHomeMenu = inflater.inflate(R.layout.fragment_home, container,false);
+        viewHomeMenu = inflater.inflate(R.layout.fragment_home, container,false);
 
         viewPager = viewHomeMenu.findViewById(R.id.homeMenuViewPager);
         viewPager.setAdapter(new HomeMenuPagerAdapter(this,this.getContext()));

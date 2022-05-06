@@ -50,6 +50,7 @@ class MainNavigationActivity : AppCompatActivity() {
         const val TAG_USER_MENU = "user_menu"
         const val TAG_TRACK_MENU = "track_menu"
         const val TAG_POINT = "point"
+        const val TAG_EDIT_ACCOUNT = "edit_account"
 
         public var activeFragment: Fragment? = null
     }
@@ -138,6 +139,12 @@ class MainNavigationActivity : AppCompatActivity() {
         val fr = supportFragmentManager.findFragmentByTag(TAG_USER_MENU)
         if (fr != null) fr as UserMenuInformationAccountFragment
         else UserMenuInformationAccountFragment()
+    }
+
+    private val accountEditorFragment: AccountEditorFragment by lazy {
+        val fr = supportFragmentManager.findFragmentByTag(TAG_EDIT_ACCOUNT)
+        if (fr != null) fr as AccountEditorFragment
+        else AccountEditorFragment()
     }
 
     private val trackMenuFragment: TrackMenuFragment by lazy {
@@ -258,6 +265,7 @@ class MainNavigationActivity : AppCompatActivity() {
                 .add(R.id.fragment_container, findFriend, TAG_FINDFRIEND).hide(findFriend)
                 .add(R.id.fragment_container, userMenuFragment, TAG_USER_MENU).hide(userMenuFragment)
                 .add(R.id.fragment_container, trackMenuFragment, TAG_TRACK_MENU).hide(trackMenuFragment)
+                .add(R.id.fragment_container, accountEditorFragment, TAG_EDIT_ACCOUNT).hide(accountEditorFragment)
                 //TODO: .add(R.id.fragment_container, {required fragment}, TAG_RECORD).hide({required fragment})
                 .show(activeFragment!!)
                 .commit()
@@ -296,6 +304,19 @@ class MainNavigationActivity : AppCompatActivity() {
 
             R.id.navigation_account -> {
                 if (activeFragment !is UserMenuInformationAccountFragment) {
+
+                    val editButton: Button = findViewById(R.id.editButtonInformationAccountUserMenuFragment)
+                    editButton.setOnClickListener(object : View.OnClickListener {
+                        override fun onClick(p0: View?) {
+                            supportFragmentManager
+                                .beginTransaction()
+                                .hide(activeFragment!!)
+                                .show(accountEditorFragment).commit()
+
+                            activeFragment = accountEditorFragment
+                        }
+                    })
+
                     supportFragmentManager.beginTransaction().hide(activeFragment!!)
                         .show(userMenuFragment)
                         .commit()

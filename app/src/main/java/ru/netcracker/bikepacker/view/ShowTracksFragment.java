@@ -35,10 +35,6 @@ public class ShowTracksFragment extends Fragment {
         // Inflate the layout for this fragment
         showTracksView = inflater.inflate(R.layout.fragment_show_tracks, container, false);
 
-        Activity activity = getActivity();
-
-        FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
 
         showTracksRecyclerView = showTracksView.findViewById(R.id.showTrackFragmentRecycleView);

@@ -141,8 +141,6 @@ public class FindFriendFragment extends Fragment {
 
                                     ShowTracksFragment showTracksFragment = new ShowTracksFragment(tracks);
 
-                                    FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-
                                     getActivity().getSupportFragmentManager().beginTransaction()
                                             .add(R.id.fragment_container, showTracksFragment, "TAG_SHOW_TRACKS")
                                             .hide(MainNavigationActivity.Companion.getActiveFragment())

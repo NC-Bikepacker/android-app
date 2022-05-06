@@ -37,6 +37,9 @@ public interface ApiService {
     @POST("/signup")
     Call<Void> signUp(@Body SignUpModel signUpModel);
 
+    @PUT("/updatedata")
+    Call<UserModel> updateUserData (@Header("Cookie") String cookie, @Body SignUpModel signUpModel);
+
     //Track operations API
     @POST("/tracks")
     Call<ResponseBody> postTrack(@Header("Cookie") String cookie, @Body TrackModel track);
