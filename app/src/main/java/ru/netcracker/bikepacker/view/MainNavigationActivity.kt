@@ -314,7 +314,7 @@ class MainNavigationActivity : AppCompatActivity() {
 
             R.id.navigation_home -> {
                 if (activeFragment is HomeFragment) return false
-                val findFriendButton: ImageButton = findViewById(R.id.findFriendsButton)
+/*                val findFriendButton: ImageButton = findViewById(R.id.findFriendsButton)
                 findFriendButton.setOnClickListener(object : View.OnClickListener {
                     override fun onClick(p0: View?) {
                         findFriend.disp()
@@ -325,7 +325,7 @@ class MainNavigationActivity : AppCompatActivity() {
 
                         activeFragment = findFriend
                     }
-                })
+                })*/
                 supportFragmentManager
                     .beginTransaction()
                     .hide(activeFragment!!)

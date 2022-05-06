@@ -26,29 +26,7 @@
                 android:contentDescription="add news"
                 android:src="@drawable/ic_add_round_fill"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/findFriendsButton"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <ImageButton
-                android:id="@+id/findFriendsButton"
-                style="@style/Widget.AppCompat.Button.Borderless.Colored"
-                android:layout_width="60dp"
-                android:layout_height="match_parent"
-                android:contentDescription="add friends"
-                android:src="@drawable/ic_user_add_duotone_line"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/searchView"
-                app:layout_constraintStart_toEndOf="@+id/addNewsButton"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <androidx.appcompat.widget.SearchView
-                android:id="@+id/searchView"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/findFriendsButton"
                 app:layout_constraintTop_toTopOf="parent" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>

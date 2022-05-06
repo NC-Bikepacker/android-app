@@ -39,7 +39,6 @@ public class HomeFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View viewHomeMenu = inflater.inflate(R.layout.fragment_home, container,false);
-        findFriends = viewHomeMenu.findViewById(R.id.findFriendsButton);
 
         viewPager = viewHomeMenu.findViewById(R.id.homeMenuViewPager);
         viewPager.setAdapter(new HomeMenuPagerAdapter(this,this.getContext()));

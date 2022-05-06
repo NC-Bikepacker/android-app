@@ -42,15 +42,13 @@ public class TrackMenuRecycleViewFragment extends Fragment {
     private TracksRecyclerAdapter recyclerAdapter;
     private RetrofitManager retrofitManager;
     private UserAccountManager userAccountManager;
-    private final GpxFileManager gpxFileManager;
 
-    private FloatingActionButton importGpxButton;
+
 
     public TrackMenuRecycleViewFragment(int position) {
         this.position = position;
         this.retrofitManager = RetrofitManager.getInstance(this.getContext());
         this.userAccountManager = UserAccountManager.getInstance(this.getContext());
-        this.gpxFileManager = new GpxFileManager(getContext());
     }
 
     @Override
@@ -58,7 +56,7 @@ public class TrackMenuRecycleViewFragment extends Fragment {
                              Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_track_menu_recycle_view, container, false);
 
-        importGpxButton = view.findViewById(R.id.importTrackButton);
+
 
         switch (position) {
             //all used tracks
@@ -74,17 +72,6 @@ public class TrackMenuRecycleViewFragment extends Fragment {
         return view;
     }
 
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-
-        importGpxButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                gpxFileManager.importGpx(getContext());
-            }
-        });
-    }
 
     private void setTrackMenuRecyclerFragment(List<TrackModel> tracks, View view) {
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
