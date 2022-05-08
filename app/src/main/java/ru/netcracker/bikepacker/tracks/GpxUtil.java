@@ -2,17 +2,30 @@ package ru.netcracker.bikepacker.tracks;
 
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.overlay.Polyline;
+import org.w3c.dom.Document;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.StringReader;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 
 import io.jenetics.jpx.GPX;
 import io.jenetics.jpx.Track;
 import io.jenetics.jpx.TrackSegment;
 import io.jenetics.jpx.WayPoint;
+import ru.netcracker.bikepacker.model.TrackModel;
+import ru.netcracker.bikepacker.model.UserModel;
 
 public class GpxUtil {
     public static TrackSegment makeSegment(GeoPoint... geoPoints) {
@@ -72,10 +85,30 @@ public class GpxUtil {
         return geoPointsList;
     }
 
+    public static Polyline trackModelToPolyline(TrackModel trackModel) throws IOException {
+        Polyline polyline = new Polyline();
+        Document document = null;
+        List<GeoPoint> listPoints = new ArrayList<>();
+        DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+        try {
+            DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
+            document = documentBuilder.parse(new InputSource(new StringReader(trackModel.getGpx())));
+        } catch (ParserConfigurationException | IOException | SAXException e) {
+            e.printStackTrace();
+        }
+        NodeList nodeList = document.getElementsByTagName("trkpt");
+        for (int i = 0; i < nodeList.getLength(); i++) {
+            listPoints.add(new GeoPoint(Double.valueOf(String.valueOf(nodeList.item(i).getAttributes().getNamedItem("lat").getNodeValue())),
+                    Double.valueOf(String.valueOf(nodeList.item(i).getAttributes().getNamedItem("lon").getNodeValue()))));
+        }
+        polyline.setPoints(listPoints);
+        return polyline;
+    }
+
     public static String gpxToString(GPX gpx) {
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         try {
-            GPX.write(gpx,byteArrayOutputStream);
+            GPX.write(gpx, byteArrayOutputStream);
         } catch (IOException e) {
             e.printStackTrace();
         }

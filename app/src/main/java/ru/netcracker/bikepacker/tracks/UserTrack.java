@@ -14,7 +14,7 @@ import java.util.List;
 
 public class UserTrack extends OverlayWithIW {
     public static final String RECORDED_TRACK_TAG = "rec";
-    private static final Paint RECORDED_TRACK_PAINT = new Paint();
+    private static Paint RECORDED_TRACK_PAINT = new Paint();
     private static final float ANC_U = Marker.ANCHOR_LEFT, ANC_V = Marker.ANCHOR_BOTTOM;
     private static final double ZOOM_VAL = 0.0005;
 
@@ -53,9 +53,46 @@ public class UserTrack extends OverlayWithIW {
         finishMarker.setId(RECORDED_TRACK_TAG);
     }
 
+    private UserTrack(MapView map, Drawable startIcon, Drawable finishIcon, Polyline polyline, int r, int g, int b) {
+        RECORDED_TRACK_PAINT.setARGB(80, r, g, b);
+        RECORDED_TRACK_PAINT.setStrokeWidth(10F);
+        RECORDED_TRACK_PAINT.setStrokeCap(Paint.Cap.ROUND);
+
+        polyline.getOutlinePaint().set(RECORDED_TRACK_PAINT);
+        polyline.setSubDescription(RECORDED_TRACK_TAG);
+        polyline.setId(RECORDED_TRACK_TAG);
+        this.polyline = polyline;
+
+        startMarker = new Marker(map);
+        startMarker.setAnchor(ANC_U, ANC_V);
+        startMarker.setIcon(startIcon);
+        startMarker.setSubDescription(RECORDED_TRACK_TAG);
+        startMarker.setPosition(
+                polyline.getActualPoints()
+                        .get(0)
+        );
+        startMarker.setId(RECORDED_TRACK_TAG);
+
+        finishMarker = new Marker(map);
+        finishMarker.setAnchor(ANC_U, ANC_V);
+        finishMarker.setIcon(finishIcon);
+        finishMarker.setSubDescription(RECORDED_TRACK_TAG);
+        finishMarker.setPosition(
+                polyline.getActualPoints()
+                        .get(polyline.getActualPoints().size() - 1)
+        );
+        finishMarker.setId(RECORDED_TRACK_TAG);
+    }
+
+
     public static UserTrack newInstance(MapView map, Drawable startIcon, Drawable finishIcon, Polyline polyline
     ) {
         return new UserTrack(map, startIcon, finishIcon, polyline);
+    }
+
+    public static UserTrack newInstance(MapView map, Drawable startIcon, Drawable finishIcon, Polyline polyline, int[] color
+    ) {
+        return new UserTrack(map, startIcon, finishIcon, polyline, color[0], color[1], color[2]);
     }
 
     public List<OverlayWithIW> toList() {
@@ -70,4 +107,8 @@ public class UserTrack extends OverlayWithIW {
                 polyline.getBounds().getLonWest() - ZOOM_VAL
         );
     }
+
+//    public void changeColorTrackPaint() {
+//        RECORDED_TRACK_PAINT.setARGB(155, 51, 250, 51);
+//    }
 }

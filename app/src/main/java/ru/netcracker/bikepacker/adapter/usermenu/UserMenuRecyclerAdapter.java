@@ -13,14 +13,31 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.squareup.picasso.Picasso;
 
+import org.osmdroid.views.overlay.Polyline;
+import org.w3c.dom.Document;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.StringReader;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
+import io.jenetics.jpx.GPX;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -30,6 +47,8 @@ import ru.netcracker.bikepacker.manager.UserAccountManager;
 import ru.netcracker.bikepacker.model.ImageModel;
 import ru.netcracker.bikepacker.model.TrackModel;
 import ru.netcracker.bikepacker.service.ImageConverter;
+import ru.netcracker.bikepacker.tracks.GpxUtil;
+import ru.netcracker.bikepacker.view.OpenTrackFragment;
 
 public class UserMenuRecyclerAdapter extends RecyclerView.Adapter<UserMenuRecyclerAdapter.UserMenuRecyclerViewHolder> {
 
@@ -63,13 +82,13 @@ public class UserMenuRecyclerAdapter extends RecyclerView.Adapter<UserMenuRecycl
     @Override
     public void onBindViewHolder(@NonNull UserMenuRecyclerViewHolder holder, int position) {
         TrackModel track = tracks.get(position);
-
         Picasso.get()
                 .load(track.getUser().getUserPicLink())
                 .placeholder(R.drawable.ic_userpic)
                 .error(R.drawable.ic_userpic)
                 .into(holder.userPicItemUserMenu);
 
+        holder.setTrack(track);
         holder.setFragmentManager(fragmentManager);
         holder.firstAndLastnameUserMenuItem.setText(tracks.get(position).getUser().getFirstname() +
                 " " +
@@ -98,7 +117,6 @@ public class UserMenuRecyclerAdapter extends RecyclerView.Adapter<UserMenuRecycl
                     public void onResponse(Call<ImageModel> call, Response<ImageModel> response) {
                         if (response.isSuccessful() && response.body() != null) {
                             holder.itemUserMenuMapImage.setImageBitmap(imageConverter.decode(response.body().getImageBase64()));
-//                                    holder.itemUserMenuMapImage.set
                         }
                     }
 
@@ -129,6 +147,11 @@ public class UserMenuRecyclerAdapter extends RecyclerView.Adapter<UserMenuRecycl
         ImageView itemUserMenuMapImage;
         LinearLayout trackLinearLayout;
         FragmentManager fragmentManager;
+        TrackModel track;
+
+        public void setTrack(TrackModel track) {
+            this.track = track;
+        }
 
         public void setFragmentManager(FragmentManager fragmentManager) {
             this.fragmentManager = fragmentManager;
@@ -154,10 +177,14 @@ public class UserMenuRecyclerAdapter extends RecyclerView.Adapter<UserMenuRecycl
                 @Override
                 public void onClick(View view) {
                     //open route
+                    OpenTrackFragment openFragment = (OpenTrackFragment) fragmentManager.findFragmentByTag("openTrack");
+                    openFragment.setTrack(track);
+                    openFragment.openTrack();
+
                     fragmentManager.beginTransaction()
                             .hide(Objects.requireNonNull(fragmentManager.findFragmentByTag("user_menu")))
-                            .show(Objects.requireNonNull(fragmentManager.findFragmentByTag("openTrack")))
-                            .commit();;
+                            .show(Objects.requireNonNull(openFragment))
+                            .commit();
                 }
             });
         }

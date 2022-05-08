@@ -3,6 +3,7 @@ package ru.netcracker.bikepacker.view
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Paint
 import android.os.Bundle
 import android.preference.PreferenceManager
 import android.util.Log
@@ -15,8 +16,6 @@ import androidx.fragment.app.Fragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import org.osmdroid.config.Configuration
 import org.osmdroid.views.overlay.OverlayWithIW
-import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider
-import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay
 import ru.netcracker.bikepacker.R
 import ru.netcracker.bikepacker.databinding.ActivityMainNavigationBinding
 import ru.netcracker.bikepacker.tracks.GpxUtil
@@ -213,10 +212,28 @@ class MainNavigationActivity : AppCompatActivity() {
     private val openTrackFragment: OpenTrackFragment by lazy {
         val fr = supportFragmentManager.findFragmentByTag(TAG_OPEN)
         if (fr != null) fr as OpenTrackFragment
-        else{
+        else {
             val fr = OpenTrackFragment()
             fr.fragmentManager = supportFragmentManager
             fr.setOnStartRouteBtnListener {
+                run {
+                    val track = fr.getTrack()
+                    val map = mapFragment.map
+//                    val paint = Paint()
+//                    paint.setARGB(255, 51, 255, 51)
+                    userTrack = UserTrack.newInstance(
+                        map,
+                        mapFragment.startIcon,
+                        mapFragment.finishIcon,
+                        GpxUtil.trackModelToPolyline(track),
+                        intArrayOf(102, 70, 150)
+                    )
+
+                    map.let {
+                        it?.zoomToBoundingBox(userTrack?.boundingBox, true)
+                        it?.overlayManager?.addAll(userTrack?.toList()!!)
+                    }
+                }
                 supportFragmentManager.beginTransaction()
                     .hide(openTrackFragment)
                     .show(mapFragment)
@@ -281,7 +298,8 @@ class MainNavigationActivity : AppCompatActivity() {
                 .add(R.id.fragment_container, settingsFragment, TAG_SETTINGS).hide(settingsFragment)
                 .add(R.id.fragment_container, homeFragment, TAG_HOME).hide(homeFragment)
                 .add(R.id.fragment_container, findFriend, TAG_FINDFRIEND).hide(findFriend)
-                .add(R.id.fragment_container, userMenuFragment, TAG_USER_MENU).hide(userMenuFragment)
+                .add(R.id.fragment_container, userMenuFragment, TAG_USER_MENU)
+                .hide(userMenuFragment)
                 .add(R.id.fragment_container, openTrackFragment, TAG_OPEN).hide(openTrackFragment)
                 //TODO: .add(R.id.fragment_container, {required fragment}, TAG_RECORD).hide({required fragment})
                 .show(activeFragment!!)
@@ -303,9 +321,14 @@ class MainNavigationActivity : AppCompatActivity() {
 
     private fun setFragment(itemId: Int): Boolean {
         selectedFragment = itemId
-
+        if (activeFragment is UserMenuFragment) {
+            supportFragmentManager.beginTransaction().hide(openTrackFragment)
+                .commit()
+        }
         when (itemId) {
             R.id.navigation_record -> {
+
+
                 if (activeFragment !is MapFragment) {
                     supportFragmentManager.beginTransaction().hide(activeFragment!!)
                         .show(mapFragment)
