@@ -18,17 +18,7 @@ public class TrackMenuPagerAdapter extends FragmentStateAdapter {
     @NonNull
     @Override
     public Fragment createFragment(int position) {
-
-        switch (position){
-            //all used tracks
-            case 0:
-                return new TrackMenuRecycleViewFragment(position);
-            //favorite tracks
-            case 1:
-                return new TrackMenuRecycleViewFragment(position);
-            default:
-                return new TrackMenuRecycleViewFragment(position);
-        }
+        return new TrackMenuRecycleViewFragment(position);
     }
 
     @Override

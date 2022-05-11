@@ -1,5 +1,6 @@
 package ru.netcracker.bikepacker.adapter;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
 import android.media.Image;
@@ -52,7 +53,7 @@ public class ImageSliderAdapter extends
 
     @Override
     public SliderAdapterVH onCreateViewHolder(ViewGroup parent) {
-        View inflate = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_image_slider_layout, null);
+        @SuppressLint("InflateParams") View inflate = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_image_slider_layout, null);
         return new SliderAdapterVH(inflate);
     }
 
@@ -67,15 +68,6 @@ public class ImageSliderAdapter extends
                 .load(sliderItem)
                 .fit().centerCrop()
                 .into(viewHolder.imageViewBackground);
-
-        //viewHolder.imageViewBackground.setImageBitmap(imageConverter.decode(sliderItem.getImageBase64()));
-
-       /* viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-            }
-        });*/
     }
 
     @Override

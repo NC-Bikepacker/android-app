@@ -54,6 +54,7 @@ public class TracksRecyclerAdapter extends RecyclerView.Adapter<TracksRecyclerAd
         return new TracksRecyclerAdapter.UserMenuRecyclerViewHolder(tracksItem);
     }
 
+
     @Override
     public void onBindViewHolder(@NonNull UserMenuRecyclerViewHolder holder, int position) {
         TrackModel track = tracks.get(position);
@@ -64,51 +65,31 @@ public class TracksRecyclerAdapter extends RecyclerView.Adapter<TracksRecyclerAd
                 .error(R.drawable.ic_userpic)
                 .into(holder.userPicItemUserMenu);
 
-        holder.firstAndLastnameUserMenuItem.setText(tracks.get(position).getUser().getFirstname() +
-                " " +
-                tracks.get(position).getUser().getLastname());
+        holder.firstAndLastnameUserMenuItem.setText(String.format("%s %s", tracks.get(position).getUser().getFirstname(), tracks.get(position).getUser().getLastname()));
 
-        /*Convert travel time in seconds to readable string in format HH:MM:SS*/
-        long travelTime = tracks.get(position).getTravelTime();
-        long sec = travelTime % 60;
-        long min = (travelTime / 60) % 60;
-        long hours = (travelTime / 60) / 60;
-
-        String trTimeSeconds = (sec < 10) ? "0" + sec : Long.toString(sec);
-        String trTimeMinutes = (min < 10) ? "0" + min : Long.toString(min);
-        String trTimeHours = (hours < 10) ? "0" + hours : Long.toString(hours);
-
-        String travelTimeString = trTimeHours + ":" + trTimeMinutes + ":" + trTimeSeconds;
-
-        holder.timeTextViewUserMenu.setText(travelTimeString);
-
+        holder.timeTextViewUserMenu.setText(getConvertTravelTime(track));
 
         retrofitManager.getJSONApi()
                 .getTrackImage(userAccountManager.getCookie(), tracks.get(position).getTrackId())
                 .enqueue(new Callback<ImageModel>() {
                     @RequiresApi(api = Build.VERSION_CODES.O)
                     @Override
-                    public void onResponse(Call<ImageModel> call, Response<ImageModel> response) {
+                    public void onResponse(@NonNull Call<ImageModel> call, @NonNull Response<ImageModel> response) {
                         if (response.isSuccessful() && response.body() != null) {
                             holder.itemUserMenuMapImage.setImageBitmap(imageConverter.decode(response.body().getImageBase64()));
                         }
                     }
 
                     @Override
-                    public void onFailure(Call<ImageModel> call, Throwable t) {
+                    public void onFailure(@NonNull Call<ImageModel> call, @NonNull Throwable t) {
                         Log.e(TracksRecyclerAdapter.class.getName(), "Error responce image model: " + t.getMessage(), t);
                     }
                 });
 
-
-        holder.exportGpxButton.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View view) {
-                String exportingGpx = tracks.get(position).getGpx();
-                if (exportingGpx == null) exportingGpx = "";
-                gpxFileManager.exportGpx(context, exportingGpx);
-            }
+        holder.exportGpxButton.setOnClickListener(view -> {
+            String exportingGpx = tracks.get(position).getGpx();
+            if (exportingGpx == null) exportingGpx = "";
+            gpxFileManager.exportGpx(context, exportingGpx);
         });
     }
 
@@ -149,5 +130,19 @@ public class TracksRecyclerAdapter extends RecyclerView.Adapter<TracksRecyclerAd
             this.timeTextViewUserMenu = itemView.findViewById(R.id.timeTextViewUserMenu);
             this.itemUserMenuMapImage = itemView.findViewById(R.id.itemUserMenuMapImage);
         }
+    }
+
+    private String getConvertTravelTime(TrackModel track){
+        /*Convert travel time in seconds to readable string in format HH:MM:SS*/
+        long travelTime = track.getTravelTime();
+        long sec = travelTime % 60;
+        long min = (travelTime / 60) % 60;
+        long hours = (travelTime / 60) / 60;
+
+        String trTimeSeconds = (sec < 10) ? "0" + sec : Long.toString(sec);
+        String trTimeMinutes = (min < 10) ? "0" + min : Long.toString(min);
+        String trTimeHours = (hours < 10) ? "0" + hours : Long.toString(hours);
+
+        return trTimeHours + ":" + trTimeMinutes + ":" + trTimeSeconds;
     }
 }

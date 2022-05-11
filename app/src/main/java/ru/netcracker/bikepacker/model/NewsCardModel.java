@@ -84,7 +84,7 @@ public class NewsCardModel {
         this.likes = likes;
     }
 
-    public NewsCardModel(long id, TrackModel track, String description, String date, UserModel user, Long likes) {
+    public NewsCardModel(long id, TrackModel track, String description, String date, UserModel user, List<ImageModel> images, Long likes) {
         this.id = id;
         this.track = track;
         this.description = description;

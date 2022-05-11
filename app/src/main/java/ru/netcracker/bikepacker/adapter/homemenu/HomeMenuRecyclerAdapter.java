@@ -1,8 +1,8 @@
 package ru.netcracker.bikepacker.adapter.homemenu;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
-import android.media.Image;
 import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,7 +10,6 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
@@ -24,15 +23,12 @@ import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 import ru.netcracker.bikepacker.R;
-import ru.netcracker.bikepacker.adapter.FindFriendAdapter;
 import ru.netcracker.bikepacker.adapter.ImageRecyclerAdapter;
 import ru.netcracker.bikepacker.adapter.ImageSliderAdapter;
 import ru.netcracker.bikepacker.manager.RetrofitManager;
 import ru.netcracker.bikepacker.manager.UserAccountManager;
-import ru.netcracker.bikepacker.model.ImageModel;
 import ru.netcracker.bikepacker.model.NewsCardModel;
 import ru.netcracker.bikepacker.model.TrackModel;
 import ru.netcracker.bikepacker.model.UserModel;
@@ -55,7 +51,6 @@ public class HomeMenuRecyclerAdapter extends RecyclerView.Adapter<HomeMenuRecycl
 
     }
 
-
     @NonNull
     @Override
     public HomeMenuRecyclerViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -63,24 +58,21 @@ public class HomeMenuRecyclerAdapter extends RecyclerView.Adapter<HomeMenuRecycl
         return new HomeMenuRecyclerAdapter.HomeMenuRecyclerViewHolder(newsItem);
     }
 
+    @SuppressLint("SetTextI18n")
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public void onBindViewHolder(@NonNull HomeMenuRecyclerViewHolder holder, int position) {
-        //Toast.makeText(context, news.size(), Toast.LENGTH_SHORT).show();
         NewsCardModel newsCardModel = news.get(position);
         UserModel user = newsCardModel.getUser();
         TrackModel track = newsCardModel.getTrack();
         List<String> images = new ArrayList<>();
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
         ImageSliderAdapter adapter;
-        Random random = new Random();
 
-        ////////////////////////////
         images.add("https://bikepacking.com/wp-content/uploads/2022/05/Old-Man-Mountain-Elkhorn-Rack-Review_4.jpg");
         images.add("https://bikepacking.com/wp-content/uploads/2022/05/Old-Man-Mountain-Elkhorn-Rack-Review_9.jpg");
         images.add("https://bikepacking.com/wp-content/uploads/2022/05/Old-Man-Mountain-Elkhorn-Rack-Review_22.jpg");
         images.add("https://bikepacking.com/wp-content/uploads/2022/05/Old-Man-Mountain-Elkhorn-Rack-Review_19.jpg");
-        ///////////////////////////////
 
         Picasso.get()
                 .load(track.getUser().getUserPicLink())
@@ -89,24 +81,13 @@ public class HomeMenuRecyclerAdapter extends RecyclerView.Adapter<HomeMenuRecycl
                 .into(holder.userPicItemHomeMenu);
 
         holder.usernameHomeMenuItem.setText(newsCardModel.getUser().getUsername());
-        holder.firstAndLastnameHomeMenuItem.setText(user.getFirstname() + " " + user.getLastname());
+        holder.firstAndLastnameHomeMenuItem.setText(String.format("%s %s", user.getFirstname(), user.getLastname()));
         holder.bodyDescriptionTextView.setText(newsCardModel.getDescription());
+        holder.bodyDescriptionTextView.setOnClickListener(v -> holder.bodyDescriptionTextView.setMaxLines(Integer.MAX_VALUE));
         holder.distanceTextViewNewspaperCard.setText("12");
         holder.complexityTextViewNewspaperCard.setText(Long.toString(track.getTrackComplexity()));
 
-        /*Convert travel time in seconds to readable string in format HH:MM:SS*/
-        long travelTime = track.getTravelTime();
-        long sec = travelTime % 60;
-        long min = (travelTime / 60) % 60;
-        long hours = (travelTime / 60) / 60;
-
-        String trTimeSeconds = (sec < 10) ? "0" + sec : Long.toString(sec);
-        String trTimeMinutes = (min < 10) ? "0" + min : Long.toString(min);
-        String trTimeHours = (hours < 10) ? "0" + hours : Long.toString(hours);
-
-        String travelTimeString = trTimeHours + ":" + trTimeMinutes + ":" + trTimeSeconds;
-
-        holder.timeTextViewNewspaperCard.setText(travelTimeString);
+        holder.timeTextViewNewspaperCard.setText(convertTravelTime(track));
         holder.dateHomeMenuItem.setText(newsCardModel.getDate());
 
         if(track.getImageBase64()!=null) {
@@ -145,7 +126,6 @@ public class HomeMenuRecyclerAdapter extends RecyclerView.Adapter<HomeMenuRecycl
                 complexityTextViewNewspaperCard,
                 timeTextViewNewspaperCard,
                 dateHomeMenuItem;
-        RecyclerView imagesNewspaperCardRecycleView;
         SliderView imageSliderView;
 
 
@@ -156,7 +136,6 @@ public class HomeMenuRecyclerAdapter extends RecyclerView.Adapter<HomeMenuRecycl
             this.firstAndLastnameHomeMenuItem = itemView.findViewById(R.id.firstAndLastnameHomeMenuItem);
             this.usernameHomeMenuItem = itemView.findViewById(R.id.nicknameHomeMenuItem);
             this.bodyDescriptionTextView = itemView.findViewById(R.id.bodyDescriptionTextView);
-            //this.imagesNewspaperCardRecycleView = itemView.findViewById(R.id.imagesNuewspaperCardRecycleView);
             this.imageSliderView = itemView.findViewById(R.id.imageSlider);
             this.distanceTextViewNewspaperCard = itemView.findViewById(R.id.distanceTextViewNewspaperCard);
             this.complexityTextViewNewspaperCard = itemView.findViewById(R.id.complexityTextViewNewspaperCard);
@@ -168,6 +147,20 @@ public class HomeMenuRecyclerAdapter extends RecyclerView.Adapter<HomeMenuRecycl
             this.imageTrackItemNewspaperCard = itemView.findViewById(R.id.imageTrackItemNewspaperCard);
         }
 
+    }
+
+    /*Convert travel time in seconds to readable string in format HH:MM:SS*/
+    private String convertTravelTime(TrackModel track){
+        long travelTime = track.getTravelTime();
+        long sec = travelTime % 60;
+        long min = (travelTime / 60) % 60;
+        long hours = (travelTime / 60) / 60;
+
+        String trTimeSeconds = (sec < 10) ? "0" + sec : Long.toString(sec);
+        String trTimeMinutes = (min < 10) ? "0" + min : Long.toString(min);
+        String trTimeHours = (hours < 10) ? "0" + hours : Long.toString(hours);
+
+        return trTimeHours + ":" + trTimeMinutes + ":" + trTimeSeconds;
     }
 }
 

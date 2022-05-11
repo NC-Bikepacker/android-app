@@ -34,16 +34,7 @@ public class HomeMenuPagerAdapter extends FragmentStateAdapter {
     @NonNull
     @Override
     public Fragment createFragment(int position) {
-        switch (position){
-            //all used tracks
-            case 0:
-                return new HomeMenuRecycleViewFragment(position);
-            //favorite tracks
-            case 1:
-                return new HomeMenuRecycleViewFragment(position);
-            default:
-                return new HomeMenuRecycleViewFragment(0);
-        }
+        return new HomeMenuRecycleViewFragment(position);
     }
 
     @Override

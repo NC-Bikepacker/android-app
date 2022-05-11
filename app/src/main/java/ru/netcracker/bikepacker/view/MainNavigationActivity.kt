@@ -15,8 +15,6 @@ import androidx.fragment.app.Fragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import org.osmdroid.config.Configuration
 import org.osmdroid.views.overlay.OverlayWithIW
-import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider
-import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay
 import ru.netcracker.bikepacker.R
 import ru.netcracker.bikepacker.databinding.ActivityMainNavigationBinding
 import ru.netcracker.bikepacker.tracks.GpxUtil
@@ -38,7 +36,6 @@ class MainNavigationActivity : AppCompatActivity() {
         const val CURRENT_FRAGMENT = "current_fragment"
 
         private const val REQUEST_PERMISSIONS_REQUEST_CODE = 1
-        private val homeFragment = HomeFragment()
         const val INITIAL_SELECTED_ITEM: Int = R.id.navigation_home
 
         //tag for each fragment
@@ -52,7 +49,7 @@ class MainNavigationActivity : AppCompatActivity() {
         const val TAG_POINT = "point"
         const val TAG_EDIT_ACCOUNT = "edit_account"
 
-        public var activeFragment: Fragment? = null
+        var activeFragment: Fragment? = null
     }
 
     private var downAnim: Animation? = null
@@ -118,15 +115,15 @@ class MainNavigationActivity : AppCompatActivity() {
         else {
             val createPoint = CreatePointFragment()
             createPoint.setOnCancelButtonListener {
-                findViewById<ImageButton>(R.id.locationBtn).visibility = View.VISIBLE;
-                findViewById<ImageButton>(R.id.zoomInBtn).visibility = View.VISIBLE;
-                findViewById<ImageButton>(R.id.zoomOutBtn).visibility = View.VISIBLE;
+                findViewById<ImageButton>(R.id.locationBtn).visibility = View.VISIBLE
+                findViewById<ImageButton>(R.id.zoomInBtn).visibility = View.VISIBLE
+                findViewById<ImageButton>(R.id.zoomOutBtn).visibility = View.VISIBLE
                 findViewById<Button>(R.id.buttonPoint).visibility = View.VISIBLE
                 findViewById<EditText>(R.id.description).setText("")
                 supportFragmentManager.beginTransaction()
                     .show(recordFragment)
                     .remove(createPointFragment)
-                    .commit();
+                    .commit()
             }
             createPoint.setButtonPoint(findViewById<Button>(R.id.buttonPoint))
             createPoint.setRecordFragment(recordFragment)
@@ -158,8 +155,8 @@ class MainNavigationActivity : AppCompatActivity() {
 
         if (fr != null) fr as RecordFragment
         else {
-            val initialFr = ru.netcracker.bikepacker.view.RecordFragment()
-            initialFr.setBtnPoint(findViewById<Button>(R.id.buttonPoint));
+            val initialFr = RecordFragment()
+            initialFr.setBtnPoint(findViewById<Button>(R.id.buttonPoint))
             initialFr.setOnGpxCreatedListener { gpx ->
                 run {
                     val map = mapFragment.map
@@ -179,13 +176,13 @@ class MainNavigationActivity : AppCompatActivity() {
             }
             initialFr.setOnCreatePointListener {
                 findViewById<Button>(R.id.buttonPoint).visibility = View.INVISIBLE
-                findViewById<ImageButton>(R.id.locationBtn).visibility = View.INVISIBLE;
-                findViewById<ImageButton>(R.id.zoomInBtn).visibility = View.INVISIBLE;
-                findViewById<ImageButton>(R.id.zoomOutBtn).visibility = View.INVISIBLE;
+                findViewById<ImageButton>(R.id.locationBtn).visibility = View.INVISIBLE
+                findViewById<ImageButton>(R.id.zoomInBtn).visibility = View.INVISIBLE
+                findViewById<ImageButton>(R.id.zoomOutBtn).visibility = View.INVISIBLE
                 supportFragmentManager.beginTransaction()
                     .replace(R.id.create_point_container, createPointFragment, TAG_POINT)
                     .hide(recordFragment)
-                    .commit();
+                    .commit()
             }
             initialFr.setOnStopBtnClickListener {
                 findViewById<FrameLayout>(R.id.start_new_route_container)?.startAnimation(downAnim)
@@ -335,18 +332,6 @@ class MainNavigationActivity : AppCompatActivity() {
 
             R.id.navigation_home -> {
                 if (activeFragment is HomeFragment) return false
-/*                val findFriendButton: ImageButton = findViewById(R.id.findFriendsButton)
-                findFriendButton.setOnClickListener(object : View.OnClickListener {
-                    override fun onClick(p0: View?) {
-                        findFriend.disp()
-                        supportFragmentManager
-                            .beginTransaction()
-                            .hide(activeFragment!!)
-                            .show(findFriend).commit()
-
-                        activeFragment = findFriend
-                    }
-                })*/
                 supportFragmentManager
                     .beginTransaction()
                     .hide(activeFragment!!)
@@ -356,7 +341,7 @@ class MainNavigationActivity : AppCompatActivity() {
             }
 
             R.id.navigation_friends -> {
-                findFriend.disp();
+                findFriend.disp()
                 if (activeFragment !is FindFriendFragment) {
                     supportFragmentManager.beginTransaction()
                         .hide(activeFragment!!)

@@ -25,10 +25,8 @@ import ru.netcracker.bikepacker.adapter.TracksRecyclerAdapter;
 import ru.netcracker.bikepacker.adapter.homemenu.HomeMenuRecyclerAdapter;
 import ru.netcracker.bikepacker.manager.RetrofitManager;
 import ru.netcracker.bikepacker.manager.UserAccountManager;
-import ru.netcracker.bikepacker.model.ImageModel;
 import ru.netcracker.bikepacker.model.NewsCardModel;
 import ru.netcracker.bikepacker.model.TrackModel;
-import ru.netcracker.bikepacker.model.UserModel;
 
 public class HomeMenuRecycleViewFragment extends Fragment {
 
@@ -82,14 +80,13 @@ public class HomeMenuRecycleViewFragment extends Fragment {
                 .getNews(userAccountManager.getCookie(),userAccountManager.getUser().getId())
                 .enqueue(new Callback<List<NewsCardModel>>() {
                     @Override
-                    public void onResponse(Call<List<NewsCardModel>> call, @NonNull Response<List<NewsCardModel>> response) {
+                    public void onResponse(@NonNull Call<List<NewsCardModel>> call, @NonNull Response<List<NewsCardModel>> response) {
                         if(response.isSuccessful()){
                             news.clear();
                             news.addAll(Objects.requireNonNull(response.body()));
 
                             homeMenuRecyclerAdapter = new HomeMenuRecyclerAdapter(getContext(), news);
                             homeMenuRecyclerView.setAdapter(homeMenuRecyclerAdapter);
-
                         }
                         else {
                             Toast.makeText(getContext(), "Проверьте соединение интернет", Toast.LENGTH_SHORT).show();
@@ -98,7 +95,7 @@ public class HomeMenuRecycleViewFragment extends Fragment {
                     }
 
                     @Override
-                    public void onFailure(Call<List<NewsCardModel>> call, Throwable t) {
+                    public void onFailure(@NonNull Call<List<NewsCardModel>> call, @NonNull Throwable t) {
                         Toast.makeText(getContext(), "Ошибка вывода новостей. Проверьте соединение интернет", Toast.LENGTH_SHORT).show();
                         Log.e("RetrofitError", "Error in HomeMenuRecycleViewFragment.class. Error: "+ t.getMessage() , t);
                     }
@@ -112,7 +109,7 @@ public class HomeMenuRecycleViewFragment extends Fragment {
                 .getLastFriendTrack(userAccountManager.getCookie(), userAccountManager.getUser().getId())
                 .enqueue(new Callback<List<TrackModel>>() {
                     @Override
-                    public void onResponse(Call<List<TrackModel>> call, Response<List<TrackModel>> response) {
+                    public void onResponse(@NonNull Call<List<TrackModel>> call, @NonNull Response<List<TrackModel>> response) {
                         if(response.isSuccessful()){
                             tracks.clear();
                             assert response.body() != null;
@@ -128,7 +125,7 @@ public class HomeMenuRecycleViewFragment extends Fragment {
                     }
 
                     @Override
-                    public void onFailure(Call<List<TrackModel>> call, Throwable t) {
+                    public void onFailure(@NonNull Call<List<TrackModel>> call, @NonNull Throwable t) {
                         Toast.makeText(getContext(), "Ошибка вывода треков. Проверьте соединение интернет", Toast.LENGTH_SHORT).show();
                         Log.e("Error show last tracks friends in homeMenu fragment", "Error friend track response. Error message: "+ t.getMessage(), t);
                     }

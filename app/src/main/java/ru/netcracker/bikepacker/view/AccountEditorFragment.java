@@ -6,6 +6,7 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
+import android.text.Editable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,6 +18,7 @@ import android.widget.Toast;
 import com.google.android.material.textfield.TextInputEditText;
 
 import java.util.Objects;
+import java.util.Optional;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -65,16 +67,22 @@ public class AccountEditorFragment extends Fragment {
         email.setText(userAccountManager.getUser().getEmail());
         username.setText(userAccountManager.getUser().getUsername());
 
+        Optional<Editable> firstnameOpt = Optional.ofNullable(firstname.getText());
+        Optional<Editable> lastnameOpt = Optional.ofNullable(lastname.getText());
+        Optional<Editable> emailOpt = Optional.ofNullable(email.getText());
+        Optional<Editable> usernameOpt = Optional.ofNullable(username.getText());
+
+
         save.setOnClickListener(view -> {
             user = new SignUpModel();
             //флаг изменений, если есть изменения, то true
             boolean editFlag;
 
             //проверка, что поле в фрагменте изменено и не является нулевым
-            if(!userAccountManager.getUser().getFirstname().equals(Objects.requireNonNull(firstname.getText()).toString()) && !firstname.getText().toString().isEmpty()){ editFlag=true; }
-            if(!userAccountManager.getUser().getLastname().equals(Objects.requireNonNull(lastname.getText()).toString())&& !lastname.getText().toString().isEmpty()){ editFlag=true;}
-            if(!userAccountManager.getUser().getEmail().equals(Objects.requireNonNull(email.getText()).toString()) && !email.getText().toString().isEmpty()){editFlag=true;}
-            if(!userAccountManager.getUser().getUsername().equals(Objects.requireNonNull(username.getText()).toString()) && !username.getText().toString().isEmpty()){editFlag=true;}
+            if(firstnameOpt.isPresent() && !userAccountManager.getUser().getFirstname().equals(firstnameOpt.get().toString()) && !firstnameOpt.get().toString().isEmpty()) { editFlag=true; }
+            if(lastnameOpt.isPresent() && !userAccountManager.getUser().getLastname().equals(lastnameOpt.get().toString()) && !lastnameOpt.get().toString().isEmpty()){ editFlag=true;}
+            if(emailOpt.isPresent() && !userAccountManager.getUser().getEmail().equals(emailOpt.get().toString()) && !emailOpt.get().toString().isEmpty()){editFlag=true;}
+            if(usernameOpt.isPresent() && !userAccountManager.getUser().getUsername().equals(usernameOpt.get().toString()) && !usernameOpt.get().toString().isEmpty()){editFlag=true;}
 
 
             //устанавливаем поля для новых данных юзера
