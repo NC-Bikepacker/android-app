@@ -129,6 +129,8 @@ public class AccountEditorFragment extends Fragment {
                                     SessionManager.getInstance(getContext())
                                             .setSessionUser(response.body());
                                     Toast.makeText(getContext(), "Данные аккаунта успешно обновлены", Toast.LENGTH_SHORT).show();
+                                    password.setText("");
+                                    confirmPassword.setText("");
                                 }
                                 else {
                                     Log.e("AccountEditorFragment.class", "Не выполнен запрос отправки данных аккаунта клиента");
