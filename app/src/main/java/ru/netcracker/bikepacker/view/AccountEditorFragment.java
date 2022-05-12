@@ -76,7 +76,7 @@ public class AccountEditorFragment extends Fragment {
         save.setOnClickListener(view -> {
             user = new SignUpModel();
             //флаг изменений, если есть изменения, то true
-            boolean editFlag;
+            boolean editFlag = false;
 
             //проверка, что поле в фрагменте изменено и не является нулевым
             if(firstnameOpt.isPresent() && !userAccountManager.getUser().getFirstname().equals(firstnameOpt.get().toString()) && !firstnameOpt.get().toString().isEmpty()) { editFlag=true; }
@@ -90,31 +90,35 @@ public class AccountEditorFragment extends Fragment {
             user.setLastname(lastname.getText().toString());
             user.setEmail(email.getText().toString());
             user.setUsername(username.getText().toString());
-            if(Objects.requireNonNull(password.getText()).toString().length() >= 8 &&
-                    password.getText().toString().equals(Objects.requireNonNull(confirmPassword.getText()).toString()) &&
-                    PasswordGeneratingService.isValidPassword(password.getText().toString())){
-                user.setPassword(password.getText().toString());
-                editFlag = true;
-            }
-            else {
-                editFlag = false;
-                if(!password.getText().toString().equals(Objects.requireNonNull(confirmPassword.getText()).toString())){
-                    Toast.makeText(getContext(), "введенные пароли не совпадают, повторите попытку ввода", Toast.LENGTH_LONG).show();
-                    password.setText("");
-                    confirmPassword.setText("");
-                    return;
+
+            if(password.getText()!=null && confirmPassword.getText()!=null){
+                if(password.getText().toString().length() >= 8 &&
+                        password.getText().toString().equals(Objects.requireNonNull(confirmPassword.getText()).toString()) &&
+                        PasswordGeneratingService.isValidPassword(password.getText().toString())){
+                    user.setPassword(password.getText().toString());
+                    editFlag = true;
                 }
-                if(password.getText().toString().length() < 8){
-                    Toast.makeText(getContext(), "длинна пароля менее 8 символов, введите пароль удовлетворяющий условиям безопасности", Toast.LENGTH_LONG).show();
-                    password.setText("");
-                    confirmPassword.setText("");
-                    return;
-                }
-                if(!PasswordGeneratingService.isValidPassword(password.getText().toString())){
-                    Toast.makeText(getContext(), "введенный пароль не соответствует условиям безопасности, введите пароль содержащий хотя бы одну цифру, одну заглавную букву и одну строчную букву", Toast.LENGTH_LONG).show();
-                    password.setText("");
-                    confirmPassword.setText("");
-                    return;
+                else {
+                    editFlag = false;
+
+                    if (!password.getText().toString().equals(confirmPassword.getText().toString())) {
+                        Toast.makeText(getContext(), "введенные пароли не совпадают, повторите попытку ввода", Toast.LENGTH_LONG).show();
+                        password.setText("");
+                        confirmPassword.setText("");
+                        return;
+                    }
+                    if (password.getText().toString().length() < 8) {
+                        Toast.makeText(getContext(), "длинна пароля менее 8 символов, введите пароль удовлетворяющий условиям безопасности", Toast.LENGTH_LONG).show();
+                        password.setText("");
+                        confirmPassword.setText("");
+                        return;
+                    }
+                    if (!PasswordGeneratingService.isValidPassword(password.getText().toString())) {
+                        Toast.makeText(getContext(), "введенный пароль не соответствует условиям безопасности, введите пароль содержащий хотя бы одну цифру, одну заглавную букву и одну строчную букву", Toast.LENGTH_LONG).show();
+                        password.setText("");
+                        confirmPassword.setText("");
+                        return;
+                    }
                 }
             }
 
