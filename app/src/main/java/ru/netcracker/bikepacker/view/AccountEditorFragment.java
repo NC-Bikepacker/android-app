@@ -149,12 +149,14 @@ public class AccountEditorFragment extends Fragment {
 
         backFragment.setOnClickListener(view -> {
             FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
-            Fragment activeFragment = Objects.requireNonNull(MainNavigationActivity.Companion.getActiveFragment());
-            fragmentManager.beginTransaction()
-                    .hide(activeFragment)
-                    .show(Objects.requireNonNull(fragmentManager.findFragmentByTag("user_menu")))
-                    .commit();
-            MainNavigationActivity.Companion.setActiveFragment(fragmentManager.findFragmentByTag("user_menu"));
+            Optional<Fragment> activeFragment = Optional.ofNullable(MainNavigationActivity.Companion.getActiveFragment());
+            if(activeFragment.isPresent()){
+                fragmentManager.beginTransaction()
+                        .hide(activeFragment.get())
+                        .show(Objects.requireNonNull(fragmentManager.findFragmentByTag("user_menu")))
+                        .commit();
+                MainNavigationActivity.Companion.setActiveFragment(fragmentManager.findFragmentByTag("user_menu"));
+            }
         });
         return viewAccountEditor;
     }

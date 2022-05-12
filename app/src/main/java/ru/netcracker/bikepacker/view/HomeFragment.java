@@ -2,22 +2,18 @@ package ru.netcracker.bikepacker.view;
 
 import android.os.Bundle;
 
-import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
 import androidx.viewpager2.widget.ViewPager2;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
 
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 
 import ru.netcracker.bikepacker.R;
 import ru.netcracker.bikepacker.adapter.homemenu.HomeMenuPagerAdapter;
-import ru.netcracker.bikepacker.adapter.trackmenu.TrackMenuPagerAdapter;
 
 public class HomeFragment extends Fragment {
     private View viewHomeMenu;
@@ -42,12 +38,16 @@ public class HomeFragment extends Fragment {
         this.listener = new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-                tab.getIcon().setTint(viewHomeMenu.getContext().getColor(R.color.white));
+                if(tab.getIcon()!=null){
+                    tab.getIcon().setTint(viewHomeMenu.getContext().getColor(R.color.white));
+                }
             }
 
             @Override
             public void onTabUnselected(TabLayout.Tab tab) {
-                tab.getIcon().setTint(viewHomeMenu.getContext().getColor(R.color.tabIconColor));
+                if(tab.getIcon()!=null) {
+                    tab.getIcon().setTint(viewHomeMenu.getContext().getColor(R.color.tabIconColor));
+                }
             }
 
             @Override
@@ -56,19 +56,20 @@ public class HomeFragment extends Fragment {
             }
         };
 
-        TabLayoutMediator tabLayoutMediator = new TabLayoutMediator(tabLayoutHomeMenu, viewPager, new TabLayoutMediator.TabConfigurationStrategy() {
-            @Override
-            public void onConfigureTab(@NonNull TabLayout.Tab tab, int position) {
-                switch (position){
-                    case 0:
-                        tab.setIcon(R.drawable.ic_newspaper_folded__1_);
+        TabLayoutMediator tabLayoutMediator = new TabLayoutMediator(tabLayoutHomeMenu, viewPager, (tab, position) -> {
+            switch (position){
+                case 0:
+                    tab.setIcon(R.drawable.ic_newspaper_folded__1_);
+                    if(tab.getIcon()!=null) {
                         tab.getIcon().setTint(viewHomeMenu.getContext().getColor(R.color.tabIconColor));
-                        break;
-                    case 1:
-                        tab.setIcon(R.drawable.ic_track_inspection);
+                    }
+                    break;
+                case 1:
+                    tab.setIcon(R.drawable.ic_track_inspection);
+                    if(tab.getIcon()!=null) {
                         tab.getIcon().setTint(viewHomeMenu.getContext().getColor(R.color.tabIconColor));
-                        break;
-                }
+                    }
+                    break;
             }
         });
         tabLayoutHomeMenu.addOnTabSelectedListener(listener);
