@@ -1,4 +1,4 @@
-package ru.netcracker.bikepacker.adapter.usermenu;
+package ru.netcracker.bikepacker.adapter;
 
 import android.content.Context;
 import android.os.Build;
@@ -29,7 +29,7 @@ import ru.netcracker.bikepacker.model.TrackModel;
 import ru.netcracker.bikepacker.service.GpxFileManager;
 import ru.netcracker.bikepacker.service.ImageConverter;
 
-public class UserMenuRecyclerAdapter extends RecyclerView.Adapter<UserMenuRecyclerAdapter.UserMenuRecyclerViewHolder> {
+public class TracksRecyclerAdapter extends RecyclerView.Adapter<TracksRecyclerAdapter.UserMenuRecyclerViewHolder> {
 
     private final Context context;
     private final List<TrackModel> tracks;
@@ -38,7 +38,7 @@ public class UserMenuRecyclerAdapter extends RecyclerView.Adapter<UserMenuRecycl
     private final ImageConverter imageConverter;
     private final GpxFileManager gpxFileManager;
 
-    public UserMenuRecyclerAdapter(Context context, List<TrackModel> tracks) {
+    public TracksRecyclerAdapter(Context context, List<TrackModel> tracks) {
         this.context = context;
         this.tracks = tracks;
         this.retrofitManager = RetrofitManager.getInstance(context);
@@ -50,9 +50,10 @@ public class UserMenuRecyclerAdapter extends RecyclerView.Adapter<UserMenuRecycl
     @NonNull
     @Override
     public UserMenuRecyclerViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View tracksItem = LayoutInflater.from(context).inflate(R.layout.item_track_user_menu, parent, false);
-        return new UserMenuRecyclerAdapter.UserMenuRecyclerViewHolder(tracksItem);
+        View tracksItem = LayoutInflater.from(context).inflate(R.layout.item_track_menu, parent, false);
+        return new TracksRecyclerAdapter.UserMenuRecyclerViewHolder(tracksItem);
     }
+
 
     @Override
     public void onBindViewHolder(@NonNull UserMenuRecyclerViewHolder holder, int position) {
@@ -64,51 +65,31 @@ public class UserMenuRecyclerAdapter extends RecyclerView.Adapter<UserMenuRecycl
                 .error(R.drawable.ic_userpic)
                 .into(holder.userPicItemUserMenu);
 
-        holder.firstAndLastnameUserMenuItem.setText(tracks.get(position).getUser().getFirstname() +
-                " " +
-                tracks.get(position).getUser().getLastname());
+        holder.firstAndLastnameUserMenuItem.setText(String.format("%s %s", tracks.get(position).getUser().getFirstname(), tracks.get(position).getUser().getLastname()));
 
-        /*Convert travel time in seconds to readable string in format HH:MM:SS*/
-        long travelTime = tracks.get(position).getTravelTime();
-        long sec = travelTime % 60;
-        long min = (travelTime / 60) % 60;
-        long hours = (travelTime / 60) / 60;
-
-        String trTimeSeconds = (sec < 10) ? "0" + sec : Long.toString(sec);
-        String trTimeMinutes = (min < 10) ? "0" + min : Long.toString(min);
-        String trTimeHours = (hours < 10) ? "0" + hours : Long.toString(hours);
-
-        String travelTimeString = trTimeHours + ":" + trTimeMinutes + ":" + trTimeSeconds;
-
-        holder.timeTextViewUserMenu.setText(travelTimeString);
-
+        holder.timeTextViewUserMenu.setText(getConvertTravelTime(track));
 
         retrofitManager.getJSONApi()
                 .getTrackImage(userAccountManager.getCookie(), tracks.get(position).getTrackId())
                 .enqueue(new Callback<ImageModel>() {
                     @RequiresApi(api = Build.VERSION_CODES.O)
                     @Override
-                    public void onResponse(Call<ImageModel> call, Response<ImageModel> response) {
+                    public void onResponse(@NonNull Call<ImageModel> call, @NonNull Response<ImageModel> response) {
                         if (response.isSuccessful() && response.body() != null) {
                             holder.itemUserMenuMapImage.setImageBitmap(imageConverter.decode(response.body().getImageBase64()));
                         }
                     }
 
                     @Override
-                    public void onFailure(Call<ImageModel> call, Throwable t) {
-                        Log.e(UserMenuRecyclerAdapter.class.getName(), "Error responce image model: " + t.getMessage(), t);
+                    public void onFailure(@NonNull Call<ImageModel> call, @NonNull Throwable t) {
+                        Log.e(TracksRecyclerAdapter.class.getName(), "Error responce image model: " + t.getMessage(), t);
                     }
                 });
 
-
-        holder.exportGpxButton.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View view) {
-                String exportingGpx = tracks.get(position).getGpx();
-                if (exportingGpx == null) exportingGpx = "";
-                gpxFileManager.exportGpx(context, exportingGpx);
-            }
+        holder.exportGpxButton.setOnClickListener(view -> {
+            String exportingGpx = tracks.get(position).getGpx();
+            if (exportingGpx == null) exportingGpx = "";
+            gpxFileManager.exportGpx(context, exportingGpx);
         });
     }
 
@@ -149,5 +130,19 @@ public class UserMenuRecyclerAdapter extends RecyclerView.Adapter<UserMenuRecycl
             this.timeTextViewUserMenu = itemView.findViewById(R.id.timeTextViewUserMenu);
             this.itemUserMenuMapImage = itemView.findViewById(R.id.itemUserMenuMapImage);
         }
+    }
+
+    private String getConvertTravelTime(TrackModel track){
+        /*Convert travel time in seconds to readable string in format HH:MM:SS*/
+        long travelTime = track.getTravelTime();
+        long sec = travelTime % 60;
+        long min = (travelTime / 60) % 60;
+        long hours = (travelTime / 60) / 60;
+
+        String trTimeSeconds = (sec < 10) ? "0" + sec : Long.toString(sec);
+        String trTimeMinutes = (min < 10) ? "0" + min : Long.toString(min);
+        String trTimeHours = (hours < 10) ? "0" + hours : Long.toString(hours);
+
+        return trTimeHours + ":" + trTimeMinutes + ":" + trTimeSeconds;
     }
 }

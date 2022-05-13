@@ -1,0 +1,370 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/border_bottom"
+    android:paddingStart="16dp"
+    android:paddingTop="16dp"
+    android:paddingEnd="16dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraintLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/nicknameHomeMenuItem"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="@string/nickname"
+            android:textColor="@color/grey_main"
+            android:textSize="12sp"
+            app:layout_constraintStart_toStartOf="@+id/firstAndLastnameHomeMenuItem"
+            app:layout_constraintTop_toBottomOf="@+id/firstAndLastnameHomeMenuItem"
+            app:lineHeight="18sp" />
+
+        <TextView
+            android:id="@+id/firstAndLastnameHomeMenuItem"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:fontFamily="@font/proxima_nova_bold"
+            android:text="First and Last name"
+            android:textColor="#000000 "
+            app:layout_constraintStart_toEndOf="@+id/userPicItemHomeMenu"
+            app:layout_constraintTop_toTopOf="@+id/userPicItemHomeMenu" />
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/userPicItemHomeMenu"
+            android:layout_width="67dp"
+            android:layout_height="0dp"
+            android:layout_marginBottom="8dp"
+            android:contentDescription="userPicItemUserMenu"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintDimensionRatio="1:1"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_userpic" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraintLayout3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/constraintLayout">
+
+        <TextView
+            android:id="@+id/bodyDescriptionTextView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:text="Основной текст"
+            android:textColor="@color/black"
+            android:textSize="14sp"
+            android:maxLines="4"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraintLayout4"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:scrollbars="horizontal"
+        app:layout_constraintTop_toBottomOf="@+id/constraintLayout3"
+        tools:layout_editor_absoluteX="16dp">
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            app:cardCornerRadius="6dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <com.smarteist.autoimageslider.SliderView
+                android:id="@+id/imageSlider"
+                android:layout_width="match_parent"
+                android:layout_height="300dp"
+                app:sliderAnimationDuration="600"
+                app:sliderAutoCycleDirection="back_and_forth"
+                app:sliderAutoCycleEnabled="true"
+                app:sliderIndicatorAnimationDuration="600"
+                app:sliderIndicatorGravity="center_horizontal|bottom"
+                app:sliderIndicatorMargin="15dp"
+                app:sliderIndicatorOrientation="horizontal"
+                app:sliderIndicatorPadding="3dp"
+                app:sliderIndicatorRadius="2dp"
+                app:sliderIndicatorSelectedColor="#5A5A5A"
+                app:sliderIndicatorUnselectedColor="#FFF"
+                app:sliderScrollTimeInSec="1"
+                app:sliderStartAutoCycle="true" />
+
+        </androidx.cardview.widget.CardView>
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraintLayout6"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/constraintLayout4">
+
+        <ImageView
+            android:id="@+id/imageTrackItemNewspaperCard"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="8dp"
+            android:scaleType="centerCrop"
+            android:contentDescription="@string/favourite_tracks"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintDimensionRatio="1.33:1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/constraintLayout8"
+            app:srcCompat="@drawable/ic_track_inspection" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/constraintLayout7"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginTop="8dp"
+            app:layout_constraintEnd_toStartOf="@+id/constraintLayout8"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:id="@+id/distanceTextViewNewspaperCard"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginStart="4dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="2dp"
+                android:layout_marginBottom="4dp"
+                android:fontFamily="@font/proxima_nova_cond_bold"
+                android:text="0,0"
+                android:textAlignment="center"
+                android:textColor="#000000 "
+                android:textSize="16sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/textView15"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textView12" />
+
+            <TextView
+                android:id="@+id/textView12"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:fontFamily="@font/proxima_nova_cond_bold"
+                android:text="Distance"
+                android:textAlignment="center"
+                android:textColor="#5D3EA8 "
+                android:textSize="16sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/textView15"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:layout_marginEnd="4dp"
+                android:fontFamily="@font/proxima_nova_cond_bold"
+                android:text="km"
+                android:textAlignment="center"
+                android:textColor="#5D3EA8 "
+                android:textSize="16sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/distanceTextViewNewspaperCard"
+                app:layout_constraintTop_toTopOf="@+id/distanceTextViewNewspaperCard" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/constraintLayout8"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            app:layout_constraintBottom_toBottomOf="@+id/constraintLayout7"
+            app:layout_constraintEnd_toStartOf="@+id/constraintLayout9"
+            app:layout_constraintStart_toEndOf="@+id/constraintLayout7"
+            app:layout_constraintTop_toTopOf="@+id/constraintLayout7"
+            app:layout_constraintVertical_bias="0.0">
+
+            <TextView
+                android:id="@+id/textView13"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:fontFamily="@font/proxima_nova_cond_bold"
+                android:text="Complexity"
+                android:textAlignment="center"
+                android:textColor="#5D3EA8 "
+                android:textSize="16sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageView
+                android:id="@+id/imageComplexityItemNewspaperCard"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="4dp"
+                android:scaleType="centerCrop"
+                android:contentDescription="@string/favourite_tracks"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/complexityTextViewNewspaperCard"
+                app:layout_constraintTop_toBottomOf="@+id/textView13"
+                app:srcCompat="@drawable/ic_star_small" />
+
+            <TextView
+                android:id="@+id/complexityTextViewNewspaperCard"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                android:layout_marginEnd="2dp"
+                android:fontFamily="@font/proxima_nova_cond_bold"
+                android:text="0,0"
+                android:textAlignment="center"
+                android:textColor="#000000 "
+                android:textSize="16sp"
+                app:layout_constraintBottom_toBottomOf="@+id/imageComplexityItemNewspaperCard"
+                app:layout_constraintEnd_toStartOf="@+id/imageComplexityItemNewspaperCard"
+                app:layout_constraintStart_toEndOf="@+id/imageComplexityItemNewspaperCard"
+                app:layout_constraintTop_toTopOf="@+id/imageComplexityItemNewspaperCard" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/constraintLayout9"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="@+id/constraintLayout8"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/constraintLayout8"
+            app:layout_constraintTop_toTopOf="@+id/constraintLayout8">
+
+            <TextView
+                android:id="@+id/textView14"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:fontFamily="@font/proxima_nova_cond_bold"
+                android:text="Time"
+                android:textAlignment="center"
+                android:textColor="#5D3EA8 "
+                android:textSize="16sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/timeTextViewNewspaperCard"
+                android:layout_width="60dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="4dp"
+                android:fontFamily="@font/proxima_nova_cond_bold"
+                android:text="04:33:21"
+                android:textAlignment="center"
+                android:textColor="#000000 "
+                android:textSize="16sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="@+id/textView14"
+                app:layout_constraintStart_toStartOf="@+id/textView14"
+                app:layout_constraintTop_toBottomOf="@+id/textView14" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraintLayout5"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/constraintLayout6"
+        tools:layout_editor_absoluteX="16dp">
+
+        <TextView
+            android:id="@+id/likeCountTextViewNewspaperCard"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/proxima_nova_cond_bold"
+            android:text="120"
+            android:textAlignment="center"
+            android:textColor="@color/grey_main"
+            android:textSize="14sp"
+            app:layout_constraintBottom_toBottomOf="@+id/likeNewspaperCard"
+            app:layout_constraintStart_toEndOf="@+id/likeNewspaperCard"
+            app:layout_constraintTop_toTopOf="@+id/likeNewspaperCard" />
+
+        <ImageButton
+            android:id="@+id/shareNewspaperCardButton"
+            style="@style/Widget.AppCompat.Button.Borderless.Colored"
+            android:layout_width="30dp"
+            android:layout_height="0dp"
+            android:layout_marginEnd="32dp"
+            android:contentDescription="uploadTrackButton"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/chatAltFillButtonOnNewspaperCard"
+            app:srcCompat="@drawable/ic_share" />
+
+        <ImageButton
+            android:id="@+id/chatAltFillButtonOnNewspaperCard"
+            style="@style/Widget.AppCompat.Button.Borderless.Colored"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginEnd="32dp"
+            android:contentDescription="chatAltFillButton"
+            app:layout_constraintBottom_toBottomOf="@+id/likeNewspaperCard"
+            app:layout_constraintEnd_toStartOf="@+id/shareNewspaperCardButton"
+            app:layout_constraintTop_toTopOf="@+id/likeNewspaperCard"
+            app:srcCompat="@drawable/ic_chat_alt_fill" />
+
+        <ImageButton
+            android:id="@+id/likeNewspaperCard"
+            style="@style/Widget.AppCompat.Button.Borderless.Colored"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+
+            android:layout_marginEnd="32dp"
+            android:contentDescription="likeNewspaperCard"
+            app:layout_constraintBottom_toBottomOf="@+id/dateHomeMenuItem"
+            app:layout_constraintEnd_toStartOf="@+id/chatAltFillButtonOnNewspaperCard"
+            app:layout_constraintTop_toTopOf="@+id/dateHomeMenuItem"
+            app:srcCompat="@drawable/ic_favorite_fill" />
+
+        <TextView
+            android:id="@+id/dateHomeMenuItem"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:layout_marginBottom="12dp"
+            android:text="July 25, 2020 at 8:58 AM"
+            android:textColor="@color/grey_main"
+            android:textSize="12sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:lineHeight="18sp" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

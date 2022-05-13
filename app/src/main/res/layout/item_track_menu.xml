@@ -282,13 +282,14 @@
                 android:id="@+id/itemUserMenuMapImage"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
+                android:adjustViewBounds="true"
+                android:scaleType="centerCrop"
                 app:layout_constraintDimensionRatio="0.92:1"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/ic_track_inspection"
-                android:scaleType="centerCrop"
-                android:adjustViewBounds="true"/>
+                app:srcCompat="@drawable/ic_track_inspection" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
