@@ -1,5 +1,6 @@
 package ru.netcracker.bikepacker.adapter.usermenu;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Build;
 import android.util.Log;
@@ -54,6 +55,7 @@ public class UserMenuRecyclerAdapter extends RecyclerView.Adapter<UserMenuRecycl
         return new UserMenuRecyclerAdapter.UserMenuRecyclerViewHolder(tracksItem);
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(@NonNull UserMenuRecyclerViewHolder holder, int position) {
         TrackModel track = tracks.get(position);

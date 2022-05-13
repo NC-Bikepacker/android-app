@@ -70,6 +70,19 @@ public interface ApiService {
     @GET("/favoritetracks/{idThisUser}")
     Call<List<TrackModel>> getMyFavoriteTracks(@Header ("Cookie") String cookie, @Path("idThisUser") Long id);
 
+    //SORTED TRACKS
+    @GET("/bydistance/{userid}-{lat}-{lon}")
+    Call<List<TrackModel>> getTracksSortedByDistance(@Header ("Cookie") String cookie, @Path("userid") long id,
+                                                     @Path("lat") double lat,
+                                                     @Path("lon") double lon
+    );
+
+    @GET("/bycomplexity/{userid}")
+    Call<List<TrackModel>> getTracksSortedByComplexity(@Header ("Cookie") String cookie, @Path("userid") long id);
+
+    @GET("/bytime/{userid}")
+    Call<List<TrackModel>> getTracksSortedByTime(@Header ("Cookie") String cookie, @Path("userid") long id);
+
     //IMAGE
     @GET("/image/track/{id}")
     Call<ImageModel> getTrackImage(@Header ("Cookie") String cookie, @Path("id") Long id);

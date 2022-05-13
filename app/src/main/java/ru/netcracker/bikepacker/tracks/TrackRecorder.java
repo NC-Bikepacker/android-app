@@ -4,7 +4,6 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.pm.PackageManager;
-import android.graphics.Path;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -21,15 +20,14 @@ import androidx.core.app.ActivityCompat;
 import org.osmdroid.util.GeoPoint;
 
 import java.io.IOException;
+import java.sql.Date;
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
-import java.util.Optional;
-import java.util.Timer;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
-
 import java.util.stream.Stream;
 
 import io.jenetics.jpx.GPX;
@@ -61,6 +59,7 @@ public class TrackRecorder {
     private double speed = 0;
     private boolean isRecording = false;
     private String timeString;
+    private TrackModel trackToSend;
     //region Constants
     public static final long MIN_TIME_MS = 5000;
     public static final float MIN_DISTANCE_M = 5;
@@ -92,7 +91,7 @@ public class TrackRecorder {
         }
         Location userLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
         if (userLocation == null) {
-            Toast.makeText(ctx,"No last location found",Toast.LENGTH_LONG).show();
+            Toast.makeText(ctx, "No last location found", Toast.LENGTH_LONG).show();
             return Optional.empty();
         }
         return Optional.of(new GeoPoint(userLocation));
@@ -104,7 +103,7 @@ public class TrackRecorder {
         }
         Location userLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
         if (userLocation == null) {
-            Toast.makeText(ctx,"Recording start failed",Toast.LENGTH_LONG).show();
+            Toast.makeText(ctx, "Recording start failed", Toast.LENGTH_LONG).show();
             return;
         }
         GeoPoint start = new GeoPoint(userLocation);
@@ -122,6 +121,7 @@ public class TrackRecorder {
         this.textView = textView;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     public void startRecording() {
         seconds = 0;
         isRecording = true;
@@ -148,7 +148,6 @@ public class TrackRecorder {
 
         handler.post(new Runnable() {
             @SuppressLint("SetTextI18n")
-            @RequiresApi(api = Build.VERSION_CODES.O)
             @Override
             public void run() {
                 int hours = seconds / 3600;
@@ -191,9 +190,26 @@ public class TrackRecorder {
                 ).build();
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     public void sendPostRequest() {
-        TrackModel trackToPost = new TrackModel(userAccountManager.getUser());
-        RetrofitManager.getInstance(ctx).getJSONApi().postTrack(userAccountManager.getCookie(), trackToPost).enqueue(new Callback<ResponseBody>() {
+        trackToSend = new TrackModel(userAccountManager.getUser());
+        trackToSend.setTrackDate(Date.valueOf(LocalDate.now().toString()));
+
+        int hour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
+        String partOfTheDay;
+        if (4 <= hour && hour < 12) partOfTheDay = "Morning";
+        else if (12 <= hour && hour < 15) partOfTheDay = "Noon";
+        else if (15 <= hour && hour < 21) partOfTheDay = "Evening";
+        else if (21 <= hour) partOfTheDay = "Night";
+        else partOfTheDay = "Night";
+        partOfTheDay += " trip";
+        trackToSend.setTrackName(partOfTheDay);
+
+        wayPoints.stream().findFirst().ifPresent(wayPoint -> {
+            trackToSend.setTrackStartLat(wayPoint.getLatitude().doubleValue());
+            trackToSend.setTrackStartLon(wayPoint.getLongitude().doubleValue());
+        });
+        RetrofitManager.getInstance(ctx).getJSONApi().postTrack(userAccountManager.getCookie(), trackToSend).enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 try {
@@ -220,17 +236,17 @@ public class TrackRecorder {
 
             @Override
             public void onFailure(@NonNull Call<ResponseBody> call, @NonNull Throwable t) {
-                Log.e("Track sending callback", "error send response. Error message: " + t.getMessage(),t);
+                Log.e("Track sending callback", "error send response. Error message: " + t.getMessage(), t);
             }
         });
     }
 
-    public void sendPutRequest(long travelTime, float complexity) {
-        //TODO: Change complexity to float
-        TrackModel trackToPut = new TrackModel(trackId, travelTime, (long) complexity, userAccountManager.getUser(), GpxUtil.gpxToString(getGpx()));
+    public void sendPutRequest(long travelTime, double complexity) {
+        trackToSend.setTravelTime(travelTime);
+        trackToSend.setTrackComplexity(complexity);
 
         RetrofitManager.getInstance(ctx).getJSONApi()
-                .putTrack(userAccountManager.getCookie(), trackId, trackToPut)
+                .putTrack(userAccountManager.getCookie(), trackId, trackToSend)
                 .enqueue(new Callback<ResponseBody>() {
                     @Override
                     public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
@@ -251,17 +267,47 @@ public class TrackRecorder {
 
                     @Override
                     public void onFailure(@NonNull Call<ResponseBody> call, @NonNull Throwable t) {
-                        Log.e("TrackPuttingCallback", "error put response. Error message: " + t.getMessage(),t);
+                        Log.e("TrackPuttingCallback", "error put response. Error message: " + t.getMessage(), t);
                     }
                 });
     }
 
     public void sendPutRequest() {
-        TrackModel trackToPut = new TrackModel(userAccountManager.getUser());
-        trackToPut.setGpx(GpxUtil.gpxToString(getGpx()));
-        trackToPut.setTrackId(trackId);
+        trackToSend.setTrackId(trackId);
+
+        GPX gpx = getGpx();
+        trackToSend.setGpx(GpxUtil.gpxToString(gpx));
+
+        if (trackToSend.getTrackStartLat() == null || trackToSend.getTrackStartLon() == null) {
+            gpx.tracks()
+                    .findFirst()
+                    .flatMap(
+                            trackSegments ->
+                                    trackSegments.segments()
+                                            .findFirst()
+                                            .flatMap(
+                                                    wayPoints -> wayPoints.points()
+                                                            .findFirst()
+                                            )
+                    ).ifPresent(wayPoint -> {
+                        trackToSend.setTrackStartLat(wayPoint.getLatitude().doubleValue());
+                        trackToSend.setTrackStartLon(wayPoint.getLongitude().doubleValue());
+                    });
+        }
+        gpx.tracks().findFirst().flatMap(trackSegments -> trackSegments.segments().findFirst()).ifPresent(
+                wayPoints -> {
+                    List<WayPoint> points = wayPoints.getPoints();
+                    WayPoint last = points.get(points.size() - 1);
+                    trackToSend.setTrackFinishLat(last.getLatitude().doubleValue());
+                    trackToSend.setTrackFinishLon(last.getLongitude().doubleValue());
+                }
+        );
+
+        trackToSend.setTrackDistance(getStatisticDouble(StatisticType.Distance));
+        trackToSend.setTrackAvgSpeed(getStatisticDouble(StatisticType.AverageSpeed));
+
         RetrofitManager.getInstance(ctx).getJSONApi()
-                .putTrack(userAccountManager.getCookie(), trackId, trackToPut)
+                .putTrack(userAccountManager.getCookie(), trackId, trackToSend)
                 .enqueue(new Callback<ResponseBody>() {
                     @Override
                     public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
@@ -282,37 +328,49 @@ public class TrackRecorder {
 
                     @Override
                     public void onFailure(@NonNull Call<ResponseBody> call, @NonNull Throwable t) {
-                        Log.e("TrackPuttingCallback", "error put response. Error message: " + t.getMessage(),t);
+                        Log.e("TrackPuttingCallback", "error put response. Error message: " + t.getMessage(), t);
                     }
                 });
     }
+
     public List<WayPoint> getPoints() {
         return points;
     }
 
-    public String getStatistics(StatisticType statisticType) {
+    public String getStatisticString(StatisticType statisticType) {
         switch (statisticType) {
-            case Distanse:
+            case Distance:
                 return String.format(Locale.getDefault(),
                         "%.0f meters",
-                        trackBuilder.segments()
-                        .stream()
-                        .findFirst()
-                        .map(TrackSegment::points)
-                        .orElse(Stream.empty())
-                        .collect(Geoid.WGS84.toPathLength())
-                        .to(Length.Unit.METER)
+                        getStatisticDouble(StatisticType.Distance)
                 );
             case Time:
                 return timeString;
             default:
                 return String.format(Locale.getDefault(),
                         "%.1f Km/h",
-                        speeds.stream()
+                        getStatisticDouble(StatisticType.AverageSpeed)
+                );
+        }
+    }
+
+    public double getStatisticDouble(StatisticType statisticType) {
+        switch (statisticType) {
+            case Distance:
+                return trackBuilder.segments()
+                        .stream()
+                        .findFirst()
+                        .map(TrackSegment::points)
+                        .orElse(Stream.empty())
+                        .collect(Geoid.WGS84.toPathLength())
+                        .to(Length.Unit.METER);
+            case Time:
+                return seconds;
+            default:
+                return speeds.stream()
                         .mapToDouble(Double::doubleValue)
                         .average()
-                        .orElse(0)
-                );
+                        .orElse(0);
         }
     }
 

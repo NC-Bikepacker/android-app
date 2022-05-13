@@ -26,7 +26,9 @@ import ru.netcracker.bikepacker.adapter.usermenu.UserMenuRecyclerAdapter;
 import ru.netcracker.bikepacker.manager.RetrofitManager;
 import ru.netcracker.bikepacker.manager.UserAccountManager;
 import ru.netcracker.bikepacker.model.TrackModel;
+import ru.netcracker.bikepacker.service.ApiService;
 import ru.netcracker.bikepacker.service.GpxFileManager;
+import ru.netcracker.bikepacker.sorting.TypeOfSorting;
 
 
 public class UserMenuRecycleViewFragment extends Fragment {
@@ -58,7 +60,7 @@ public class UserMenuRecycleViewFragment extends Fragment {
         switch (position) {
             //all used tracks
             case 0:
-                setUserMenuRecyclerFragment(getAllUsedTracks(), view);
+                setUserMenuRecyclerFragment(getAllUsedTracks(TypeOfSorting.BEST_CHOICE), view);
                 break;
             // favorite tracks
             case 1:
@@ -123,26 +125,56 @@ public class UserMenuRecycleViewFragment extends Fragment {
     }
 
 
-    private List<TrackModel> getAllUsedTracks(){
+    private List<TrackModel> getAllUsedTracks(TypeOfSorting typeOfSorting){
         List<TrackModel> tracks = new ArrayList<>();
-        retrofitManager.getJSONApi()
-                .getTracksByUser(userAccountManager.getCookie(), userAccountManager.getUser().getId())
-                .enqueue(new Callback<List<TrackModel>>() {
-                    @Override
-                    public void onResponse(Call<List<TrackModel>> call, Response<List<TrackModel>> response) {
-                        if(response.body()!=null){
-                            tracks.addAll(response.body());
-                        }
+        ApiService api = retrofitManager.getJSONApi();
+        Call<List<TrackModel>> call = null;
+//        switch (typeOfSorting) {
+//            case BY_DISTANCE:
+//                call = api.getTracksSortedByDistance(
+//                        userAccountManager.getCookie(),
+//                        userAccountManager.getUser().getId(),
+//                        44.6185690,
+//                        38.3892360
+//                        );
+//                break;
+//            case BY_TIME:
+//                call = api.getTracksSortedByTime(
+//                        userAccountManager.getCookie(),
+//                        userAccountManager.getUser().getId()
+//                        );
+//                break;
+//            case BY_COMPLEXITY:
+//                call = api.getTracksSortedByComplexity(
+//                        userAccountManager.getCookie(),
+//                        userAccountManager.getUser().getId()
+//                );
+//                break;
+//            default:
+//                call = api.getTracksByUser(
+//                        userAccountManager.getCookie(),
+//                        userAccountManager.getUser().getId());
+//                break;
+//        }
+        call = api.getTracksByUser(
+                userAccountManager.getCookie(),
+                userAccountManager.getUser().getId());
+        call.enqueue(new Callback<List<TrackModel>>() {
+            @Override
+            public void onResponse(Call<List<TrackModel>> call, Response<List<TrackModel>> response) {
+                if(response.body()!=null){
+                    tracks.addAll(response.body());
+                }
 
-                        recyclerAdapter = new UserMenuRecyclerAdapter(getContext(), tracks);
-                        userMenuRecyclerView.setAdapter(recyclerAdapter);
-                    }
+                recyclerAdapter = new UserMenuRecyclerAdapter(getContext(), tracks);
+                userMenuRecyclerView.setAdapter(recyclerAdapter);
+            }
 
-                    @Override
-                    public void onFailure(Call<List<TrackModel>> call, Throwable t) {
-                        Log.e("UserMenuRecycleViewFragment error","Error get user tracks: " + t.getMessage(),t);
-                    }
-                });
+            @Override
+            public void onFailure(Call<List<TrackModel>> call, Throwable t) {
+                Log.e("UserMenuRecycleViewFragment error","Error get user tracks: " + t.getMessage(),t);
+            }
+        });
         return tracks;
     }
 }

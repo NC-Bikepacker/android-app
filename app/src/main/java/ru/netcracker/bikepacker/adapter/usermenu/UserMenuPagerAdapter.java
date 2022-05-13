@@ -10,9 +10,10 @@ import ru.netcracker.bikepacker.view.UserMenuInformationAccountFragment;
 import ru.netcracker.bikepacker.view.UserMenuRecycleViewFragment;
 
 public class UserMenuPagerAdapter extends FragmentStateAdapter {
-
-    public UserMenuPagerAdapter(@NonNull Fragment fragment, Context context) {
+    private Context ctx;
+    public UserMenuPagerAdapter(@NonNull Fragment fragment, Context ctx) {
         super(fragment);
+        this.ctx = ctx;
     }
 
     @NonNull
@@ -27,8 +28,6 @@ public class UserMenuPagerAdapter extends FragmentStateAdapter {
             case 1:
                 return new UserMenuRecycleViewFragment(position);
             //user information
-            case 2:
-                return new UserMenuInformationAccountFragment();
             default:
                 return new UserMenuInformationAccountFragment();
         }
