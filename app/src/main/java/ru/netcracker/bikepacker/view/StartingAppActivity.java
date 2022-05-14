@@ -7,9 +7,11 @@ import android.os.Build;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -27,6 +29,7 @@ public class StartingAppActivity extends AppCompatActivity {
     private SessionManager sessionManager;
     private Context context;
     private NavController navController;
+    private FragmentManager fragmentManager;
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
@@ -37,13 +40,19 @@ public class StartingAppActivity extends AppCompatActivity {
         navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
         appBarConfiguration = new AppBarConfiguration.Builder(navController.getGraph()).build();
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        fragmentManager = this.getSupportFragmentManager();
 
         context = getApplicationContext();
         sessionManager = SessionManager.getInstance(context);
 
         if (sessionManager.isEmpty()) {
             navController.navigate(R.id.action_fragmentLoadingScreen_to_logInFragment);
-        } else {
+        }
+        else if(false){
+            navController.navigate(R.id.confirmEmailFragment);
+        }
+        else {
+            Toast.makeText(this.getApplicationContext(),"dsgjkytyj", Toast.LENGTH_LONG).show();
             Intent intent = new Intent(StartingAppActivity.this, MainNavigationActivity.class);
             startActivity(intent);
             finish();

@@ -50,6 +50,11 @@
             android:id="@+id/action_fragmentLoadingScreen_to_logInFragment"
             app:destination="@id/logInFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/confirmEmailFragment"
+        android:name="ru.netcracker.bikepacker.view.ConfirmEmailFragment"
+        android:label="fragment_confirm_email"
+        tools:layout="@layout/fragment_confirm_email" />
 
 
 </navigation>

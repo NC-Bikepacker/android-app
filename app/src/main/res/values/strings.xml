@@ -56,4 +56,9 @@
     <string name="add_description">Add description</string>
     <string name="record_icon">record icon</string>
     <string name="large_text">large text</string>
+
+    <!-- String ConfirmEmailFragment -->
+    <string name="confirm_email_description">Thank you for registering! To join the Bikepacker family, confirm your email</string>
+    <string name="get_link_confirm_email">request a link to confirm the posts again</string>
+    <string name="request">request</string>
 </resources>
