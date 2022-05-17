@@ -239,7 +239,6 @@ class MainNavigationActivity : AppCompatActivity() {
                     mapFragment.startIcon,
                     mapFragment.finishIcon,
                     GpxUtil.trackModelToPolyline(track),
-                    intArrayOf(102, 70, 150)
                 )
 
                 mapFragment.zoomToBounds(userTrack?.boundingBox)
@@ -247,7 +246,6 @@ class MainNavigationActivity : AppCompatActivity() {
             }
             fr
         }
-
     }
 
     private var ctx: Context? = null
