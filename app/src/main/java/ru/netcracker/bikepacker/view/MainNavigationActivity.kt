@@ -3,11 +3,11 @@ package ru.netcracker.bikepacker.view
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.graphics.Paint
 import android.os.Bundle
 import android.preference.PreferenceManager
 import android.util.Log
 import android.view.View
+import android.view.ViewTreeObserver
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.*
@@ -15,6 +15,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import org.osmdroid.config.Configuration
+import org.osmdroid.util.GeoPoint
+import org.osmdroid.views.MapView
 import org.osmdroid.views.overlay.OverlayWithIW
 import ru.netcracker.bikepacker.R
 import ru.netcracker.bikepacker.databinding.ActivityMainNavigationBinding
@@ -25,6 +27,7 @@ import java.util.stream.Collectors
 import kotlin.Boolean
 import kotlin.Int
 import kotlin.getValue
+import kotlin.intArrayOf
 import kotlin.lazy
 import kotlin.let
 import kotlin.run
@@ -92,7 +95,9 @@ class MainNavigationActivity : AppCompatActivity() {
     private val mapFragment: MapFragment by lazy {
         val fr = supportFragmentManager.findFragmentByTag(TAG_MAP)
         if (fr != null) fr as MapFragment
-        else ru.netcracker.bikepacker.view.MapFragment()
+        else {
+            ru.netcracker.bikepacker.view.MapFragment()
+        }
     }
 
     private val settingsFragment: SettingsFragment by lazy {
@@ -150,7 +155,6 @@ class MainNavigationActivity : AppCompatActivity() {
 
     private val recordFragment: RecordFragment by lazy {
         val fr = supportFragmentManager.findFragmentByTag(TAG_RECORD)
-
         if (fr != null) fr as RecordFragment
         else {
             val initialFr = ru.netcracker.bikepacker.view.RecordFragment()
@@ -168,6 +172,8 @@ class MainNavigationActivity : AppCompatActivity() {
                     )
                     map.let {
                         it?.zoomToBoundingBox(userTrack?.boundingBox, true)
+                        val col: List<OverlayWithIW> = userTrack?.toList()!!
+
                         it?.overlayManager?.addAll(userTrack?.toList()!!)
                     }
                 }
@@ -216,24 +222,6 @@ class MainNavigationActivity : AppCompatActivity() {
             val fr = OpenTrackFragment()
             fr.fragmentManager = supportFragmentManager
             fr.setOnStartRouteBtnListener {
-                run {
-                    val track = fr.getTrack()
-                    val map = mapFragment.map
-//                    val paint = Paint()
-//                    paint.setARGB(255, 51, 255, 51)
-                    userTrack = UserTrack.newInstance(
-                        map,
-                        mapFragment.startIcon,
-                        mapFragment.finishIcon,
-                        GpxUtil.trackModelToPolyline(track),
-                        intArrayOf(102, 70, 150)
-                    )
-
-                    map.let {
-                        it?.zoomToBoundingBox(userTrack?.boundingBox, true)
-                        it?.overlayManager?.addAll(userTrack?.toList()!!)
-                    }
-                }
                 supportFragmentManager.beginTransaction()
                     .hide(openTrackFragment)
                     .show(mapFragment)
@@ -242,6 +230,20 @@ class MainNavigationActivity : AppCompatActivity() {
                     .setCustomAnimations(R.anim.up_alpha_trans, R.anim.down_alpha_trans)
                     .replace(R.id.start_new_route_container, recordFragment, TAG_RECORD)
                     .commit()
+                activeFragment = mapFragment
+
+                val track = fr.getTrack()
+                val map = mapFragment.map
+                userTrack = UserTrack.newInstance(
+                    map,
+                    mapFragment.startIcon,
+                    mapFragment.finishIcon,
+                    GpxUtil.trackModelToPolyline(track),
+                    intArrayOf(102, 70, 150)
+                )
+
+                mapFragment.zoomToBounds(userTrack?.boundingBox)
+                mapFragment.map.overlayManager?.addAll(userTrack?.toList()!!)
             }
             fr
         }
@@ -327,8 +329,6 @@ class MainNavigationActivity : AppCompatActivity() {
         }
         when (itemId) {
             R.id.navigation_record -> {
-
-
                 if (activeFragment !is MapFragment) {
                     supportFragmentManager.beginTransaction().hide(activeFragment!!)
                         .show(mapFragment)
@@ -339,6 +339,13 @@ class MainNavigationActivity : AppCompatActivity() {
                     .replace(R.id.start_new_route_container, recordFragment, TAG_RECORD)
                     .commit()
                 mapFragment.mapController.animateTo(mapFragment.userLocation)
+
+                ///////////////////////////////////////////////
+                mapFragment.map.let {
+                    while (it.overlayManager.size > 2) {
+                        it.overlayManager.removeLast()
+                    }
+                }
                 activeFragment = mapFragment
             }
 

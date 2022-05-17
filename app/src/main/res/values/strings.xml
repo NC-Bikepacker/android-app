@@ -2,7 +2,7 @@
     <string name="action_settings">Settings</string>
     <string name="already_have_an_account">Already have an account?</string>
     <string name="app_name">Bikepacker</string>
-    <string name="backend_server_ip">http://192.168.1.56:8085/</string>
+    <string name="backend_server_ip">http://192.168.56.1:8085/</string>
     <string name="bikepacker_app_logo">Bikepacker app logo</string>
     <string name="compass_icon">map</string>
     <string name="confirm_password">Confirm password</string>
@@ -41,7 +41,7 @@
     <string name="time">Time:</string>
 
     <!-- Server string -->
-    <string name="server_ip">http://37.140.241.224:8085</string>
+    <string name="server_ip">http://192.168.56.1:8085</string>
     <string name="username">Username</string>
     <string name="title_activity_test">Test</string>
 

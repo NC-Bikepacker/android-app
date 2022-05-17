@@ -4,6 +4,7 @@ import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
 
 import org.osmdroid.util.BoundingBox;
+import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.Marker;
 import org.osmdroid.views.overlay.OverlayWithIW;
@@ -100,6 +101,12 @@ public class UserTrack extends OverlayWithIW {
     }
 
     public BoundingBox getBoundingBox() {
+double n = polyline.getBounds().getLatNorth();
+        double e = polyline.getBounds().getLonEast();
+        double s = polyline.getBounds().getLatSouth();
+        double w = polyline.getBounds().getLonWest();
+
+
         return new BoundingBox(
                 polyline.getBounds().getLatNorth() + ZOOM_VAL,
                 polyline.getBounds().getLonEast() + ZOOM_VAL,
