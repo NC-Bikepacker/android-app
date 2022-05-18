@@ -55,13 +55,6 @@ public class FindFriendFragment extends Fragment {
     private UserModel iAmUser;
     private String cookie;
     private OnFriendClickListener clickListener;
-//
-//    public void setFragmentManager(FragmentManager fragmentManager) {
-//        this.fragmentManager = fragmentManager;
-//    }
-//
-//    private FragmentManager fragmentManager;
-
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -145,7 +138,6 @@ public class FindFriendFragment extends Fragment {
                                     tracks.addAll(Optional.ofNullable(response.body()).orElse(Collections.emptyList()));
 
                                     ShowTracksFragment showTracksFragment = new ShowTracksFragment(tracks);
-//                                    showTracksFragment.setFragmentManager(fragmentManager);
 
                                     Optional<FragmentActivity> activity = Optional.ofNullable(getActivity());
                                     Optional<Fragment> activeFragment = Optional.ofNullable(MainNavigationActivity.Companion.getActiveFragment());

@@ -387,7 +387,7 @@ class MainNavigationActivity : AppCompatActivity() {
                 supportFragmentManager
                     .beginTransaction()
                     .hide(activeFragment!!)
-                    .show(findFriend).commit()
+                    .show(homeFragment).commit()
 
                 activeFragment = homeFragment
             }
