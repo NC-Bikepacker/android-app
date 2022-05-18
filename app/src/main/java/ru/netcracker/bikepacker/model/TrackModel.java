@@ -3,8 +3,6 @@ package ru.netcracker.bikepacker.model;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-import java.sql.Date;
-
 
 public class TrackModel {
 
@@ -33,7 +31,7 @@ public class TrackModel {
     private String trackName;
     @SerializedName("trackDate")
     @Expose
-    private Date trackDate;
+    private String trackDate;
     @SerializedName("trackDistance")
     @Expose
     private Double trackDistance;
@@ -53,13 +51,12 @@ public class TrackModel {
     @Expose
     private Double trackFinishLon;
 
-    public TrackModel(long trackId,
-                      long travelTime,
-                      long trackComplexity,
+    public TrackModel(long travelTime,
+                      double trackComplexity,
                       UserModel user,
                       String gpx,
                       String trackName,
-                      Date trackDate,
+                      String trackDate,
                       Double trackDistance,
                       Double trackAvgSpeed,
                       Double trackStartLat,
@@ -114,11 +111,11 @@ public class TrackModel {
         this.trackName = trackName;
     }
 
-    public Date getTrackDate() {
+    public String getTrackDate() {
         return trackDate;
     }
 
-    public void setTrackDate(Date trackDate) {
+    public void setTrackDate(String trackDate) {
         this.trackDate = trackDate;
     }
 
@@ -216,5 +213,25 @@ public class TrackModel {
 
     public void setImageBase64(String imageBase64) {
         this.imageBase64 = imageBase64;
+    }
+
+    @Override
+    public String toString() {
+        return "TrackModel{" +
+                "trackId=" + trackId +
+                ", travelTime=" + travelTime +
+                ", trackComplexity=" + trackComplexity +
+                ", user=" + user +
+                ", gpx='" + gpx + '\'' +
+                ", imageBase64='" + imageBase64 + '\'' +
+                ", trackName='" + trackName + '\'' +
+                ", trackDate=" + trackDate +
+                ", trackDistance=" + trackDistance +
+                ", trackAvgSpeed=" + trackAvgSpeed +
+                ", trackStartLat=" + trackStartLat +
+                ", trackStartLon=" + trackStartLon +
+                ", trackFinishLat=" + trackFinishLat +
+                ", trackFinishLon=" + trackFinishLon +
+                '}';
     }
 }

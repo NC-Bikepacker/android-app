@@ -4,6 +4,7 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.icu.util.Calendar;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -20,10 +21,8 @@ import androidx.core.app.ActivityCompat;
 import org.osmdroid.util.GeoPoint;
 
 import java.io.IOException;
-import java.sql.Date;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
@@ -193,7 +192,7 @@ public class TrackRecorder {
     @RequiresApi(api = Build.VERSION_CODES.O)
     public void sendPostRequest() {
         trackToSend = new TrackModel(userAccountManager.getUser());
-        trackToSend.setTrackDate(Date.valueOf(LocalDate.now().toString()));
+        trackToSend.setTrackDate(LocalDate.now().toString());
 
         int hour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
         String partOfTheDay;
@@ -209,6 +208,7 @@ public class TrackRecorder {
             trackToSend.setTrackStartLat(wayPoint.getLatitude().doubleValue());
             trackToSend.setTrackStartLon(wayPoint.getLongitude().doubleValue());
         });
+        Log.d("TrackToSend",trackToSend.toString());
         RetrofitManager.getInstance(ctx).getJSONApi().postTrack(userAccountManager.getCookie(), trackToSend).enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
