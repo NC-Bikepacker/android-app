@@ -42,11 +42,14 @@ public class UserMenuInformationAccountFragment extends Fragment {
         this.email = userMenuInformationAccountFragmentView.findViewById(R.id.emailInUserMenu);
         this.editButton = userMenuInformationAccountFragmentView.findViewById(R.id.editButtonInformationAccountUserMenuFragment);
 
-        Picasso.get()
-                .load(userAccountManager.getUser().getUserPicLink())
-                .placeholder(R.drawable.ic_userpic)
-                .error(R.drawable.ic_userpic)
-                .into(userPic);
+        if(!userAccountManager.getUser().getUserPicLink().isEmpty()){
+            Picasso.get()
+                    .load(userAccountManager.getUser().getUserPicLink())
+                    .placeholder(R.drawable.ic_userpic)
+                    .error(R.drawable.ic_userpic)
+                    .into(userPic);
+        }
+
 
         firstAndLastNames.setText(userAccountManager.getUser().getFirstname() + " " + userAccountManager.getUser().getLastname());
         nickname.setText(userAccountManager.getUser().getUsername());

@@ -249,6 +249,7 @@ public class MapFragment extends Fragment {
 
     public void zoomToBounds(final BoundingBox box) {
         if (map.getHeight() > 0) {
+            map.setExpectedCenter(new GeoPoint(box.getCenterLatitude(), box.getCenterLongitude()));
             map.zoomToBoundingBox(box, true);
         } else {
             ViewTreeObserver vto = map.getViewTreeObserver();

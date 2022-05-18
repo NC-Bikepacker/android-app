@@ -7,6 +7,8 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -19,7 +21,9 @@ import android.widget.ImageButton;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -31,7 +35,9 @@ import ru.netcracker.bikepacker.adapter.OnFriendClickListener;
 import ru.netcracker.bikepacker.listholder.MyFriendsList;
 import ru.netcracker.bikepacker.manager.RetrofitManager;
 import ru.netcracker.bikepacker.manager.SessionManager;
+import ru.netcracker.bikepacker.manager.UserAccountManager;
 import ru.netcracker.bikepacker.model.FriendModel;
+import ru.netcracker.bikepacker.model.TrackModel;
 import ru.netcracker.bikepacker.model.UserModel;
 
 
@@ -49,6 +55,13 @@ public class FindFriendFragment extends Fragment {
     private UserModel iAmUser;
     private String cookie;
     private OnFriendClickListener clickListener;
+//
+//    public void setFragmentManager(FragmentManager fragmentManager) {
+//        this.fragmentManager = fragmentManager;
+//    }
+//
+//    private FragmentManager fragmentManager;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -66,7 +79,7 @@ public class FindFriendFragment extends Fragment {
         //инициализаруем session manager
         sessionManager = SessionManager.getInstance(context);
 
-        cookie = "JSESSIONID=" + sessionManager.getSessionId() + "; Path=/; HttpOnly;";
+        cookie = UserAccountManager.getInstance(context).getCookie();
 
         //получаем sessionUser
         iAmUser = sessionManager.getSessionUser();
@@ -87,7 +100,7 @@ public class FindFriendFragment extends Fragment {
                                 displayFindFriend(viewFindFriendFragment, user.getUsername());
                             }
                             @Override
-                            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                            public void onFailure(@NonNull Call<ResponseBody> call, @NonNull Throwable t) {
                                 Toast.makeText(context, "Ошибка добавления пользователя", Toast.LENGTH_SHORT).show();
                                 displayFindFriend(viewFindFriendFragment, findFriendsList.get(position).getUsername());
                                 Log.d(t.getMessage(), "Ошибка добавления пользователя");
@@ -103,17 +116,59 @@ public class FindFriendFragment extends Fragment {
                         .deleteFriend(cookie, friends)
                         .enqueue(new Callback<ResponseBody>() {
                             @Override
-                            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                            public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
                                 Toast.makeText(getContext(), "Пользователь " + user.getFirstname() + " удален", Toast.LENGTH_SHORT).show();
                                 MyFriendsList.getInstance().deleteFriend(user);
                                 displayMyFriend(viewFindFriendFragment);
                             }
 
                             @Override
-                            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                            public void onFailure(@NonNull Call<ResponseBody> call, @NonNull Throwable t) {
                                 Toast.makeText(getContext(), "Ошибка удаления", Toast.LENGTH_SHORT).show();
                                 displayMyFriend(viewFindFriendFragment);
                                 Log.d(t.getMessage(), "Ошибка удаления друга");
+                            }
+                        });
+            }
+
+            @Override
+            public void showUserTracks(UserModel user, UserAccountManager userAccountManager) {
+                List<TrackModel> tracks = new ArrayList<>();
+                RetrofitManager.getInstance(getContext())
+                        .getJSONApi()
+                        .getTracksByUser(userAccountManager.getCookie(), user.getId())
+                        .enqueue(new Callback<List<TrackModel>>() {
+                            @Override
+                            public void onResponse(@NonNull Call<List<TrackModel>> call, @NonNull Response<List<TrackModel>> response) {
+                                if(response.isSuccessful()){
+                                    tracks.clear();
+                                    tracks.addAll(Optional.ofNullable(response.body()).orElse(Collections.emptyList()));
+
+                                    ShowTracksFragment showTracksFragment = new ShowTracksFragment(tracks);
+//                                    showTracksFragment.setFragmentManager(fragmentManager);
+
+                                    Optional<FragmentActivity> activity = Optional.ofNullable(getActivity());
+                                    Optional<Fragment> activeFragment = Optional.ofNullable(MainNavigationActivity.Companion.getActiveFragment());
+
+                                    if(activity.isPresent() && activeFragment.isPresent()) {
+                                        activity.get().getSupportFragmentManager().beginTransaction()
+                                                .add(R.id.fragment_container, showTracksFragment, "TAG_SHOW_TRACKS")
+                                                .hide(activeFragment.get())
+                                                .show(showTracksFragment)
+                                                .commit();
+                                        MainNavigationActivity.Companion.setActiveFragment(showTracksFragment);
+                                    }
+                                }
+                                else {
+                                    Toast.makeText(getContext(), "Проверьте соединение интернет", Toast.LENGTH_SHORT).show();
+                                    Log.e("Error show friend tracks", "Error response successful response. Error message: "+ response.message() + ". Error code: " + response.code());
+                                }
+                            }
+
+                            @Override
+                            public void onFailure(@NonNull Call<List<TrackModel>> call, @NonNull Throwable t) {
+                                Toast.makeText(getContext(), "Ошибка вывода треков пользователя " + "@" + user.getUsername() + ". Проверьте соединение интернет", Toast.LENGTH_SHORT).show();
+                                Log.e("Error show friend tracks", "Error user track response. Error message: "+ t.getMessage(), t);
                             }
                         });
             }
@@ -132,13 +187,7 @@ public class FindFriendFragment extends Fragment {
         displayMyFriend(viewFindFriendFragment);
 
         //обработчик нажатия кнопки searchFriendButton для начала поиска
-        searchFriendButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                displayFindFriend(viewFindFriendFragment, findFriendSearchPlane.getText().toString());
-            }
-        });
+        searchFriendButton.setOnClickListener(view -> displayFindFriend(viewFindFriendFragment, findFriendSearchPlane.getText().toString()));
 
         return viewFindFriendFragment;
     }
@@ -161,7 +210,7 @@ public class FindFriendFragment extends Fragment {
                 .enqueue(new Callback<List<UserModel>>() {
                     @RequiresApi(api = Build.VERSION_CODES.N)
                     @Override
-                    public void onResponse(Call<List<UserModel>> call, Response<List<UserModel>> response) {
+                    public void onResponse(@NonNull Call<List<UserModel>> call, @NonNull Response<List<UserModel>> response) {
                         List<UserModel> friends = response.body();
                         if (friends != null && !friends.isEmpty()) {
                             MyFriendsList.getInstance().updateMyFriends(friends);
@@ -172,7 +221,7 @@ public class FindFriendFragment extends Fragment {
                     }
 
                     @Override
-                    public void onFailure(Call<List<UserModel>> call, Throwable t) {
+                    public void onFailure(@NonNull Call<List<UserModel>> call, @NonNull Throwable t) {
                         Toast.makeText(context, "Нет соединения с сервером!", Toast.LENGTH_SHORT).show();
                         Log.d(t.getMessage(), "Error occurred while getting request!");
                     }
@@ -185,7 +234,7 @@ public class FindFriendFragment extends Fragment {
                 .getFriendWithNickName(cookie, nickName)
                 .enqueue(new Callback<UserModel>() {
                     @Override
-                    public void onResponse(Call<UserModel> call, Response<UserModel> response) {
+                    public void onResponse(@NonNull Call<UserModel> call, @NonNull Response<UserModel> response) {
                         UserModel friend = response.body();
                         findFriendsList.clear();
                         if (friend == null) {
@@ -197,7 +246,7 @@ public class FindFriendFragment extends Fragment {
                     }
 
                     @Override
-                    public void onFailure(Call<UserModel> call, Throwable t) {
+                    public void onFailure(@NonNull Call<UserModel> call, @NonNull Throwable t) {
                         Toast.makeText(getContext(), "Ошибка поиска пользователя", Toast.LENGTH_SHORT).show();
                         Log.d(t.getMessage(), "Ошибка поиска пользователя");
                     }
