@@ -13,25 +13,24 @@ import androidx.annotation.RequiresApi;
 import com.smarteist.autoimageslider.SliderViewAdapter;
 import com.squareup.picasso.Picasso;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import ru.netcracker.bikepacker.R;
 import ru.netcracker.bikepacker.service.ImageConverter;
 
-public class ImageSliderAdapter extends
-        SliderViewAdapter<ImageSliderAdapter.SliderAdapterVH> {
+public class ImageSliderAdapterToConfirmFragment extends
+        SliderViewAdapter<ImageSliderAdapterToConfirmFragment.SliderAdapterVH> {
 
     private Context context;
-    private List<String> mSliderItems;
+    private List<Integer> mSliderItems;
     private ImageConverter imageConverter = new ImageConverter();
 
-    public ImageSliderAdapter(Context context, List<String> mSliderItems) {
+    public ImageSliderAdapterToConfirmFragment(Context context, List<Integer> mSliderItems) {
         this.context = context;
         this.mSliderItems = mSliderItems;
     }
 
-    public void renewItems(List<String> sliderItems) {
+    public void renewItems(List<Integer> sliderItems) {
         this.mSliderItems = sliderItems;
         notifyDataSetChanged();
     }
@@ -41,23 +40,23 @@ public class ImageSliderAdapter extends
         notifyDataSetChanged();
     }
 
-    public void addItem(String sliderItem) {
+    public void addItem(Integer sliderItem) {
         this.mSliderItems.add(sliderItem);
         notifyDataSetChanged();
     }
 
     @Override
-    public SliderAdapterVH onCreateViewHolder(ViewGroup parent) {
+    public ImageSliderAdapterToConfirmFragment.SliderAdapterVH onCreateViewHolder(ViewGroup parent) {
         @SuppressLint("InflateParams") View inflate = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_image_slider_layout, null);
-        return new SliderAdapterVH(inflate);
+        return new ImageSliderAdapterToConfirmFragment.SliderAdapterVH(inflate);
     }
 
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
-    public void onBindViewHolder(SliderAdapterVH viewHolder, int position) {
+    public void onBindViewHolder(ImageSliderAdapterToConfirmFragment.SliderAdapterVH viewHolder, int position) {
 
-        String sliderItem = mSliderItems.get(position);
+        Integer sliderItem = mSliderItems.get(position);
 
         Picasso.get()
                 .load(sliderItem)

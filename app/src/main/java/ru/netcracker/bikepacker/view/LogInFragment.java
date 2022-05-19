@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -25,9 +26,11 @@ import ru.netcracker.bikepacker.R;
 import ru.netcracker.bikepacker.databinding.FragmentLogInBinding;
 import ru.netcracker.bikepacker.manager.RetrofitManager;
 import ru.netcracker.bikepacker.manager.SessionManager;
+import ru.netcracker.bikepacker.manager.UserAccountManager;
 import ru.netcracker.bikepacker.model.AuthModel;
 import ru.netcracker.bikepacker.model.UserModel;
 import ru.netcracker.bikepacker.service.EmailValidationService;
+import ru.netcracker.bikepacker.service.PasswordGeneratingService;
 
 public class LogInFragment extends Fragment {
 
@@ -53,7 +56,7 @@ public class LogInFragment extends Fragment {
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        context = getActivity().getApplicationContext();
+        context = requireActivity().getApplicationContext();
 
         emailField = fragmentLogInBinding.layoutSigninEmailFieldTextField;
         passwordField = fragmentLogInBinding.layoutSigninPasswordFieldTextField;
@@ -106,6 +109,11 @@ public class LogInFragment extends Fragment {
                 if (fieldsAreNotEmpty && passwordIsValid && emailIsValid) {
                     authRequest(context, new AuthModel(email, password));
                 }
+
+                if(view!=null){
+                    InputMethodManager inputMethodManager = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                    inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                }
             }
         });
     }
@@ -130,8 +138,14 @@ public class LogInFragment extends Fragment {
 
                     if (null != response.body()) {
                         sessionManager.setSessionUser(response.body());
-                        NavHostFragment.findNavController(LogInFragment.this)
-                                .navigate(R.id.action_logInFragment_to_mainNavigationActivity);
+                        UserAccountManager.getInstance(context).setUserData();
+                        if(sessionManager.getSessionUser().isAccountVerification()) {
+                            NavHostFragment.findNavController(LogInFragment.this)
+                                    .navigate(R.id.action_logInFragment_to_mainNavigationActivity);
+                        }else {
+                            NavHostFragment.findNavController(LogInFragment.this)
+                                    .navigate(R.id.confirmEmailFragment);
+                        }
                     } else {
                         try {
                             throw new InvalidObjectException("Log in response body is empty");
@@ -140,6 +154,7 @@ public class LogInFragment extends Fragment {
                         }
                     }
                 } else {
+                    Toast.makeText(getContext(),"Проверьте правильность ввода почты и пароля",Toast.LENGTH_SHORT).show();
                     Log.d("Message", "Error. Authenticated was failed. Response " + response.code());
                 }
             }

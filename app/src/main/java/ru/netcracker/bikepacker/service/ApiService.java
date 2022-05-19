@@ -40,6 +40,9 @@ public interface ApiService {
     @PUT("/updatedata")
     Call<UserModel> updateUserData (@Header("Cookie") String cookie, @Body SignUpModel signUpModel);
 
+    @GET("/repeatConfirm/{user_id}")
+    Call<ResponseBody> repeatConfirm(@Header ("Cookie") String cookie, @Path("user_id") long user_id);
+
     //Track operations API
     @POST("/tracks")
     Call<ResponseBody> postTrack(@Header("Cookie") String cookie, @Body TrackModel track);
@@ -55,7 +58,7 @@ public interface ApiService {
     Call<ResponseBody> putTrack(@Header("Cookie") String cookie, @Path("id") long id, @Body TrackModel track);
 
     //operations with usersApi
-    @GET("/users/{id}")
+    @GET("/users/user/getbyid/{id}")
     Call<UserModel> getUserWithID(@Header ("Cookie") String cookie, @Path("id") long id);
 
     @GET("/users/user/getbyusername/{userNickName}")

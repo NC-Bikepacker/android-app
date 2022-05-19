@@ -8,6 +8,9 @@ import java.util.Objects;
 
 public class UserModel implements Serializable {
 
+    @SerializedName("accountVerification")
+    @Expose
+    private boolean accountVerification;
     @SerializedName("firstname")
     @Expose
     private String firstname;
@@ -32,9 +35,6 @@ public class UserModel implements Serializable {
         this.lastname = lastname;
         this.username = username;
         this.id = id;
-    }
-
-    public UserModel(long l, String favorite, String tracks, String comeBak, Object o) {
     }
 
     public UserModel() {
@@ -87,6 +87,14 @@ public class UserModel implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public boolean isAccountVerification() {
+        return accountVerification;
+    }
+
+    public void setAccountVerification(boolean accountVerification) {
+        this.accountVerification = accountVerification;
     }
 
     @Override

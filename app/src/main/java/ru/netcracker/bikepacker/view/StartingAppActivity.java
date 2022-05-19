@@ -20,6 +20,7 @@ import androidx.navigation.ui.NavigationUI;
 import ru.netcracker.bikepacker.R;
 import ru.netcracker.bikepacker.databinding.ActivityMainBinding;
 import ru.netcracker.bikepacker.manager.SessionManager;
+import ru.netcracker.bikepacker.manager.UserAccountManager;
 
 public class StartingAppActivity extends AppCompatActivity {
 
@@ -30,6 +31,7 @@ public class StartingAppActivity extends AppCompatActivity {
     private Context context;
     private NavController navController;
     private FragmentManager fragmentManager;
+    private static long back_pressed;
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
@@ -48,11 +50,13 @@ public class StartingAppActivity extends AppCompatActivity {
         if (sessionManager.isEmpty()) {
             navController.navigate(R.id.action_fragmentLoadingScreen_to_logInFragment);
         }
+        /*else if(!sessionManager.getSessionUser().isAccountVerification()){
+            navController.navigate(R.id.confirmEmailFragment);
+        }*/
         else if(false){
             navController.navigate(R.id.confirmEmailFragment);
         }
         else {
-            Toast.makeText(this.getApplicationContext(),"dsgjkytyj", Toast.LENGTH_LONG).show();
             Intent intent = new Intent(StartingAppActivity.this, MainNavigationActivity.class);
             startActivity(intent);
             finish();
@@ -79,5 +83,15 @@ public class StartingAppActivity extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
         return NavigationUI.navigateUp(navController, appBarConfiguration)
                 || super.onSupportNavigateUp();
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (back_pressed + 2000 > System.currentTimeMillis())
+            super.onBackPressed();
+        else
+            Toast.makeText(getBaseContext(), "Press once again to exit!",
+                    Toast.LENGTH_SHORT).show();
+        back_pressed = System.currentTimeMillis();
     }
 }

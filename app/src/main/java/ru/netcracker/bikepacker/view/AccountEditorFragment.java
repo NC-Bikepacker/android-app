@@ -132,6 +132,7 @@ public class AccountEditorFragment extends Fragment {
                                 if (response.isSuccessful() && response.body()!=null){
                                     SessionManager.getInstance(getContext())
                                             .setSessionUser(response.body());
+                                    UserAccountManager.getInstance(getContext());
                                     Toast.makeText(getContext(), "Данные аккаунта успешно обновлены", Toast.LENGTH_SHORT).show();
                                     password.setText("");
                                     confirmPassword.setText("");
