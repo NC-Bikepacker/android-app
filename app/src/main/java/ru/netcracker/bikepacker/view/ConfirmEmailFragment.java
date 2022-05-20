@@ -78,7 +78,7 @@ public class ConfirmEmailFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 if(!clickFlag.get()){
-                    Toast toast = Toast.makeText(getContext(), "сделать запрос можно раз в 5 секунд", Toast.LENGTH_LONG);
+                    Toast toast = Toast.makeText(getContext(), "you can make a request once every 5 seconds", Toast.LENGTH_LONG);
                     toast.setGravity(Gravity.TOP, 0 , 160);
                     toast.show();
                     return;
@@ -94,8 +94,8 @@ public class ConfirmEmailFragment extends Fragment {
     private void openQuitDialog() {
         AlertDialog.Builder quitDialog = new AlertDialog.Builder(
                 getContext());
-        quitDialog.setTitle("Вы хотите выйти из аккаунта?");
-        quitDialog.setPositiveButton("Да", new DialogInterface.OnClickListener() {
+        quitDialog.setTitle("Do you want to log out of your account?");
+        quitDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 UserAccountManager.getInstance(requireContext()).removeUser();
@@ -104,7 +104,7 @@ public class ConfirmEmailFragment extends Fragment {
             }
         });
 
-        quitDialog.setNegativeButton("Нет", new DialogInterface.OnClickListener() {
+        quitDialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
             }
@@ -125,13 +125,13 @@ public class ConfirmEmailFragment extends Fragment {
                                 NavHostFragment.findNavController(ConfirmEmailFragment.this).navigate(R.id.action_confirmEmailFragment_to_mainNavigationActivity);
                             }
                             else {
-                                Toast toast = Toast.makeText(getContext(),"Для того чтобы продолжить, подтвердите почту!",Toast.LENGTH_SHORT);
+                                Toast toast = Toast.makeText(getContext(),"Confirm your e-mail address to continue!",Toast.LENGTH_SHORT);
                                 toast.setGravity(Gravity.TOP, 0 , 160);
                                 toast.show();
                             }
                         }
                         else {
-                            Toast toast = Toast.makeText(getContext(), "Ошибка запроса, проверьте соединение интернет", Toast.LENGTH_LONG);
+                            Toast toast = Toast.makeText(getContext(), "Request error, check internet connection", Toast.LENGTH_LONG);
                             toast.setGravity(Gravity.TOP, 0 , 160);
                             toast.show();
                             Log.e("ConfirmEmail", "Ошибка запроса верификации");
@@ -140,7 +140,7 @@ public class ConfirmEmailFragment extends Fragment {
 
                     @Override
                     public void onFailure(@NonNull Call<UserModel> call, @NonNull Throwable t) {
-                        Toast toast = Toast.makeText(getContext(), "Ошибка при совершении запроса, обратитесь в техподдержку", Toast.LENGTH_LONG);
+                        Toast toast = Toast.makeText(getContext(), "Error when executing the request, contact technical support", Toast.LENGTH_LONG);
                         toast.setGravity(Gravity.TOP, 0 , 160);
                         toast.show();
                         Log.e("ConfirmEmail", "Ошибка запроса верификации",t);
@@ -166,7 +166,7 @@ public class ConfirmEmailFragment extends Fragment {
                         }
                         else {
                             Log.e("ConfirmEmailFragment", "response body error");
-                            Toast toast = Toast.makeText(getContext(), "Ошибка запроса, проверьте соединение интернет",Toast.LENGTH_LONG);
+                            Toast toast = Toast.makeText(getContext(), "Request error, check internet connection",Toast.LENGTH_LONG);
                             toast.setGravity(Gravity.TOP, 0 , 160);
                             toast.show();
                         }
@@ -175,7 +175,7 @@ public class ConfirmEmailFragment extends Fragment {
                     @Override
                     public void onFailure(@NonNull Call<ResponseBody> call,@NonNull Throwable t) {
                         Log.e("ConfirmEmailFragment", "response error");
-                        Toast toast = Toast.makeText(getContext(), "Ошибка запроса, обратитесь в техподдержку",Toast.LENGTH_LONG);
+                        Toast toast = Toast.makeText(getContext(), "Error when executing the request, contact technical support",Toast.LENGTH_LONG);
                         toast.setGravity(Gravity.TOP, 0 , 160);
                         toast.show();
                     }

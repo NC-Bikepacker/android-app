@@ -37,8 +37,8 @@ public interface ApiService {
     @POST("/signup")
     Call<Void> signUp(@Body SignUpModel signUpModel);
 
-    @PUT("/updatedata")
-    Call<UserModel> updateUserData (@Header("Cookie") String cookie, @Body SignUpModel signUpModel);
+    @PUT("/updateuserdata/{user_id}")
+    Call<UserModel> updateUserData (@Header("Cookie") String cookie, @Path("user_id") Long user_id, @Body SignUpModel signUpModel);
 
     @GET("/repeatConfirm/{user_id}")
     Call<ResponseBody> repeatConfirm(@Header ("Cookie") String cookie, @Path("user_id") long user_id);

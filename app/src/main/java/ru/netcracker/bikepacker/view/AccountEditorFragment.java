@@ -91,7 +91,9 @@ public class AccountEditorFragment extends Fragment {
             user.setEmail(email.getText().toString());
             user.setUsername(username.getText().toString());
 
-            if(password.getText()!=null && confirmPassword.getText()!=null){
+            if(!emailOpt.isPresent()){user.setEmail(userAccountManager.getUser().getEmail());}
+
+            if(password.getText()!=null && password.getText().length() >0 && confirmPassword.getText()!=null && confirmPassword.getText().length()>0){
                 if(password.getText().toString().length() >= 8 &&
                         password.getText().toString().equals(Objects.requireNonNull(confirmPassword.getText()).toString()) &&
                         PasswordGeneratingService.isValidPassword(password.getText().toString())){
@@ -102,19 +104,19 @@ public class AccountEditorFragment extends Fragment {
                     editFlag = false;
 
                     if (!password.getText().toString().equals(confirmPassword.getText().toString())) {
-                        Toast.makeText(getContext(), "введенные пароли не совпадают, повторите попытку ввода", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getContext(), "entered passwords do not match, try again", Toast.LENGTH_LONG).show();
                         password.setText("");
                         confirmPassword.setText("");
                         return;
                     }
                     if (password.getText().toString().length() < 8) {
-                        Toast.makeText(getContext(), "длинна пароля менее 8 символов, введите пароль удовлетворяющий условиям безопасности", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getContext(), "password is less than 8 characters long, enter a password that meets the security conditions", Toast.LENGTH_LONG).show();
                         password.setText("");
                         confirmPassword.setText("");
                         return;
                     }
                     if (!PasswordGeneratingService.isValidPassword(password.getText().toString())) {
-                        Toast.makeText(getContext(), "введенный пароль не соответствует условиям безопасности, введите пароль содержащий хотя бы одну цифру, одну заглавную букву и одну строчную букву", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getContext(), "the password you entered does not meet the security conditions, enter a password containing at least one number, one uppercase letter and one lowercase letter", Toast.LENGTH_LONG).show();
                         password.setText("");
                         confirmPassword.setText("");
                         return;
@@ -125,28 +127,28 @@ public class AccountEditorFragment extends Fragment {
             if (editFlag){
                 RetrofitManager.getInstance(getContext())
                         .getJSONApi()
-                        .updateUserData(userAccountManager.getCookie(), user)
+                        .updateUserData(userAccountManager.getCookie(), userAccountManager.getUser().getId(), user)
                         .enqueue(new Callback<UserModel>() {
                             @Override
                             public void onResponse(@NonNull Call<UserModel> call, @NonNull Response<UserModel> response) {
                                 if (response.isSuccessful() && response.body()!=null){
                                     SessionManager.getInstance(getContext())
                                             .setSessionUser(response.body());
-                                    UserAccountManager.getInstance(getContext());
-                                    Toast.makeText(getContext(), "Данные аккаунта успешно обновлены", Toast.LENGTH_SHORT).show();
+                                    UserAccountManager.getInstance(getContext()).setUserData();
+                                    Toast.makeText(getContext(), "Account data has been successfully updated", Toast.LENGTH_SHORT).show();
                                     password.setText("");
                                     confirmPassword.setText("");
                                 }
                                 else {
                                     Log.e("AccountEditorFragment.class", "Не выполнен запрос отправки данных аккаунта клиента");
-                                    Toast.makeText(getContext(), "Проверьте соединение интернет.", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(getContext(), "Check your internet connection", Toast.LENGTH_SHORT).show();
                                 }
                             }
 
                             @Override
                             public void onFailure(@NonNull Call<UserModel> call, @NonNull Throwable t) {
                                 Log.e("AccountEditorFragment.class", "Ошибка выполнения запроса отправки данных аккаунта клиента");
-                                Toast.makeText(getContext(), "Ошибка запроса отправки данных", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getContext(), "Data sending request error", Toast.LENGTH_SHORT).show();
                             }
                         });
             }

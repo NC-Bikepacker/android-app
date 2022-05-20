@@ -154,7 +154,7 @@ public class LogInFragment extends Fragment {
                         }
                     }
                 } else {
-                    Toast.makeText(getContext(),"Проверьте правильность ввода почты и пароля",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(),"Make sure your email and password are correct",Toast.LENGTH_SHORT).show();
                     Log.d("Message", "Error. Authenticated was failed. Response " + response.code());
                 }
             }
