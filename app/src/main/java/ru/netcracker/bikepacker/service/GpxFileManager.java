@@ -3,9 +3,7 @@ package ru.netcracker.bikepacker.service;
 import android.content.Context;
 import android.util.Log;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
-
 import org.apache.commons.io.IOUtils;
 
 import java.io.BufferedReader;

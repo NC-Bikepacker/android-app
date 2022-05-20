@@ -8,26 +8,31 @@ import java.io.IOException;
 import ru.netcracker.bikepacker.model.UserModel;
 
 public class UserAccountManager {
-   private static UserAccountManager userAccountManager;
-   private UserModel user;
-   private SessionManager sessionManager;
-   private String cookie;
+   private static volatile UserAccountManager userAccountManager;
+   private final UserModel user;
+    private final String cookie;
 
     private UserAccountManager(Context context) throws IOException {
-        this.sessionManager = SessionManager.getInstance(context);
+        SessionManager sessionManager = SessionManager.getInstance(context);
         this.user = sessionManager.getSessionUser();
         this.cookie = "JSESSIONID=" + sessionManager.getSessionId() + "; Path=/; HttpOnly;";
     }
 
     public static UserAccountManager getInstance(Context context) {
-        if (userAccountManager == null) {
+        UserAccountManager localUserAccountManager = userAccountManager;
+        if (localUserAccountManager == null) {
             try {
-                userAccountManager = new UserAccountManager(context);
+                synchronized (UserAccountManager.class){
+                    localUserAccountManager = userAccountManager;
+                    if(localUserAccountManager ==null){
+                        userAccountManager = localUserAccountManager = new UserAccountManager(context);
+                    }
+                }
             } catch (IOException e) {
-                Log.d("Error instace UserAccountService", e.getMessage());
+                Log.d("Error instance UserAccountService", e.getMessage());
             }
         }
-        return userAccountManager;
+        return localUserAccountManager;
     }
 
     public UserModel getUser(){
