@@ -20,13 +20,11 @@ import androidx.navigation.ui.NavigationUI;
 import ru.netcracker.bikepacker.R;
 import ru.netcracker.bikepacker.databinding.ActivityMainBinding;
 import ru.netcracker.bikepacker.manager.SessionManager;
-import ru.netcracker.bikepacker.manager.UserAccountManager;
 
 public class StartingAppActivity extends AppCompatActivity {
 
     private AppBarConfiguration appBarConfiguration;
     private ActivityMainBinding binding;
-    private static int TIME_OUT = 1500;
     private SessionManager sessionManager;
     private Context context;
     private NavController navController;
@@ -50,10 +48,7 @@ public class StartingAppActivity extends AppCompatActivity {
         if (sessionManager.isEmpty()) {
             navController.navigate(R.id.action_fragmentLoadingScreen_to_logInFragment);
         }
-        /*else if(!sessionManager.getSessionUser().isAccountVerification()){
-            navController.navigate(R.id.confirmEmailFragment);
-        }*/
-        else if(false){
+        else if(!sessionManager.getSessionUser().isAccountVerification()){
             navController.navigate(R.id.confirmEmailFragment);
         }
         else {

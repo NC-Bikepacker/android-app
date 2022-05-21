@@ -15,6 +15,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
@@ -220,6 +221,7 @@ public class FindFriendFragment extends Fragment {
     }
 
     private void displayFindFriend(View view, String nickName) {
+        hideSoftInput(view);
         RetrofitManager.getInstance(getContext())
                 .getJSONApi()
                 .getFriendWithNickName(cookie, nickName)
@@ -247,5 +249,11 @@ public class FindFriendFragment extends Fragment {
 
     public void disp() {
         displayMyFriend(viewFindFriendFragment);
+    }
+    private void hideSoftInput(View view){
+        if(view!=null){
+            InputMethodManager inputMethodManager = (InputMethodManager) requireContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+            inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        }
     }
 }

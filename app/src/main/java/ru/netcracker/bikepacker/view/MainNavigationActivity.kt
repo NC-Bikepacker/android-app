@@ -12,8 +12,6 @@ import android.view.animation.AnimationUtils
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import androidx.navigation.NavController
-import androidx.navigation.Navigation
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import org.osmdroid.config.Configuration
 import org.osmdroid.views.overlay.OverlayWithIW
@@ -303,19 +301,6 @@ class MainNavigationActivity : AppCompatActivity() {
 
             R.id.navigation_account -> {
                 if (activeFragment !is UserMenuInformationAccountFragment) {
-
-                    val editButton: Button = findViewById(R.id.editButtonInformationAccountUserMenuFragment)
-                    editButton.setOnClickListener(object : View.OnClickListener {
-                        override fun onClick(p0: View?) {
-                            supportFragmentManager
-                                .beginTransaction()
-                                .hide(activeFragment!!)
-                                .show(accountEditorFragment).commit()
-
-                            activeFragment = accountEditorFragment
-                        }
-                    })
-
                     supportFragmentManager.beginTransaction().hide(activeFragment!!)
                         .show(userMenuFragment)
                         .commit()

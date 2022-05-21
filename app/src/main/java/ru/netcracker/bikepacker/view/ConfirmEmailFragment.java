@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.fragment.NavHostFragment;
 
@@ -16,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.smarteist.autoimageslider.SliderAnimations;
@@ -39,12 +41,13 @@ import ru.netcracker.bikepacker.model.UserModel;
 
 public class ConfirmEmailFragment extends Fragment {
     Button repeat;
-    ImageButton buttonBack, buttonContinue;
+    ImageButton buttonBack;
     SliderView imageSlider;
     View view;
     ImageSliderAdapterToConfirmFragment adapter;
     UserAccountManager userAccountManager;
     AtomicBoolean clickFlag = new AtomicBoolean(true);
+    ConstraintLayout logIn;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -54,8 +57,8 @@ public class ConfirmEmailFragment extends Fragment {
         repeat = view.findViewById(R.id.buttonRepeatConfirmEmail);
         imageSlider = view.findViewById(R.id.confirmEmailFragmentImageSlider);
         buttonBack = view.findViewById(R.id.buttonBackConfirmEmailFragment);
-        buttonContinue = view.findViewById(R.id.buttonContinueConfirmEmailFragment);
         userAccountManager = UserAccountManager.getInstance(getContext());
+        logIn = view.findViewById(R.id.loginConstraintButton);
 
         List<Integer> images = new ArrayList<>();
         images.add(R.drawable.image_1);
@@ -72,7 +75,6 @@ public class ConfirmEmailFragment extends Fragment {
         imageSlider.startAutoCycle();
 
         buttonBack.setOnClickListener(v -> openQuitDialog());
-        buttonContinue.setOnClickListener(v -> checkConfirmEmail());
 
         repeat.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -87,6 +89,8 @@ public class ConfirmEmailFragment extends Fragment {
                 new Handler().postDelayed(() -> clickFlag.set(true), 5000);
             }
         });
+
+        logIn.setOnClickListener(v -> checkConfirmEmail());
 
 
         return view;

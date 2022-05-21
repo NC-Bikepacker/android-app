@@ -1,5 +1,6 @@
 package ru.netcracker.bikepacker.view;
 
+import android.content.Context;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -11,6 +12,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.Toast;
@@ -77,6 +79,8 @@ public class AccountEditorFragment extends Fragment {
             user = new SignUpModel();
             //флаг изменений, если есть изменения, то true
             boolean editFlag = false;
+            //скрываем клавиатуру
+            hideSortInput(view);
 
             //проверка, что поле в фрагменте изменено и не является нулевым
             if(firstnameOpt.isPresent() && !userAccountManager.getUser().getFirstname().equals(firstnameOpt.get().toString()) && !firstnameOpt.get().toString().isEmpty()) { editFlag=true; }
@@ -164,7 +168,15 @@ public class AccountEditorFragment extends Fragment {
                         .commit();
                 MainNavigationActivity.Companion.setActiveFragment(fragmentManager.findFragmentByTag("user_menu"));
             }
+            hideSortInput(view);
         });
         return viewAccountEditor;
+    }
+
+    private void hideSortInput(View view){
+        if(view!=null){
+            InputMethodManager inputMethodManager = (InputMethodManager) requireContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+            inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        }
     }
 }

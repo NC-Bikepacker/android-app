@@ -11,7 +11,6 @@ import androidx.viewpager2.adapter.FragmentStateAdapter;
 
 import ru.netcracker.bikepacker.view.HomeFragment;
 import ru.netcracker.bikepacker.view.HomeMenuRecycleViewFragment;
-import ru.netcracker.bikepacker.view.TrackMenuRecycleViewFragment;
 
 public class HomeMenuPagerAdapter extends FragmentStateAdapter {
 

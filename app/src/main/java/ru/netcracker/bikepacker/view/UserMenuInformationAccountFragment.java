@@ -1,16 +1,13 @@
 package ru.netcracker.bikepacker.view;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 
 import androidx.appcompat.widget.PopupMenu;
 import androidx.fragment.app.Fragment;
-import androidx.navigation.Navigation;
-import androidx.navigation.fragment.NavHostFragment;
 
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -20,12 +17,15 @@ import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
+import java.util.Optional;
+
 import ru.netcracker.bikepacker.R;
 import ru.netcracker.bikepacker.manager.SessionManager;
 import ru.netcracker.bikepacker.manager.UserAccountManager;
 
 
 public class UserMenuInformationAccountFragment extends Fragment {
+
     private View userMenuInformationAccountFragmentView;
     private ImageView userPic, popupMenuSettingButton;
     private TextView firstAndLastNames, email, nickname;
@@ -37,6 +37,7 @@ public class UserMenuInformationAccountFragment extends Fragment {
         super.onCreate(savedInstanceState);
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -47,7 +48,6 @@ public class UserMenuInformationAccountFragment extends Fragment {
         this.firstAndLastNames = userMenuInformationAccountFragmentView.findViewById(R.id.firstAndLastNamesInUserMenu);
         this.nickname = userMenuInformationAccountFragmentView.findViewById(R.id.nicknameInUserMenu);
         this.email = userMenuInformationAccountFragmentView.findViewById(R.id.emailInUserMenu);
-        this.editButton = userMenuInformationAccountFragmentView.findViewById(R.id.editButtonInformationAccountUserMenuFragment);
         this.popupMenuSettingButton = userMenuInformationAccountFragmentView.findViewById(R.id.popupMenuButtonUserMenu);
 
         if(!userAccountManager.getUser().getUserPicLink().isEmpty()){
@@ -66,20 +66,21 @@ public class UserMenuInformationAccountFragment extends Fragment {
                 popup.setOnMenuItemClickListener(item -> {
                     switch (item.getItemId()){
                         case R.id.logout:
-                            UserAccountManager.getInstance(requireContext()).removeUser();
-                            SessionManager.getInstance(requireContext()).removeSession();
-                            Intent intent = new Intent(requireActivity(), StartingAppActivity.class);
-                            startActivity(intent);
-                            requireActivity().finish();
+                            logout();
                             return true;
                         case R.id.edit_userpic:
-                                Toast.makeText(requireContext(), "тут должно быть окно смены изображения", Toast.LENGTH_LONG).show();
+                                editUserpic();
+                            return true;
+                        case R.id.edit_profile_button:
+                            editAccount();
+                            return true;
+                        case R.id.import_strava_button:
+                            importFromStrava();
                             return true;
                         default:
                             return false;
                     }
                 });
-
                 popup.show();
             }
         });
@@ -90,6 +91,35 @@ public class UserMenuInformationAccountFragment extends Fragment {
         email.setText(userAccountManager.getUser().getEmail());
 
         return userMenuInformationAccountFragmentView;
+    }
+
+    private void logout(){
+        UserAccountManager.getInstance(requireContext()).removeUser();
+        SessionManager.getInstance(requireContext()).removeSession();
+        Intent intent = new Intent(requireActivity(), StartingAppActivity.class);
+        startActivity(intent);
+        requireActivity().finish();
+    }
+
+    private void editUserpic(){
+        Toast.makeText(requireContext(), "тут должно быть окно смены изображения", Toast.LENGTH_LONG).show();
+    }
+
+    private void editAccount(){
+        Optional<Fragment> activeFragment = Optional.ofNullable(MainNavigationActivity.Companion.getActiveFragment());
+        AccountEditorFragment accountEditorFragment = new AccountEditorFragment();
+        if(activeFragment.isPresent()){
+            requireActivity().getSupportFragmentManager().beginTransaction()
+                    .add(R.id.fragment_container, accountEditorFragment, "TAG_EDIT_ACCOUNT")
+                    .hide(activeFragment.get())
+                    .show(accountEditorFragment)
+                    .commit();
+            MainNavigationActivity.Companion.setActiveFragment(accountEditorFragment);
+        }
+    }
+
+    private void importFromStrava(){
+        Toast.makeText(requireContext(), "тут должно быть окно импорта из Стравы", Toast.LENGTH_LONG).show();
     }
 
 }

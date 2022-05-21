@@ -57,8 +57,15 @@
     <string name="record_icon">record icon</string>
     <string name="large_text">large text</string>
 
+    <!-- String UserMenuInformationAccountFragment -->
+    <string name="import_from_Starava">Import from Strava</string>
+    <string name="edit_profile">Edit profile</string>
+
     <!-- String ConfirmEmailFragment -->
     <string name="confirm_email_description">Thank you for registering! "\n" To join the Bikepacker family, confirm your email</string>
-    <string name="get_link_confirm_email">request a link to confirm the posts again</string>
-    <string name="request">request</string>
+    <string name="resend">Resend</string>
+    <string name="welcome_to_Bikepacker">Welcome to Bikepacker family!</string>
+    <string name="LogIn">Log in</string>
+    <string name="didn_t_reci">Didn\'t receive the email?</string>
+    <string name="you_have_su">You have successfully created a new account. Please check your email and confirm your registration. "\n" "\n" Once confirmed, you will be able to log in to the application.</string>
 </resources>
