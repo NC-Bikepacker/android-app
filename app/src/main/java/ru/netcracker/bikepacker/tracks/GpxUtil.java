@@ -3,6 +3,7 @@ package ru.netcracker.bikepacker.tracks;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.overlay.Polyline;
 import org.w3c.dom.Document;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -15,6 +16,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -96,12 +98,17 @@ public class GpxUtil {
         } catch (ParserConfigurationException | IOException | SAXException e) {
             e.printStackTrace();
         }
-        NodeList nodeList = document.getElementsByTagName("trkpt");
-        for (int i = 0; i < nodeList.getLength(); i++) {
-            listPoints.add(new GeoPoint(Double.valueOf(String.valueOf(nodeList.item(i).getAttributes().getNamedItem("lat").getNodeValue())),
-                    Double.valueOf(String.valueOf(nodeList.item(i).getAttributes().getNamedItem("lon").getNodeValue()))));
+        if (document != null){
+            NodeList nodeList = document.getElementsByTagName("trkpt");
+            for (int i = 0; i < nodeList.getLength(); i++) {
+                Node lat = nodeList.item(i).getAttributes().getNamedItem("lat");
+                Node lon = nodeList.item(i).getAttributes().getNamedItem("lon");
+                if (lat != null && lon != null){
+                    listPoints.add(new GeoPoint(Double.parseDouble(lat.getNodeValue()), Double.parseDouble(lon.getNodeValue())));
+                }
+            }
+            polyline.setPoints(listPoints);
         }
-        polyline.setPoints(listPoints);
         return polyline;
     }
 

@@ -219,9 +219,9 @@ class MainNavigationActivity : AppCompatActivity() {
         val fr = supportFragmentManager.findFragmentByTag(TAG_OPEN)
         if (fr != null) fr as OpenTrackFragment
         else {
-            val fr = OpenTrackFragment()
-            fr.fragmentManager = supportFragmentManager
-            fr.setOnStartRouteBtnListener {
+            val initialFr = OpenTrackFragment()
+            initialFr.fragmentManager = supportFragmentManager
+            initialFr.setOnStartRouteBtnListener {
                 supportFragmentManager.beginTransaction()
                     .hide(openTrackFragment)
                     .show(mapFragment)
@@ -232,7 +232,7 @@ class MainNavigationActivity : AppCompatActivity() {
                     .commit()
                 activeFragment = mapFragment
 
-                val track = fr.getTrack()
+                val track = initialFr.getTrack()
                 val map = mapFragment.map
                 userTrack = UserTrack.newInstance(
                     map,
@@ -243,7 +243,7 @@ class MainNavigationActivity : AppCompatActivity() {
                 mapFragment.zoomToBounds(userTrack?.boundingBox)
                 mapFragment.map.overlayManager?.addAll(userTrack?.toList()!!)
             }
-            fr
+            initialFr
         }
     }
 

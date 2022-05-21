@@ -146,7 +146,7 @@ public class MapFragment extends Fragment {
         locationManager = (LocationManager) ctx.getSystemService(Context.LOCATION_SERVICE);
 
         //setting center on user location
-        mapController.setCenter(new GeoPoint(51, 39));
+        mapController.setCenter(getUserLocation());
 
         setupButtons(view, onClickAnim);
 
