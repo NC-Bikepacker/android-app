@@ -1,10 +1,15 @@
 package ru.netcracker.bikepacker.view
 
 import android.content.Context
+import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.os.Environment
 import android.preference.PreferenceManager
+import android.provider.Settings
 import android.util.Log
 import android.view.View
 import android.view.animation.Animation
@@ -15,11 +20,13 @@ import androidx.fragment.app.Fragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import org.osmdroid.config.Configuration
 import org.osmdroid.views.overlay.OverlayWithIW
+import ru.netcracker.bikepacker.BuildConfig
 import ru.netcracker.bikepacker.R
 import ru.netcracker.bikepacker.databinding.ActivityMainNavigationBinding
 import ru.netcracker.bikepacker.tracks.GpxUtil
 import ru.netcracker.bikepacker.tracks.UserTrack
 import java.lang.String
+import java.security.AccessController.getContext
 import java.util.stream.Collectors
 import kotlin.Boolean
 import kotlin.Int
