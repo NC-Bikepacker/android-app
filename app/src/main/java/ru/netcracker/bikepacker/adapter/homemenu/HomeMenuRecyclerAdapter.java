@@ -102,6 +102,9 @@ public class HomeMenuRecyclerAdapter extends RecyclerView.Adapter<HomeMenuRecycl
         holder.imageSliderView.setIndicatorUnselectedColor(Color.GRAY);
         holder.imageSliderView.setScrollTimeInSec(3); //set scroll delay in seconds :
         holder.imageSliderView.startAutoCycle();
+
+        holder.likeNewspaperCard.setOnClickListener(v -> likeNewsCard(holder));
+        holder.likeCountTextViewNewspaperCard.setText(String.valueOf(newsCardModel.getLikes()));
     }
 
     private ImageRecyclerAdapter getImageRecyclerAdapter(List<String> images){
@@ -125,7 +128,8 @@ public class HomeMenuRecyclerAdapter extends RecyclerView.Adapter<HomeMenuRecycl
                 distanceTextViewNewspaperCard,
                 complexityTextViewNewspaperCard,
                 timeTextViewNewspaperCard,
-                dateHomeMenuItem;
+                dateHomeMenuItem,
+                likeCountTextViewNewspaperCard;
         SliderView imageSliderView;
 
 
@@ -142,9 +146,11 @@ public class HomeMenuRecyclerAdapter extends RecyclerView.Adapter<HomeMenuRecycl
             this.timeTextViewNewspaperCard = itemView.findViewById(R.id.timeTextViewNewspaperCard);
             this.dateHomeMenuItem = itemView.findViewById(R.id.dateHomeMenuItem);
             this.likeNewspaperCard = itemView.findViewById(R.id.likeNewspaperCard);
+            this.likeNewspaperCard.setTag(R.drawable.ic_favorite_fill);
             this.chatAltFillButtonOnNewspaperCard = itemView.findViewById(R.id.chatAltFillButtonOnNewspaperCard);
             this.shareNewspaperCardButton = itemView.findViewById(R.id.shareNewspaperCardButton);
             this.imageTrackItemNewspaperCard = itemView.findViewById(R.id.imageTrackItemNewspaperCard);
+            this.likeCountTextViewNewspaperCard = itemView.findViewById(R.id.likeCountTextViewNewspaperCard);
         }
 
     }
@@ -161,6 +167,21 @@ public class HomeMenuRecyclerAdapter extends RecyclerView.Adapter<HomeMenuRecycl
         String trTimeHours = (hours < 10) ? "0" + hours : Long.toString(hours);
 
         return trTimeHours + ":" + trTimeMinutes + ":" + trTimeSeconds;
+    }
+
+    @SuppressLint("ResourceAsColor")
+    private void likeNewsCard(HomeMenuRecyclerViewHolder holder){
+        TextView likeCount = holder.likeCountTextViewNewspaperCard;
+        String likeCountText = String.valueOf(likeCount.getText());
+        if(holder.likeNewspaperCard.getTag().equals(R.drawable.ic_favorite_fill_red)){
+            holder.likeNewspaperCard.setImageResource(R.drawable.ic_favorite_fill);
+            holder.likeNewspaperCard.setTag(R.drawable.ic_favorite_fill);
+            holder.likeCountTextViewNewspaperCard.setText(String.valueOf(Long.parseLong(likeCountText)-1));
+        }else {
+            holder.likeNewspaperCard.setImageResource(R.drawable.ic_favorite_fill_red);
+            holder.likeNewspaperCard.setTag(R.drawable.ic_favorite_fill_red);
+            holder.likeCountTextViewNewspaperCard.setText(String.valueOf(Long.parseLong(likeCountText)+1));
+        }
     }
 }
 

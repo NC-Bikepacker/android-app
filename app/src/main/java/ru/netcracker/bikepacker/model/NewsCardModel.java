@@ -24,7 +24,7 @@ public class NewsCardModel {
     @SerializedName("images")
     @Expose
     private List<ImageModel> images;
-    @SerializedName("likes")
+    @SerializedName("like")
     @Expose
     private Long likes;
 

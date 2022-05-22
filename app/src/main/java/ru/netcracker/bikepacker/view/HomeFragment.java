@@ -8,9 +8,12 @@ import androidx.viewpager2.widget.ViewPager2;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
+
+import java.util.Optional;
 
 import ru.netcracker.bikepacker.R;
 import ru.netcracker.bikepacker.adapter.homemenu.HomeMenuPagerAdapter;
@@ -20,6 +23,7 @@ public class HomeFragment extends Fragment {
     private ViewPager2 viewPager;
     private TabLayout tabLayoutHomeMenu;
     private TabLayout.OnTabSelectedListener listener;
+    private ImageButton addNews;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -34,6 +38,7 @@ public class HomeFragment extends Fragment {
         viewPager = viewHomeMenu.findViewById(R.id.homeMenuViewPager);
         viewPager.setAdapter(new HomeMenuPagerAdapter(this,this.getContext()));
         tabLayoutHomeMenu = viewHomeMenu.findViewById(R.id.homeMenuTabLayout);
+        addNews = viewHomeMenu.findViewById(R.id.addNewsButton);
 
         this.listener = new TabLayout.OnTabSelectedListener() {
             @Override
@@ -56,6 +61,8 @@ public class HomeFragment extends Fragment {
             }
         };
 
+        addNews.setOnClickListener(v -> addNews());
+
         TabLayoutMediator tabLayoutMediator = new TabLayoutMediator(tabLayoutHomeMenu, viewPager, (tab, position) -> {
             switch (position){
                 case 0:
@@ -75,5 +82,18 @@ public class HomeFragment extends Fragment {
         tabLayoutHomeMenu.addOnTabSelectedListener(listener);
         tabLayoutMediator.attach();
         return viewHomeMenu;
+    }
+
+    private void addNews(){
+        Optional<Fragment> activeFragment = Optional.ofNullable(MainNavigationActivity.Companion.getActiveFragment());
+        CreateNewsCard createNewsCard = new CreateNewsCard();
+        if(activeFragment.isPresent()){
+            requireActivity().getSupportFragmentManager().beginTransaction()
+                    .add(R.id.fragment_container, createNewsCard, "TAG_CREATE_NEWS_CARD")
+                    .hide(activeFragment.get())
+                    .show(createNewsCard)
+                    .commit();
+            MainNavigationActivity.Companion.setActiveFragment(createNewsCard);
+        }
     }
 }
