@@ -247,7 +247,14 @@ public class MapFragment extends Fragment {
         return finishIcon;
     }
 
-    public void zoomToBounds(final BoundingBox box) {
+    public void zoomToTrack(UserTrack userTrack) {
+        double ZOOM_VAL = 0.008;
+        BoundingBox box = new BoundingBox(
+                userTrack.getPolyline().getBounds().getLatNorth() + ZOOM_VAL,
+                userTrack.getPolyline().getBounds().getLonEast() + ZOOM_VAL,
+                userTrack.getPolyline().getBounds().getLatSouth() - 5 * ZOOM_VAL,
+                userTrack.getPolyline().getBounds().getLonWest() - ZOOM_VAL
+        );
         if (map.getHeight() > 0) {
             map.setExpectedCenter(new GeoPoint(box.getCenterLatitude(), box.getCenterLongitude()));
             map.zoomToBoundingBox(box, true);

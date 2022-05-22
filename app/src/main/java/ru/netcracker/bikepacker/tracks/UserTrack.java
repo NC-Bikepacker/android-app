@@ -19,6 +19,10 @@ public class UserTrack extends OverlayWithIW {
     private static final float ANC_U = Marker.ANCHOR_LEFT, ANC_V = Marker.ANCHOR_BOTTOM;
     private static final double ZOOM_VAL = 0.0005;
 
+    public Polyline getPolyline() {
+        return polyline;
+    }
+
     private final Polyline polyline;
     private final Marker startMarker;
     private final Marker finishMarker;

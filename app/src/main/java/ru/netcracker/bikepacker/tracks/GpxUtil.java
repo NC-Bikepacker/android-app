@@ -1,5 +1,7 @@
 package ru.netcracker.bikepacker.tracks;
 
+import android.util.Log;
+
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.overlay.Polyline;
 import org.w3c.dom.Document;
@@ -87,7 +89,7 @@ public class GpxUtil {
         return geoPointsList;
     }
 
-    public static Polyline trackModelToPolyline(TrackModel trackModel) throws IOException {
+    public static Polyline trackModelToPolyline(TrackModel trackModel) throws Exception {
         Polyline polyline = new Polyline();
         Document document = null;
         List<GeoPoint> listPoints = new ArrayList<>();
@@ -95,10 +97,6 @@ public class GpxUtil {
         try {
             DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
             document = documentBuilder.parse(new InputSource(new StringReader(trackModel.getGpx())));
-        } catch (ParserConfigurationException | IOException | SAXException e) {
-            e.printStackTrace();
-        }
-        if (document != null){
             NodeList nodeList = document.getElementsByTagName("trkpt");
             for (int i = 0; i < nodeList.getLength(); i++) {
                 Node lat = nodeList.item(i).getAttributes().getNamedItem("lat");
@@ -108,6 +106,11 @@ public class GpxUtil {
                 }
             }
             polyline.setPoints(listPoints);
+        } catch (ParserConfigurationException | IOException | SAXException e) {
+            Log.e("ParserGpxError", e.getMessage(), e);
+        }
+        if (document == null){
+            throw new Exception("Parsing GPX was failed.");
         }
         return polyline;
     }

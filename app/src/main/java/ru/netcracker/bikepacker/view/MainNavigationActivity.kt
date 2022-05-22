@@ -240,7 +240,7 @@ class MainNavigationActivity : AppCompatActivity() {
                     mapFragment.finishIcon,
                     GpxUtil.trackModelToPolyline(track),
                 )
-                mapFragment.zoomToBounds(userTrack?.boundingBox)
+                mapFragment.zoomToTrack(userTrack)
                 mapFragment.map.overlayManager?.addAll(userTrack?.toList()!!)
             }
             initialFr
