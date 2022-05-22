@@ -2,27 +2,32 @@ package ru.netcracker.bikepacker.view
 
 import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.os.Environment
 import android.preference.PreferenceManager
+import android.provider.Settings
 import android.util.Log
 import android.view.View
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.splashscreen.SplashScreen
-import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.fragment.app.Fragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import org.osmdroid.config.Configuration
 import org.osmdroid.views.overlay.OverlayWithIW
+import ru.netcracker.bikepacker.BuildConfig
 import ru.netcracker.bikepacker.R
 import ru.netcracker.bikepacker.databinding.ActivityMainNavigationBinding
 import ru.netcracker.bikepacker.tracks.GpxUtil
 import ru.netcracker.bikepacker.tracks.UserTrack
 import java.lang.String
+import java.security.AccessController.getContext
 import java.util.stream.Collectors
 import kotlin.Boolean
 import kotlin.Int
@@ -50,6 +55,7 @@ class MainNavigationActivity : AppCompatActivity() {
         const val TAG_USER_MENU = "user_menu"
         const val TAG_TRACK_MENU = "track_menu"
         const val TAG_POINT = "point"
+        const val TAG_OPEN = "openTrack"
         const val TAG_EDIT_ACCOUNT = "edit_account"
 
         var activeFragment: Fragment? = null
@@ -108,7 +114,6 @@ class MainNavigationActivity : AppCompatActivity() {
     private val findFriend: FindFriendFragment by lazy {
         val fr = supportFragmentManager.findFragmentByTag(TAG_FINDFRIEND)
         if (fr != null){ fr as FindFriendFragment  }
-
         else FindFriendFragment()
     }
 
@@ -214,6 +219,38 @@ class MainNavigationActivity : AppCompatActivity() {
         }
     }
 
+    private val openTrackFragment: OpenTrackFragment by lazy {
+        val fr = supportFragmentManager.findFragmentByTag(TAG_OPEN)
+        if (fr != null) fr as OpenTrackFragment
+        else {
+            val initialFr = OpenTrackFragment()
+            initialFr.fragmentManager = supportFragmentManager
+            initialFr.setOnStartRouteBtnListener {
+                supportFragmentManager.beginTransaction()
+                    .hide(openTrackFragment)
+                    .show(mapFragment)
+                    .commit()
+                supportFragmentManager.beginTransaction()
+                    .setCustomAnimations(R.anim.up_alpha_trans, R.anim.down_alpha_trans)
+                    .replace(R.id.start_new_route_container, recordFragment, TAG_RECORD)
+                    .commit()
+                activeFragment = mapFragment
+
+                val track = initialFr.getTrack()
+                val map = mapFragment.map
+                userTrack = UserTrack.newInstance(
+                    map,
+                    mapFragment.startIcon,
+                    mapFragment.finishIcon,
+                    GpxUtil.trackModelToPolyline(track),
+                )
+                mapFragment.zoomToTrack(userTrack)
+                mapFragment.map.overlayManager?.addAll(userTrack?.toList()!!)
+            }
+            initialFr
+        }
+    }
+
     private var ctx: Context? = null
     private var selectedFragment: Int = R.id.navigation_home
 
@@ -267,6 +304,7 @@ class MainNavigationActivity : AppCompatActivity() {
                 .add(R.id.fragment_container, userMenuFragment, TAG_USER_MENU).hide(userMenuFragment)
                 .add(R.id.fragment_container, trackMenuFragment, TAG_TRACK_MENU).hide(trackMenuFragment)
                 .add(R.id.fragment_container, accountEditorFragment, TAG_EDIT_ACCOUNT).hide(accountEditorFragment)
+                .add(R.id.fragment_container, openTrackFragment, TAG_OPEN).hide(openTrackFragment)
                 //TODO: .add(R.id.fragment_container, {required fragment}, TAG_RECORD).hide({required fragment})
                 .show(activeFragment!!)
                 .commit()
@@ -287,7 +325,17 @@ class MainNavigationActivity : AppCompatActivity() {
 
     private fun setFragment(itemId: Int): Boolean {
         selectedFragment = itemId
-
+        if (activeFragment is MapFragment) {
+            mapFragment.map.let {
+                while (it.overlayManager.size > 2) {
+                    it.overlayManager.removeLast()
+                }
+            }
+        }
+        if (activeFragment is TrackMenuFragment) {
+            supportFragmentManager.beginTransaction().hide(openTrackFragment)
+                .commit()
+        }
         when (itemId) {
             R.id.navigation_record -> {
                 if (activeFragment !is MapFragment) {
@@ -317,6 +365,8 @@ class MainNavigationActivity : AppCompatActivity() {
                     supportFragmentManager.beginTransaction().hide(activeFragment!!)
                         .show(trackMenuFragment)
                         .commit()
+                } else {
+                    supportFragmentManager.beginTransaction().hide(openTrackFragment).show(trackMenuFragment).commit()
                 }
                 activeFragment = trackMenuFragment
             }

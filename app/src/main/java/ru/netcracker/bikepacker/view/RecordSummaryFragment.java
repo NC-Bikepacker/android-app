@@ -54,13 +54,13 @@ public class RecordSummaryFragment extends Fragment {
         );
 
         recordSummaryBinding.distanse.setText("Distance: "
-                + trackRecorder.getStatistics(StatisticType.Distanse)
+                + trackRecorder.getStatisticString(StatisticType.Distance)
         );
         recordSummaryBinding.time.setText("Time: "
-                + trackRecorder.getStatistics(StatisticType.Time)
+                + trackRecorder.getStatisticString(StatisticType.Time)
         );
         recordSummaryBinding.avgSpeed.setText("Average speed: "
-                + trackRecorder.getStatistics(StatisticType.AverageSpeed));
+                + trackRecorder.getStatisticString(StatisticType.AverageSpeed));
 
         recordSummaryBinding.acceptButton.setOnClickListener(
                 view -> {
@@ -70,8 +70,6 @@ public class RecordSummaryFragment extends Fragment {
                     onAcceptBtnClickListener.onClick();
                 }
         );
-
-
         return recordSummaryBinding.getRoot();
     }
 

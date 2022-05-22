@@ -7,8 +7,6 @@ import com.google.gson.GsonBuilder;
 
 import java.io.IOException;
 
-import okhttp3.Interceptor;
-import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import ru.netcracker.bikepacker.R;
@@ -29,13 +27,13 @@ public class RetrofitManager {
                 .build();
     }
 
-    public static RetrofitManager getInstance(Context ctx)  {
+    public static RetrofitManager getInstance(Context ctx) {
         RetrofitManager localInstance = retrofitManager;
         if (localInstance == null) {
             synchronized (RetrofitManager.class) {
                 localInstance = retrofitManager;
 
-                if(localInstance == null) {
+                if (localInstance == null) {
                     try {
                         retrofitManager = localInstance = new RetrofitManager(ctx);
                     } catch (IOException e) {
@@ -44,11 +42,10 @@ public class RetrofitManager {
                 }
             }
         }
-
         return retrofitManager;
     }
 
-    public ApiService getJSONApi(){
+    public ApiService getJSONApi() {
         return retrofit.create(ApiService.class);
     }
 }

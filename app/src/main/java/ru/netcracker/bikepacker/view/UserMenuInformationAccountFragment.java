@@ -1,6 +1,7 @@
 package ru.netcracker.bikepacker.view;
 
 import android.annotation.SuppressLint;
+import android.content.ContentResolver;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -13,9 +14,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 
 import com.squareup.picasso.Picasso;
 
@@ -29,6 +35,7 @@ import ru.netcracker.bikepacker.manager.RetrofitManager;
 import ru.netcracker.bikepacker.manager.SessionManager;
 import ru.netcracker.bikepacker.manager.UserAccountManager;
 import ru.netcracker.bikepacker.model.UserModel;
+import ru.netcracker.bikepacker.service.GpxFileManager;
 
 
 public class UserMenuInformationAccountFragment extends Fragment {
@@ -38,6 +45,8 @@ public class UserMenuInformationAccountFragment extends Fragment {
     private TextView firstAndLastNames, email, nickname;
     private Button editButton;
     private UserAccountManager userAccountManager;
+    private GpxFileManager fileManager;
+    private ContentResolver contentResolver;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -55,9 +64,10 @@ public class UserMenuInformationAccountFragment extends Fragment {
         this.firstAndLastNames = userMenuInformationAccountFragmentView.findViewById(R.id.firstAndLastNamesInUserMenu);
         this.nickname = userMenuInformationAccountFragmentView.findViewById(R.id.nicknameInUserMenu);
         this.email = userMenuInformationAccountFragmentView.findViewById(R.id.emailInUserMenu);
+        this.editButton = userMenuInformationAccountFragmentView.findViewById(R.id.editButtonInformationAccountUserMenuFragment);
+        this.contentResolver = requireActivity().getContentResolver();
         this.popupMenuSettingButton = userMenuInformationAccountFragmentView.findViewById(R.id.popupMenuButtonUserMenu);
-
-        if(!userAccountManager.getUser().getUserPicLink().isEmpty()){
+        if (!userAccountManager.getUser().getUserPicLink().isEmpty()) {
             Picasso.get()
                     .load(userAccountManager.getUser().getUserPicLink())
                     .placeholder(R.drawable.ic_userpic)
@@ -92,11 +102,18 @@ public class UserMenuInformationAccountFragment extends Fragment {
             }
         });
 
-
+        fileManager = new GpxFileManager(requireContext());
         firstAndLastNames.setText(userAccountManager.getUser().getFirstname() + " " + userAccountManager.getUser().getLastname());
         nickname.setText(userAccountManager.getUser().getUsername());
         email.setText(userAccountManager.getUser().getEmail());
-
+        ImageButton importButton = userMenuInformationAccountFragmentView.findViewById(R.id.importButton);
+        importButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                DialogFragment dialogFragment=new DialogFragment();
+                dialogFragment.show(requireActivity().getSupportFragmentManager(),"DialogFragment");
+            }
+        });
         return userMenuInformationAccountFragmentView;
     }
 
@@ -155,5 +172,10 @@ public class UserMenuInformationAccountFragment extends Fragment {
                 });
 
 
+    }
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+
+        super.onViewCreated(view, savedInstanceState);
     }
 }

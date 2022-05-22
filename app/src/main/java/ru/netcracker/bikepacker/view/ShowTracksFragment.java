@@ -25,6 +25,12 @@ public class ShowTracksFragment extends Fragment {
     private TracksRecyclerAdapter recyclerAdapter;
     List<TrackModel> trackModelList;
 
+    public void setFragmentManager(FragmentManager fragmentManager) {
+        this.fragmentManager = fragmentManager;
+    }
+
+    private FragmentManager fragmentManager;
+
     public ShowTracksFragment(List<TrackModel> trackModelList) {
         this.trackModelList = trackModelList;
     }
@@ -41,6 +47,9 @@ public class ShowTracksFragment extends Fragment {
         showTracksRecyclerView.setLayoutManager(layoutManager);
 
         recyclerAdapter = new TracksRecyclerAdapter(getContext(), trackModelList);
+        if (getActivity() != null){
+            recyclerAdapter.setFragmentManager(getActivity().getSupportFragmentManager());
+        }
         showTracksRecyclerView.setAdapter(recyclerAdapter);
 
         return showTracksView;

@@ -24,8 +24,6 @@ import org.apache.commons.lang3.StringUtils;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import ru.netcracker.bikepacker.R;
@@ -158,26 +156,20 @@ public class FileDialogOpener {
 
             File[] listFiles = dirFile.listFiles();
 
-            if (listFiles != null) {
-                for (File file : listFiles) {
-                    if (file.isDirectory()) {
-                        // Add "/" to directory names to identify them in the list
-                        dirs.add(file.getName() + "/");
-                    } else if (selectModeType == fileSaveMode || selectModeType == fileOpenMode) {
-                        // Add file names to the list if we are doing a file save or file open operation
-                        dirs.add(file.getName());
-                    }
+            for (File file : listFiles) {
+                if (file.isDirectory()) {
+                    // Add "/" to directory names to identify them in the list
+                    dirs.add(file.getName() + "/");
+                } else if (selectModeType == fileSaveMode || selectModeType == fileOpenMode) {
+                    // Add file names to the list if we are doing a file save or file open operation
+                    dirs.add(file.getName());
                 }
             }
         } catch (Exception e) {
             Log.e("Getting directories error", e.getMessage());
         }
 
-        Collections.sort(dirs, new Comparator<String>() {
-            public int compare(String o1, String o2) {
-                return o1.compareTo(o2);
-            }
-        });
+        dirs.sort(String::compareTo);
         return dirs;
     }
 

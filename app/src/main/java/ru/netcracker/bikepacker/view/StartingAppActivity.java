@@ -1,5 +1,6 @@
 package ru.netcracker.bikepacker.view;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
@@ -33,6 +34,7 @@ public class StartingAppActivity extends AppCompatActivity {
     private FragmentManager fragmentManager;
     private static long back_pressed;
 
+    @SuppressLint("SourceLockedOrientationActivity")
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -1,8 +1,11 @@
 package ru.netcracker.bikepacker.view;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.loader.content.AsyncTaskLoader;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -57,7 +60,6 @@ public class TrackMenuRecycleViewFragment extends Fragment {
                 getFavoriteTracks();
                 break;
         }
-
         return view;
     }
 
@@ -68,45 +70,56 @@ public class TrackMenuRecycleViewFragment extends Fragment {
         userMenuRecyclerView.setLayoutManager(layoutManager);
     }
 
-    private List<TrackModel> getFavoriteTracks(){
+    private List<TrackModel> getFavoriteTracks() {
         List<TrackModel> tracks = new ArrayList<>();
-           retrofitManager.getJSONApi()
-                        .getMyFavoriteTracks(userAccountManager.getCookie(), userAccountManager.getUser().getId())
-                        .enqueue(new Callback<List<TrackModel>>() {
-                            @Override
-                            public void onResponse(@NonNull Call<List<TrackModel>> call, @NonNull Response<List<TrackModel>> response) {
-                                if(response.body()!=null){
-                                    tracks.addAll(response.body());
-                                }
-                                recyclerAdapter = new TracksRecyclerAdapter(getContext(), tracks);
-                                userMenuRecyclerView.setAdapter(recyclerAdapter);
-                            }
+        retrofitManager.getJSONApi()
+                .getMyFavoriteTracks(userAccountManager.getCookie(), userAccountManager.getUser().getId())
+                .enqueue(new Callback<List<TrackModel>>() {
+                    @Override
+                    public void onResponse(@NonNull Call<List<TrackModel>> call, @NonNull Response<List<TrackModel>> response) {
+                        if (response.body() != null) {
+                            tracks.addAll(response.body());
+                        }
+                        TracksRecyclerAdapter userMenuRecyclerAdapter = new TracksRecyclerAdapter(getContext(), tracks);
+                        if (getActivity() != null) {
+                            userMenuRecyclerAdapter.setFragmentManager(getActivity().getSupportFragmentManager());
+                        }
+                        recyclerAdapter = new TracksRecyclerAdapter(getContext(), tracks);
+                        if (getActivity() != null) {
+                            recyclerAdapter.setFragmentManager(getActivity().getSupportFragmentManager());
+                        }
+                        userMenuRecyclerView.setAdapter(recyclerAdapter);
+                    }
 
-                            @Override
-                            public void onFailure(@NonNull Call<List<TrackModel>> call, @NonNull Throwable t) {
-                                Log.e("UserMenuRecycleViewFragment error","Error get favorite tracks: " + t.getMessage(),t);
-                            }
-                        });
-           return tracks;
+                    @Override
+                    public void onFailure(@NonNull Call<List<TrackModel>> call, @NonNull Throwable t) {
+                        Log.e("UserMenuRecycleViewFragment error", "Error get favorite tracks: " + t.getMessage(), t);
+                    }
+                });
+        return tracks;
     }
 
-    private List<TrackModel> getAllUsedTracks(){
+    private List<TrackModel> getAllUsedTracks() {
         List<TrackModel> tracks = new ArrayList<>();
         retrofitManager.getJSONApi()
                 .getTracksByUser(userAccountManager.getCookie(), userAccountManager.getUser().getId())
                 .enqueue(new Callback<List<TrackModel>>() {
                     @Override
                     public void onResponse(@NonNull Call<List<TrackModel>> call, @NonNull Response<List<TrackModel>> response) {
-                        if(response.body()!=null){
+                        if (response.body() != null) {
                             tracks.addAll(response.body());
                         }
-                        recyclerAdapter = new TracksRecyclerAdapter(getContext(), tracks);
+                        TracksRecyclerAdapter userMenuRecyclerAdapter = new TracksRecyclerAdapter(getContext(), tracks);
+                        if (getActivity() != null) {
+                            userMenuRecyclerAdapter.setFragmentManager(getActivity().getSupportFragmentManager());
+                        }
+                        recyclerAdapter = userMenuRecyclerAdapter;
                         userMenuRecyclerView.setAdapter(recyclerAdapter);
                     }
 
                     @Override
                     public void onFailure(@NonNull Call<List<TrackModel>> call, @NonNull Throwable t) {
-                        Log.e("UserMenuRecycleViewFragment error","Error get user tracks: " + t.getMessage(),t);
+                        Log.e("UserMenuRecycleViewFragment error", "Error get user tracks: " + t.getMessage(), t);
                     }
                 });
         return tracks;

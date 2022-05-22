@@ -116,6 +116,9 @@ public class HomeMenuRecycleViewFragment extends Fragment {
                             tracks.addAll(response.body());
 
                             tracksRecyclerAdapter = new TracksRecyclerAdapter(getContext(), tracks);
+                            if (getActivity() != null){
+                                tracksRecyclerAdapter.setFragmentManager(getActivity().getSupportFragmentManager());
+                            }
                             homeMenuRecyclerView.setAdapter(tracksRecyclerAdapter);
                         }
                         else {

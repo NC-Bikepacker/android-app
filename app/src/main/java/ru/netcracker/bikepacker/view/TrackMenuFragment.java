@@ -27,7 +27,7 @@ public class TrackMenuFragment extends Fragment {
     private TabLayout.OnTabSelectedListener listener;
     private FloatingActionButton importGpxButton;
     private final GpxFileManager gpxFileManager = new GpxFileManager(getContext());
-
+    
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -39,6 +39,7 @@ public class TrackMenuFragment extends Fragment {
 
         viewPager = viewTrackMenu.findViewById(R.id.trackMenuViewPager);
         viewPager.setAdapter(new TrackMenuPagerAdapter(this,this.getContext()));
+
         tabLayoutUserMenu = viewTrackMenu.findViewById(R.id.trackMenuTableLayout);
 
         this.listener = new TabLayout.OnTabSelectedListener() {
