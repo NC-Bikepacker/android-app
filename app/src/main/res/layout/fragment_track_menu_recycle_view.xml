@@ -5,6 +5,7 @@
     android:id="@+id/import_new_track"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
     tools:context=".view.TrackMenuRecycleViewFragment">
 
     <androidx.recyclerview.widget.RecyclerView

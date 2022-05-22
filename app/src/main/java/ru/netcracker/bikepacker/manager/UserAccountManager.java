@@ -15,7 +15,7 @@ public class UserAccountManager {
 
     private UserAccountManager(Context context) throws IOException {
         this.sessionManager = SessionManager.getInstance(context);
-        setUserData();
+        updateUserData();
     }
 
     public static UserAccountManager getInstance(Context context) {
@@ -40,7 +40,7 @@ public class UserAccountManager {
         this.setCookie(null);
     }
 
-    public synchronized void setUserData(){
+    public synchronized void updateUserData(){
         this.user = sessionManager.getSessionUser();
         this.cookie = "JSESSIONID=" + sessionManager.getSessionId() + "; Path=/; HttpOnly;";
     }

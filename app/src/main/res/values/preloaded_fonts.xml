@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <array name="preloaded_fonts" translatable="false">
-        <item>@font/</item>
+        <item>@font/proxima_nova_black</item>
+        <item>@font/proxima_nova_regular</item>
+        <item>@font/proxima_nova_semibold</item>
         <item>@font/audiowide</item>
         <item>@font/baloo_bhai_2</item>
         <item>@font/roboto</item>

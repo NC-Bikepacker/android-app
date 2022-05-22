@@ -38,7 +38,6 @@ public class HomeFragment extends Fragment {
         viewPager = viewHomeMenu.findViewById(R.id.homeMenuViewPager);
         viewPager.setAdapter(new HomeMenuPagerAdapter(this,this.getContext()));
         tabLayoutHomeMenu = viewHomeMenu.findViewById(R.id.homeMenuTabLayout);
-        addNews = viewHomeMenu.findViewById(R.id.addNewsButton);
 
         this.listener = new TabLayout.OnTabSelectedListener() {
             @Override
@@ -60,8 +59,6 @@ public class HomeFragment extends Fragment {
 
             }
         };
-
-        addNews.setOnClickListener(v -> addNews());
 
         TabLayoutMediator tabLayoutMediator = new TabLayoutMediator(tabLayoutHomeMenu, viewPager, (tab, position) -> {
             switch (position){

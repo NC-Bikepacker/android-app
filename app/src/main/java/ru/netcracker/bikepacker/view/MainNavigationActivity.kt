@@ -1,5 +1,6 @@
 package ru.netcracker.bikepacker.view
 
+import android.app.Activity
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -11,6 +12,8 @@ import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.splashscreen.SplashScreen
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.fragment.app.Fragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import org.osmdroid.config.Configuration
@@ -216,6 +219,7 @@ class MainNavigationActivity : AppCompatActivity() {
 
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setTheme(R.style.Theme_Bikepacker)
         binding = ActivityMainNavigationBinding.inflate(layoutInflater)
         ctx = applicationContext
         bitmap = BitmapFactory.decodeResource(resources, R.drawable.ic_menu_compass)
@@ -361,5 +365,9 @@ class MainNavigationActivity : AppCompatActivity() {
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putInt(CURRENT_FRAGMENT, selectedFragment)
+    }
+
+    override fun onBackPressed() {
+
     }
 }

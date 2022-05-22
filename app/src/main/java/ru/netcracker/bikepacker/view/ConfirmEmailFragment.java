@@ -17,7 +17,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.smarteist.autoimageslider.SliderAnimations;
@@ -165,7 +164,7 @@ public class ConfirmEmailFragment extends Fragment {
                                 toast.setGravity(Gravity.TOP, 0 , 160);
                                 toast.show();
                             } catch (IOException e) {
-                                e.printStackTrace();
+                                Log.e("ConfirmEmailFragment", e.getMessage(), e);
                             }
                         }
                         else {

@@ -30,7 +30,6 @@ import ru.netcracker.bikepacker.manager.UserAccountManager;
 import ru.netcracker.bikepacker.model.AuthModel;
 import ru.netcracker.bikepacker.model.UserModel;
 import ru.netcracker.bikepacker.service.EmailValidationService;
-import ru.netcracker.bikepacker.service.PasswordGeneratingService;
 
 public class LogInFragment extends Fragment {
 
@@ -46,7 +45,7 @@ public class LogInFragment extends Fragment {
 
     @Override
     public View onCreateView(
-            LayoutInflater inflater, ViewGroup container,
+            @NonNull LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState
     ) {
         fragmentLogInBinding = FragmentLogInBinding.inflate(inflater, container, false);
@@ -111,7 +110,7 @@ public class LogInFragment extends Fragment {
                 }
 
                 if(view!=null){
-                    InputMethodManager inputMethodManager = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                    InputMethodManager inputMethodManager = (InputMethodManager) requireContext().getSystemService(Context.INPUT_METHOD_SERVICE);
                     inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
                 }
             }
@@ -132,13 +131,14 @@ public class LogInFragment extends Fragment {
             public void onResponse(@NonNull Call<UserModel> call, @NonNull Response<UserModel> response) {
                 if (response.isSuccessful()) {
                     Log.d("Message", "Successfully authenticated. Response " + response.code());
-                    String sessionId = response.headers().get("Set-Cookie").split("; ")[0].replace("JSESSIONID=", "");
+                    Optional<String> headers = Optional.ofNullable(response.headers().get("Set-Cookie"));
+                    String sessionId = headers.map(s -> s.split("; ")[0].replace("JSESSIONID=", "")).orElseThrow(IllegalArgumentException::new);
                     SessionManager sessionManager = SessionManager.getInstance(context);
                     sessionManager.setSessionId(sessionId);
 
                     if (null != response.body()) {
                         sessionManager.setSessionUser(response.body());
-                        UserAccountManager.getInstance(context).setUserData();
+                        UserAccountManager.getInstance(context).updateUserData();
                         if(sessionManager.getSessionUser().isAccountVerification()) {
                             NavHostFragment.findNavController(LogInFragment.this)
                                     .navigate(R.id.action_logInFragment_to_mainNavigationActivity);

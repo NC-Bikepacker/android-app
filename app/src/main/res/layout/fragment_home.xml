@@ -4,32 +4,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
     tools:context=".view.HomeFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/top_bar_layout"
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
-
-            <ImageButton
-                android:id="@+id/addNewsButton"
-                style="@style/Widget.AppCompat.Button.Borderless.Colored"
-                android:layout_width="60dp"
-                android:layout_height="match_parent"
-                android:contentDescription="add news"
-                android:src="@drawable/ic_add_round_fill"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <com.google.android.material.tabs.TabLayout
             android:id="@+id/homeMenuTabLayout"
@@ -37,7 +17,7 @@
             android:layout_height="50dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/top_bar_layout"
+            app:layout_constraintTop_toTopOf="parent"
             app:tabIconTint="@color/tabIconColor"
             app:tabIndicatorAnimationDuration="@integer/material_motion_duration_long_2"
             app:tabIndicatorColor="@color/tabIconColor"

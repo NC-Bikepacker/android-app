@@ -4,9 +4,11 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.widget.PopupMenu;
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,9 +21,14 @@ import com.squareup.picasso.Picasso;
 
 import java.util.Optional;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 import ru.netcracker.bikepacker.R;
+import ru.netcracker.bikepacker.manager.RetrofitManager;
 import ru.netcracker.bikepacker.manager.SessionManager;
 import ru.netcracker.bikepacker.manager.UserAccountManager;
+import ru.netcracker.bikepacker.model.UserModel;
 
 
 public class UserMenuInformationAccountFragment extends Fragment {
@@ -101,10 +108,11 @@ public class UserMenuInformationAccountFragment extends Fragment {
         requireActivity().finish();
     }
 
+    //метод для изменения изображения юзера
     private void editUserpic(){
-        Toast.makeText(requireContext(), "тут должно быть окно смены изображения", Toast.LENGTH_LONG).show();
     }
 
+    //метод для вызова фрагмента с полями для редактирования данных юзера
     private void editAccount(){
         Optional<Fragment> activeFragment = Optional.ofNullable(MainNavigationActivity.Companion.getActiveFragment());
         AccountEditorFragment accountEditorFragment = new AccountEditorFragment();
@@ -118,8 +126,34 @@ public class UserMenuInformationAccountFragment extends Fragment {
         }
     }
 
+    //метод для импорта данных из Стравы
     private void importFromStrava(){
-        Toast.makeText(requireContext(), "тут должно быть окно импорта из Стравы", Toast.LENGTH_LONG).show();
+
     }
 
+    //метод для обновления полей в фрагменте после обновления данных юзера
+    private void updateUserData(){
+        RetrofitManager.getInstance(getContext()).getJSONApi()
+                .getUserWithID(userAccountManager.getCookie(), userAccountManager.getUser().getId())
+                .enqueue(new Callback<UserModel>() {
+                    @SuppressLint("SetTextI18n")
+                    @Override
+                    public void onResponse(@NonNull Call<UserModel> call, @NonNull Response<UserModel> response) {
+                        if(response.isSuccessful() && response.body()!=null){
+                            SessionManager.getInstance(requireContext()).setSessionUser(response.body());
+                            userAccountManager.updateUserData();
+                            firstAndLastNames.setText(userAccountManager.getUser().getFirstname() + " " + userAccountManager.getUser().getLastname());
+                            nickname.setText(userAccountManager.getUser().getUsername());
+                            email.setText(userAccountManager.getUser().getEmail());
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(@NonNull Call<UserModel> call, @NonNull Throwable t) {
+                        Log.e("User<enuInformationFragment", t.getMessage(), t);
+                    }
+                });
+
+
+    }
 }
