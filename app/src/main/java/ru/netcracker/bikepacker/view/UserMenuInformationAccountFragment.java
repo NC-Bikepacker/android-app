@@ -67,7 +67,8 @@ public class UserMenuInformationAccountFragment extends Fragment {
         importButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                zipFileManager.openUploadFileDialog(requireContext());
+                DialogFragment dialogFragment=new DialogFragment();
+                dialogFragment.show(requireActivity().getSupportFragmentManager(),"DialogFragment");
             }
         });
 

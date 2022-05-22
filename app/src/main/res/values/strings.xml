@@ -57,4 +57,17 @@
     <string name="add_description">Add description</string>
     <string name="record_icon">record icon</string>
     <string name="large_text">large text</string>
+    <string name="got_it">Got it</string>
+    <string name="strava_dialog">
+        If you want to import user data from your strava account,
+        you need to follow the steps below:\n\n
+        1. Log in to the account on Strava.com\n from which you wish to bulk export data.\n\n
+        2. Hover over your name in the upper\n right-hand corner of the Strava page.
+        Choose "Settings," then find the "My Account"\n tab from the menu listed on the Left.\n\n
+        3. Select “Get Started” under “Download or Delete Your Account.”\n\n
+        4. Select “Request your archive” on the next page.\n\n
+        5. Receive an email with a link to download your data (this may take a few hours.)
+        For this reason, it’s important that you have access to the email account attached to your Strava profile.\n\n
+        6. Press on the "Got it" button and choose .zip file with all your user data.
+    </string>
 </resources>
