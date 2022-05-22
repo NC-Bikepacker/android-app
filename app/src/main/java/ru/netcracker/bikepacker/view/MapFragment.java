@@ -9,12 +9,16 @@ import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
+import android.renderscript.ScriptGroup;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.Button;
 import android.widget.ImageButton;
 
 import androidx.annotation.NonNull;
@@ -29,6 +33,7 @@ import org.osmdroid.tileprovider.tilesource.ThunderforestTileSource;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.tileprovider.tilesource.TileSourcePolicy;
 import org.osmdroid.tileprovider.tilesource.XYTileSource;
+import org.osmdroid.util.BoundingBox;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.CustomZoomButtonsController;
 import org.osmdroid.views.MapView;
@@ -36,11 +41,16 @@ import org.osmdroid.views.overlay.gestures.RotationGestureOverlay;
 import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
+import io.jenetics.jpx.Track;
 import ru.netcracker.bikepacker.R;
 import ru.netcracker.bikepacker.databinding.FragmentMapBinding;
-
+import ru.netcracker.bikepacker.model.TrackModel;
+import ru.netcracker.bikepacker.tracks.GpxUtil;
+import ru.netcracker.bikepacker.tracks.UserTrack;
 
 public class MapFragment extends Fragment {
     private MapView map;
@@ -54,11 +64,11 @@ public class MapFragment extends Fragment {
     private Drawable startIcon, finishIcon;
     private ImageButton locationBtn, zoomInBtn, zoomOutBtn;
     private GeoPoint userLocation;
-    private FragmentMapBinding mapBinding;
 
     public IMapController getMapController() {
         return mapController;
     }
+
     public GeoPoint getUserLocation() {
         if (ActivityCompat.checkSelfPermission(ctx, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
                 ActivityCompat.checkSelfPermission(ctx, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -68,6 +78,7 @@ public class MapFragment extends Fragment {
         userLocation = imHere != null ? new GeoPoint(imHere) : DEFAULT_POINT;
         return userLocation;
     }
+
     public MapView getMap() {
         return map;
     }
@@ -97,10 +108,8 @@ public class MapFragment extends Fragment {
         ActiveOnClickAnim = onClickAnim;
 
         map = view.findViewById(R.id.map);
-
         assert ctx != null;
         GpsMyLocationProvider gpsMyLocationProvider = new GpsMyLocationProvider(ctx);
-
 
         OnlineTileSourceBase OPENCYCLEMAP = new XYTileSource("Open Cycle Map",
                 0, 19, 512, ".png?apikey=063953b0deb84048a549eb28ee778db3", new String[]{
@@ -141,7 +150,7 @@ public class MapFragment extends Fragment {
 
         setupButtons(view, onClickAnim);
 
-        MyLocationNewOverlay locationOverlay = new MyLocationNewOverlay(new GpsMyLocationProvider(ctx),map);
+        MyLocationNewOverlay locationOverlay = new MyLocationNewOverlay(new GpsMyLocationProvider(ctx), map);
 
         Drawable drawable = getResources().getDrawable(R.drawable.ic_directional_arrow);
         Bitmap bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
@@ -150,7 +159,7 @@ public class MapFragment extends Fragment {
         drawable.draw(canvas);
 
         locationOverlay.setPersonIcon(bitmap);
-        locationOverlay.setDirectionArrow(bitmap,bitmap);
+        locationOverlay.setDirectionArrow(bitmap, bitmap);
         map.getOverlays().add(locationOverlay);
         map.invalidate();
     }
@@ -158,9 +167,8 @@ public class MapFragment extends Fragment {
     public void switchOnClickAnim() {
         if (ActiveOnClickAnim.equals(onClickAnim)) ActiveOnClickAnim = onClickAnimUp;
         else ActiveOnClickAnim = onClickAnim;
-        setupButtons(requireView(),ActiveOnClickAnim);
+        setupButtons(requireView(), ActiveOnClickAnim);
     }
-
 
     @Override
     public void onResume() {
@@ -237,5 +245,29 @@ public class MapFragment extends Fragment {
 
     public Drawable getFinishIcon() {
         return finishIcon;
+    }
+
+    public void zoomToTrack(UserTrack userTrack) {
+        double ZOOM_VAL = 0.008;
+        BoundingBox box = new BoundingBox(
+                userTrack.getPolyline().getBounds().getLatNorth() + ZOOM_VAL,
+                userTrack.getPolyline().getBounds().getLonEast() + ZOOM_VAL,
+                userTrack.getPolyline().getBounds().getLatSouth() - 5 * ZOOM_VAL,
+                userTrack.getPolyline().getBounds().getLonWest() - ZOOM_VAL
+        );
+        if (map.getHeight() > 0) {
+            map.setExpectedCenter(new GeoPoint(box.getCenterLatitude(), box.getCenterLongitude()));
+            map.zoomToBoundingBox(box, true);
+        } else {
+            ViewTreeObserver vto = map.getViewTreeObserver();
+            vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                @Override
+                public void onGlobalLayout() {
+                    map.zoomToBoundingBox(box, true);
+                    ViewTreeObserver vto2 = map.getViewTreeObserver();
+                    vto2.removeOnGlobalLayoutListener(this);
+                }
+            });
+        }
     }
 }

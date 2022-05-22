@@ -1,7 +1,10 @@
 package ru.netcracker.bikepacker.model;
 
+import com.google.android.gms.maps.model.Polyline;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+
+import io.jenetics.jpx.Track;
 
 
 public class TrackModel {

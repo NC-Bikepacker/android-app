@@ -70,8 +70,6 @@ public class RecordSummaryFragment extends Fragment {
                     onAcceptBtnClickListener.onClick();
                 }
         );
-
-
         return recordSummaryBinding.getRoot();
     }
 

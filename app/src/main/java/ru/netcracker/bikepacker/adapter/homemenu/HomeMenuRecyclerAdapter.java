@@ -48,7 +48,6 @@ public class HomeMenuRecyclerAdapter extends RecyclerView.Adapter<HomeMenuRecycl
         this.retrofitManager = RetrofitManager.getInstance(context);
         this.userAccountManager = UserAccountManager.getInstance(context);
         this.imageConverter = new ImageConverter();
-
     }
 
     @NonNull

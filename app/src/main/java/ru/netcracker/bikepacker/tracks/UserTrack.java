@@ -4,6 +4,7 @@ import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
 
 import org.osmdroid.util.BoundingBox;
+import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.Marker;
 import org.osmdroid.views.overlay.OverlayWithIW;
@@ -14,9 +15,13 @@ import java.util.List;
 
 public class UserTrack extends OverlayWithIW {
     public static final String RECORDED_TRACK_TAG = "rec";
-    private static final Paint RECORDED_TRACK_PAINT = new Paint();
+    private static Paint RECORDED_TRACK_PAINT = new Paint();
     private static final float ANC_U = Marker.ANCHOR_LEFT, ANC_V = Marker.ANCHOR_BOTTOM;
     private static final double ZOOM_VAL = 0.0005;
+
+    public Polyline getPolyline() {
+        return polyline;
+    }
 
     private final Polyline polyline;
     private final Marker startMarker;

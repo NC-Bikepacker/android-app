@@ -8,15 +8,18 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
+import java.util.Objects;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -28,6 +31,7 @@ import ru.netcracker.bikepacker.model.ImageModel;
 import ru.netcracker.bikepacker.model.TrackModel;
 import ru.netcracker.bikepacker.service.GpxFileManager;
 import ru.netcracker.bikepacker.service.ImageConverter;
+import ru.netcracker.bikepacker.view.OpenTrackFragment;
 
 public class TracksRecyclerAdapter extends RecyclerView.Adapter<TracksRecyclerAdapter.UserMenuRecyclerViewHolder> {
 
@@ -37,6 +41,11 @@ public class TracksRecyclerAdapter extends RecyclerView.Adapter<TracksRecyclerAd
     private final UserAccountManager userAccountManager;
     private final ImageConverter imageConverter;
     private final GpxFileManager gpxFileManager;
+    private FragmentManager fragmentManager;
+
+    public void setFragmentManager(FragmentManager fragmentManager) {
+        this.fragmentManager = fragmentManager;
+    }
 
     public TracksRecyclerAdapter(Context context, List<TrackModel> tracks) {
         this.context = context;
@@ -54,7 +63,6 @@ public class TracksRecyclerAdapter extends RecyclerView.Adapter<TracksRecyclerAd
         return new TracksRecyclerAdapter.UserMenuRecyclerViewHolder(tracksItem);
     }
 
-
     @Override
     public void onBindViewHolder(@NonNull UserMenuRecyclerViewHolder holder, int position) {
         TrackModel track = tracks.get(position);
@@ -66,7 +74,8 @@ public class TracksRecyclerAdapter extends RecyclerView.Adapter<TracksRecyclerAd
                 .into(holder.userPicItemUserMenu);
 
         holder.firstAndLastnameUserMenuItem.setText(String.format("%s %s", tracks.get(position).getUser().getFirstname(), tracks.get(position).getUser().getLastname()));
-
+        holder.setTrack(track);
+        holder.setFragmentManager(fragmentManager);
         holder.timeTextViewUserMenu.setText(getConvertTravelTime(track));
 
         retrofitManager.getJSONApi()
@@ -112,7 +121,17 @@ public class TracksRecyclerAdapter extends RecyclerView.Adapter<TracksRecyclerAd
                 avgSpeedTextViewUserMenu,
                 timeTextViewUserMenu;
         ImageView itemUserMenuMapImage;
+        LinearLayout trackLinearLayout;
+        FragmentManager fragmentManager;
+        TrackModel track;
 
+        public void setTrack(TrackModel track) {
+            this.track = track;
+        }
+
+        public void setFragmentManager(FragmentManager fragmentManager) {
+            this.fragmentManager = fragmentManager;
+        }
 
         public UserMenuRecyclerViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -129,10 +148,23 @@ public class TracksRecyclerAdapter extends RecyclerView.Adapter<TracksRecyclerAd
             this.avgSpeedTextViewUserMenu = itemView.findViewById(R.id.avgSpeedTextViewUserMenu);
             this.timeTextViewUserMenu = itemView.findViewById(R.id.timeTextViewUserMenu);
             this.itemUserMenuMapImage = itemView.findViewById(R.id.itemUserMenuMapImage);
+            this.trackLinearLayout = itemView.findViewById(R.id.trackLinearLayout);
+            this.trackLinearLayout.setOnClickListener(view -> {
+                //open route
+                OpenTrackFragment openFragment = (OpenTrackFragment) fragmentManager.findFragmentByTag("openTrack");
+                assert openFragment != null;
+                openFragment.setTrack(track);
+                openFragment.openTrack();
+
+                fragmentManager.beginTransaction()
+                        .hide(Objects.requireNonNull(fragmentManager.findFragmentByTag("track_menu")))
+                        .show(Objects.requireNonNull(openFragment))
+                        .commit();
+            });
         }
     }
 
-    private String getConvertTravelTime(TrackModel track){
+    private String getConvertTravelTime(TrackModel track) {
         /*Convert travel time in seconds to readable string in format HH:MM:SS*/
         long travelTime = track.getTravelTime();
         long sec = travelTime % 60;
