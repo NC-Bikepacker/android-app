@@ -10,15 +10,12 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.StringReader;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -29,7 +26,6 @@ import io.jenetics.jpx.Track;
 import io.jenetics.jpx.TrackSegment;
 import io.jenetics.jpx.WayPoint;
 import ru.netcracker.bikepacker.model.TrackModel;
-import ru.netcracker.bikepacker.model.UserModel;
 
 public class GpxUtil {
     public static TrackSegment makeSegment(GeoPoint... geoPoints) {
@@ -91,7 +87,7 @@ public class GpxUtil {
 
     public static Polyline trackModelToPolyline(TrackModel trackModel) throws Exception {
         Polyline polyline = new Polyline();
-        Document document = null;
+        Document document;
         List<GeoPoint> listPoints = new ArrayList<>();
         DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
         try {
@@ -108,8 +104,6 @@ public class GpxUtil {
             polyline.setPoints(listPoints);
         } catch (ParserConfigurationException | IOException | SAXException e) {
             Log.e("ParserGpxError", e.getMessage(), e);
-        }
-        if (document == null){
             throw new Exception("Parsing GPX was failed.");
         }
         return polyline;
