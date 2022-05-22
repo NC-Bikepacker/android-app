@@ -1,6 +1,5 @@
 package ru.netcracker.bikepacker.service;
 
-import android.content.ContentResolver;
 import android.content.Context;
 import android.os.Build;
 import android.util.Log;
@@ -29,13 +28,11 @@ import ru.netcracker.bikepacker.manager.UserAccountManager;
 public class ZipFileManager {
     private final Context context;
     private final UserAccountManager userAccountManager;
-    private ContentResolver contentResolver;
 
     public ZipFileManager(Context context) {
         super();
         this.context = context;
         this.userAccountManager = UserAccountManager.getInstance(context);
-        this.contentResolver = contentResolver;
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)

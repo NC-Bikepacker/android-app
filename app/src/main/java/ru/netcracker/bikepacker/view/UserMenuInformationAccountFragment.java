@@ -20,7 +20,6 @@ import com.squareup.picasso.Picasso;
 import ru.netcracker.bikepacker.R;
 import ru.netcracker.bikepacker.manager.UserAccountManager;
 import ru.netcracker.bikepacker.service.GpxFileManager;
-import ru.netcracker.bikepacker.service.ZipFileManager;
 
 
 public class UserMenuInformationAccountFragment extends Fragment {
@@ -63,7 +62,6 @@ public class UserMenuInformationAccountFragment extends Fragment {
         nickname.setText(userAccountManager.getUser().getUsername());
         email.setText(userAccountManager.getUser().getEmail());
         ImageButton importButton = userMenuInformationAccountFragmentView.findViewById(R.id.importButton);
-        ZipFileManager zipFileManager = new ZipFileManager(requireContext());
         importButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -71,7 +69,6 @@ public class UserMenuInformationAccountFragment extends Fragment {
                 dialogFragment.show(requireActivity().getSupportFragmentManager(),"DialogFragment");
             }
         });
-
         return userMenuInformationAccountFragmentView;
     }
 
