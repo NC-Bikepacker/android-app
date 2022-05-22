@@ -84,7 +84,7 @@ public class HomeMenuRecyclerAdapter extends RecyclerView.Adapter<HomeMenuRecycl
         holder.bodyDescriptionTextView.setText(newsCardModel.getDescription());
         holder.bodyDescriptionTextView.setOnClickListener(v -> holder.bodyDescriptionTextView.setMaxLines(Integer.MAX_VALUE));
         holder.distanceTextViewNewspaperCard.setText("12");
-        holder.complexityTextViewNewspaperCard.setText(Long.toString(track.getTrackComplexity()));
+        holder.complexityTextViewNewspaperCard.setText(Double.toString(track.getTrackComplexity()));
 
         holder.timeTextViewNewspaperCard.setText(convertTravelTime(track));
         holder.dateHomeMenuItem.setText(newsCardModel.getDate());

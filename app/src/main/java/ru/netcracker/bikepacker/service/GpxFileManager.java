@@ -3,7 +3,9 @@ package ru.netcracker.bikepacker.service;
 import android.content.Context;
 import android.util.Log;
 import android.widget.Toast;
+
 import androidx.annotation.NonNull;
+
 import org.apache.commons.io.IOUtils;
 
 import java.io.BufferedReader;
@@ -27,7 +29,7 @@ import ru.netcracker.bikepacker.model.TrackModel;
 
 public class GpxFileManager {
 
-    private final String DEFAULT_EXPORTING_GPX_TITLE = "bikepacker-gpx-track" + ".gpx";
+    private static final String DEFAULT_EXPORTING_GPX_TITLE = "bikepacker-gpx-track" + ".gpx";
 
     private final Context context;
     private Writer writer;
@@ -45,22 +47,16 @@ public class GpxFileManager {
 
         if (filePath != null) {
             File file = new File(filePath);
-
-            if (file.exists() && filePath != null) {
+            if (file.exists()) {
                 try (FileInputStream fin = new FileInputStream(file)) {
                     stringFromFile = IOUtils.toString(fin, StandardCharsets.UTF_8);
                     fin.close();
                     return stringFromFile;
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
         }
-
         return stringFromFile;
     }
 

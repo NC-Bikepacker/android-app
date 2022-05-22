@@ -1,7 +1,7 @@
 package ru.netcracker.bikepacker.tracks;
 
 public enum StatisticType {
-    Distanse,
+    Distance,
     Time,
     AverageSpeed
 }
