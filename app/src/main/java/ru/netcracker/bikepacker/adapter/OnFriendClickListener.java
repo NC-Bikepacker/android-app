@@ -1,9 +1,6 @@
 package ru.netcracker.bikepacker.adapter;
 
-import java.util.List;
-
 import ru.netcracker.bikepacker.manager.UserAccountManager;
-import ru.netcracker.bikepacker.model.TrackModel;
 import ru.netcracker.bikepacker.model.UserModel;
 
 public interface OnFriendClickListener {

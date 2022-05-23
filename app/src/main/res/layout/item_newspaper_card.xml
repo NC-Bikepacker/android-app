@@ -306,6 +306,7 @@
             android:id="@+id/likeCountTextViewNewspaperCard"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
             android:fontFamily="@font/proxima_nova_cond_bold"
             android:text="120"
             android:textAlignment="center"
@@ -346,6 +347,7 @@
             android:layout_height="30dp"
 
             android:layout_marginEnd="32dp"
+            android:backgroundTint="#D80E0E"
             android:contentDescription="likeNewspaperCard"
             app:layout_constraintBottom_toBottomOf="@+id/dateHomeMenuItem"
             app:layout_constraintEnd_toStartOf="@+id/chatAltFillButtonOnNewspaperCard"

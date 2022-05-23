@@ -1,5 +1,6 @@
 package ru.netcracker.bikepacker.view
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
@@ -43,12 +44,10 @@ class MainNavigationActivity : AppCompatActivity() {
         const val CURRENT_FRAGMENT = "current_fragment"
 
         private const val REQUEST_PERMISSIONS_REQUEST_CODE = 1
-        private val settingsFragment = SettingsFragment()
         const val INITIAL_SELECTED_ITEM: Int = R.id.navigation_home
 
         //tag for each fragment
         const val TAG_MAP = "map"
-        const val TAG_SETTINGS = "settings"
         const val TAG_RECORD = "record"
         const val TAG_HOME = "home"
         const val TAG_FINDFRIEND = "findFriend"
@@ -114,10 +113,8 @@ class MainNavigationActivity : AppCompatActivity() {
 
     private val findFriend: FindFriendFragment by lazy {
         val fr = supportFragmentManager.findFragmentByTag(TAG_FINDFRIEND)
-        if (fr != null) fr as FindFriendFragment
-        else {
-            FindFriendFragment()
-        }
+        if (fr != null){ fr as FindFriendFragment  }
+        else FindFriendFragment()
     }
 
     private val createPointFragment: CreatePointFragment by lazy {
@@ -259,6 +256,7 @@ class MainNavigationActivity : AppCompatActivity() {
 
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setTheme(R.style.Theme_Bikepacker)
         binding = ActivityMainNavigationBinding.inflate(layoutInflater)
         ctx = applicationContext
         bitmap = BitmapFactory.decodeResource(resources, R.drawable.ic_menu_compass)
@@ -350,27 +348,11 @@ class MainNavigationActivity : AppCompatActivity() {
                     .replace(R.id.start_new_route_container, recordFragment, TAG_RECORD)
                     .commit()
                 mapFragment.mapController.animateTo(mapFragment.userLocation)
-
-
                 activeFragment = mapFragment
             }
 
             R.id.navigation_account -> {
                 if (activeFragment !is UserMenuInformationAccountFragment) {
-
-                    val editButton: Button =
-                        findViewById(R.id.editButtonInformationAccountUserMenuFragment)
-                    editButton.setOnClickListener(object : View.OnClickListener {
-                        override fun onClick(p0: View?) {
-                            supportFragmentManager
-                                .beginTransaction()
-                                .hide(activeFragment!!)
-                                .show(accountEditorFragment).commit()
-
-                            activeFragment = accountEditorFragment
-                        }
-                    })
-
                     supportFragmentManager.beginTransaction().hide(activeFragment!!)
                         .show(userMenuFragment)
                         .commit()
@@ -433,5 +415,9 @@ class MainNavigationActivity : AppCompatActivity() {
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putInt(CURRENT_FRAGMENT, selectedFragment)
+    }
+
+    override fun onBackPressed() {
+
     }
 }

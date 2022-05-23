@@ -23,7 +23,6 @@ import ru.netcracker.bikepacker.tracks.listeners.OnCreatePointListener;
 import ru.netcracker.bikepacker.tracks.listeners.OnGpxCreatedListener;
 import ru.netcracker.bikepacker.tracks.listeners.OnRecordingEventsListener;
 import ru.netcracker.bikepacker.tracks.listeners.OnRecordBtnClickListener;
-import ru.netcracker.bikepacker.tracks.listeners.OnStopBtnClickListener;
 
 
 public class RecordFragment extends Fragment {

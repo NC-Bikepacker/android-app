@@ -8,9 +8,13 @@ import android.os.Build;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.splashscreen.SplashScreen;
+import androidx.fragment.app.FragmentManager;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -24,28 +28,35 @@ public class StartingAppActivity extends AppCompatActivity {
 
     private AppBarConfiguration appBarConfiguration;
     private ActivityMainBinding binding;
-    private static int TIME_OUT = 1500;
     private SessionManager sessionManager;
     private Context context;
     private NavController navController;
+    private FragmentManager fragmentManager;
+    private static long back_pressed;
 
     @SuppressLint("SourceLockedOrientationActivity")
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        this.setTheme(R.style.Theme_Bikepacker);
         super.onCreate(savedInstanceState);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
         appBarConfiguration = new AppBarConfiguration.Builder(navController.getGraph()).build();
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        fragmentManager = this.getSupportFragmentManager();
 
         context = getApplicationContext();
         sessionManager = SessionManager.getInstance(context);
 
         if (sessionManager.isEmpty()) {
             navController.navigate(R.id.action_fragmentLoadingScreen_to_logInFragment);
-        } else {
+        }
+        else if(!sessionManager.getSessionUser().isAccountVerification()){
+            navController.navigate(R.id.confirmEmailFragment);
+        }
+        else {
             Intent intent = new Intent(StartingAppActivity.this, MainNavigationActivity.class);
             startActivity(intent);
             finish();
@@ -72,5 +83,9 @@ public class StartingAppActivity extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
         return NavigationUI.navigateUp(navController, appBarConfiguration)
                 || super.onSupportNavigateUp();
+    }
+
+    @Override
+    public void onBackPressed() {
     }
 }

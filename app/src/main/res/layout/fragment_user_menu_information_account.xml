@@ -4,26 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
     tools:context=".view.UserMenuInformationAccountFragment">
-
-    <Button
-        android:id="@+id/editButtonInformationAccountUserMenuFragment"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:layout_marginEnd="24dp"
-        android:layout_marginBottom="32dp"
-        android:elegantTextHeight="false"
-        android:fontFamily="@font/proxima_nova_semibold"
-        android:letterSpacing="0"
-        android:minHeight="60dp"
-        android:text="@string/edit"
-        android:textAlignment="center"
-        android:textAllCaps="false"
-        android:textSize="18sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/userPicInUserMenu"
@@ -79,13 +61,13 @@
         app:layout_constraintTop_toBottomOf="@+id/nicknameInUserMenu" />
 
     <ImageButton
-        android:id="@+id/importButton"
+        android:id="@+id/popupMenuButtonUserMenu"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:backgroundTint="@android:color/transparent"
-        android:contentDescription="import data from strava"
-        android:src="@drawable/ic_import_data_from_strava"
-        app:layout_constraintBottom_toTopOf="@+id/editButtonInformationAccountUserMenuFragment"
-        app:layout_constraintEnd_toEndOf="@+id/editButtonInformationAccountUserMenuFragment" />
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:src="@drawable/custom_radiobutton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

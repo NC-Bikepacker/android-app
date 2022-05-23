@@ -89,14 +89,14 @@ public class HomeMenuRecycleViewFragment extends Fragment {
                             homeMenuRecyclerView.setAdapter(homeMenuRecyclerAdapter);
                         }
                         else {
-                            Toast.makeText(getContext(), "Проверьте соединение интернет", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getContext(), "Check the internet connection", Toast.LENGTH_SHORT).show();
                             Log.e("Error news in homeMenu fragment", "Error response successful response. Error message: "+ response.message() + ". Error code: " + response.code());
                         }
                     }
 
                     @Override
                     public void onFailure(@NonNull Call<List<NewsCardModel>> call, @NonNull Throwable t) {
-                        Toast.makeText(getContext(), "Ошибка вывода новостей. Проверьте соединение интернет", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), "News output error. Check internet connection", Toast.LENGTH_SHORT).show();
                         Log.e("RetrofitError", "Error in HomeMenuRecycleViewFragment.class. Error: "+ t.getMessage() , t);
                     }
                 });
@@ -122,14 +122,14 @@ public class HomeMenuRecycleViewFragment extends Fragment {
                             homeMenuRecyclerView.setAdapter(tracksRecyclerAdapter);
                         }
                         else {
-                            Toast.makeText(getContext(), "Проверьте соединение интернет", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getContext(), "Check the internet connection", Toast.LENGTH_SHORT).show();
                             Log.e("Error show last tracks friends in homeMenu fragment", "Error response successful response. Error message: "+ response.message() + ". Error code: " + response.code());
                         }
                     }
 
                     @Override
                     public void onFailure(@NonNull Call<List<TrackModel>> call, @NonNull Throwable t) {
-                        Toast.makeText(getContext(), "Ошибка вывода треков. Проверьте соединение интернет", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), "Track output error. Check internet connection", Toast.LENGTH_SHORT).show();
                         Log.e("Error show last tracks friends in homeMenu fragment", "Error friend track response. Error message: "+ t.getMessage(), t);
                     }
                 });

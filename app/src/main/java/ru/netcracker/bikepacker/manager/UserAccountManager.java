@@ -9,13 +9,13 @@ import ru.netcracker.bikepacker.model.UserModel;
 
 public class UserAccountManager {
    private static volatile UserAccountManager userAccountManager;
-   private final UserModel user;
-    private final String cookie;
+   private UserModel user;
+   private String cookie;
+   private SessionManager sessionManager;
 
     private UserAccountManager(Context context) throws IOException {
-        SessionManager sessionManager = SessionManager.getInstance(context);
-        this.user = sessionManager.getSessionUser();
-        this.cookie = "JSESSIONID=" + sessionManager.getSessionId() + "; Path=/; HttpOnly;";
+        this.sessionManager = SessionManager.getInstance(context);
+        updateUserData();
     }
 
     public static UserAccountManager getInstance(Context context) {
@@ -35,11 +35,22 @@ public class UserAccountManager {
         return localUserAccountManager;
     }
 
+    public synchronized void removeUser(){
+        this.setUser(null);
+        this.setCookie(null);
+    }
+
+    public synchronized void updateUserData(){
+        this.user = sessionManager.getSessionUser();
+        this.cookie = "JSESSIONID=" + sessionManager.getSessionId() + "; Path=/; HttpOnly;";
+    }
+
     public UserModel getUser(){
         return user;
     }
     public String getCookie(){
         return cookie;
     }
-
+    private void setUser(UserModel user) { this.user = user;}
+    private void setCookie(String cookie) { this.cookie = cookie;}
 }

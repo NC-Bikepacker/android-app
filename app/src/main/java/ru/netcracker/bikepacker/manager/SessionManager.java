@@ -14,6 +14,7 @@ public final class SessionManager {
     private final static String SESSION_USER_LASTNAME = "session_user_lastname";
     private final static String SESSION_USER_EMAIL = "session_user_email";
     private final static String SESSION_USER_PIC_LINK = "session_user_link";
+    private final static String SESSION_USER_EMAIL_CONFIRM = "session_user_email_confirm";
 
     private static volatile SessionManager sessionManagerInstance;
 
@@ -33,7 +34,7 @@ public final class SessionManager {
             }
         }
 
-        return sessionManagerInstance;
+        return localInstance;
     }
 
     private SessionManager(Context context) {
@@ -62,6 +63,7 @@ public final class SessionManager {
                 .putString(SESSION_USER_LASTNAME, userModel.getLastname())
                 .putString(SESSION_USER_EMAIL, userModel.getEmail())
                 .putString(SESSION_USER_PIC_LINK, userModel.getUserPicLink())
+                .putString(SESSION_USER_EMAIL_CONFIRM, Boolean.toString(userModel.isAccountVerification()))
                 .commit();
     }
 
@@ -73,6 +75,7 @@ public final class SessionManager {
         userModel.setUserPicLink(getSessionUserPicUrl());
         userModel.setUsername(getSessionUsername());
         userModel.setId(Long.parseLong(getSessionUserId()));
+        userModel.setAccountVerification(Boolean.parseBoolean(getSessionUserEmailConfirm()));
         return userModel;
     }
 
@@ -128,6 +131,10 @@ public final class SessionManager {
         return sharedPreferences.getString(SESSION_USER_ID, null);
     }
 
+    public synchronized String getSessionUserEmailConfirm() {
+        return sharedPreferences.getString(SESSION_USER_EMAIL_CONFIRM, null);
+    }
+
     public synchronized void removeSession() {
         editor.putLong(SESSION_USER_ID, -1)
                 .putString(SESSION_USERNAME, null)
@@ -136,6 +143,7 @@ public final class SessionManager {
                 .putString(SESSION_USER_EMAIL, null)
                 .putString(SESSION_USER_PIC_LINK, null)
                 .putString(SESSION_ID, null)
+                .putString(SESSION_USER_EMAIL_CONFIRM,null)
                 .commit();
     }
 
@@ -143,7 +151,6 @@ public final class SessionManager {
         if (sharedPreferences == null || getSessionId() == null) {
             return true;
         }
-
         return false;
     }
 }

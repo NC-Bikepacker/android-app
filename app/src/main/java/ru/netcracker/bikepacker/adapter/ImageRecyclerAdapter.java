@@ -5,9 +5,7 @@ import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
@@ -18,8 +16,6 @@ import com.squareup.picasso.Picasso;
 import java.util.List;
 
 import ru.netcracker.bikepacker.R;
-import ru.netcracker.bikepacker.adapter.homemenu.HomeMenuRecyclerAdapter;
-import ru.netcracker.bikepacker.model.NewsCardModel;
 import ru.netcracker.bikepacker.service.ImageConverter;
 
 public class ImageRecyclerAdapter extends RecyclerView.Adapter<ImageRecyclerAdapter.ImageRecyclerViewHolder>{

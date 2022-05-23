@@ -16,6 +16,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
@@ -89,12 +90,12 @@ public class FindFriendFragment extends Fragment {
                         .enqueue(new Callback<ResponseBody>() {
                             @Override
                             public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
-                                Toast.makeText(getContext(), "Заяка пользователю " + user.getFirstname() + " отправлена", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getContext(), "Friendship request sent to user " + user.getFirstname(), Toast.LENGTH_SHORT).show();
                                 displayFindFriend(viewFindFriendFragment, user.getUsername());
                             }
                             @Override
                             public void onFailure(@NonNull Call<ResponseBody> call, @NonNull Throwable t) {
-                                Toast.makeText(context, "Ошибка добавления пользователя", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(context, "Add user error", Toast.LENGTH_SHORT).show();
                                 displayFindFriend(viewFindFriendFragment, findFriendsList.get(position).getUsername());
                                 Log.d(t.getMessage(), "Ошибка добавления пользователя");
                             }
@@ -110,14 +111,14 @@ public class FindFriendFragment extends Fragment {
                         .enqueue(new Callback<ResponseBody>() {
                             @Override
                             public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
-                                Toast.makeText(getContext(), "Пользователь " + user.getFirstname() + " удален", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getContext(), "User " + user.getFirstname() + " delete", Toast.LENGTH_SHORT).show();
                                 MyFriendsList.getInstance().deleteFriend(user);
                                 displayMyFriend(viewFindFriendFragment);
                             }
 
                             @Override
                             public void onFailure(@NonNull Call<ResponseBody> call, @NonNull Throwable t) {
-                                Toast.makeText(getContext(), "Ошибка удаления", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getContext(), "Deletion error", Toast.LENGTH_SHORT).show();
                                 displayMyFriend(viewFindFriendFragment);
                                 Log.d(t.getMessage(), "Ошибка удаления друга");
                             }
@@ -152,14 +153,14 @@ public class FindFriendFragment extends Fragment {
                                     }
                                 }
                                 else {
-                                    Toast.makeText(getContext(), "Проверьте соединение интернет", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(getContext(), "check the Internet connection", Toast.LENGTH_SHORT).show();
                                     Log.e("Error show friend tracks", "Error response successful response. Error message: "+ response.message() + ". Error code: " + response.code());
                                 }
                             }
 
                             @Override
                             public void onFailure(@NonNull Call<List<TrackModel>> call, @NonNull Throwable t) {
-                                Toast.makeText(getContext(), "Ошибка вывода треков пользователя " + "@" + user.getUsername() + ". Проверьте соединение интернет", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getContext(), "User track output error " + "@" + user.getUsername() + ". check the Internet connection", Toast.LENGTH_SHORT).show();
                                 Log.e("Error show friend tracks", "Error user track response. Error message: "+ t.getMessage(), t);
                             }
                         });
@@ -214,13 +215,14 @@ public class FindFriendFragment extends Fragment {
 
                     @Override
                     public void onFailure(@NonNull Call<List<UserModel>> call, @NonNull Throwable t) {
-                        Toast.makeText(context, "Нет соединения с сервером!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, "No connection to the server!", Toast.LENGTH_SHORT).show();
                         Log.d(t.getMessage(), "Error occurred while getting request!");
                     }
                 });
     }
 
     private void displayFindFriend(View view, String nickName) {
+        hideSoftInput(view);
         RetrofitManager.getInstance(getContext())
                 .getJSONApi()
                 .getFriendWithNickName(cookie, nickName)
@@ -230,7 +232,7 @@ public class FindFriendFragment extends Fragment {
                         UserModel friend = response.body();
                         findFriendsList.clear();
                         if (friend == null) {
-                            Toast.makeText(getContext(), "Пользователи не найдены", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getContext(), "No users found", Toast.LENGTH_SHORT).show();
                         } else {
                             findFriendsList.add(friend);
                             setFindFragmentRecycler(findFriendsList, view);
@@ -239,7 +241,7 @@ public class FindFriendFragment extends Fragment {
 
                     @Override
                     public void onFailure(@NonNull Call<UserModel> call, @NonNull Throwable t) {
-                        Toast.makeText(getContext(), "Ошибка поиска пользователя", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), "User search error", Toast.LENGTH_SHORT).show();
                         Log.d(t.getMessage(), "Ошибка поиска пользователя");
                     }
                 });
@@ -248,5 +250,11 @@ public class FindFriendFragment extends Fragment {
 
     public void disp() {
         displayMyFriend(viewFindFriendFragment);
+    }
+    private void hideSoftInput(View view){
+        if(view!=null){
+            InputMethodManager inputMethodManager = (InputMethodManager) requireContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+            inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        }
     }
 }

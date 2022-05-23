@@ -50,6 +50,27 @@
             android:id="@+id/action_fragmentLoadingScreen_to_logInFragment"
             app:destination="@id/logInFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/confirmEmailFragment"
+        android:name="ru.netcracker.bikepacker.view.ConfirmEmailFragment"
+        android:label="fragment_confirm_email"
+        tools:layout="@layout/fragment_confirm_email" >
+        <action
+            android:id="@+id/action_confirmEmailFragment_to_logInFragment"
+            app:destination="@id/logInFragment" />
+        <action
+            android:id="@+id/action_confirmEmailFragment_to_mainNavigationActivity"
+            app:destination="@id/mainNavigationActivity" />
+    </fragment>
+    <fragment
+        android:id="@+id/userMenuInformationAccountFragment"
+        android:name="ru.netcracker.bikepacker.view.UserMenuInformationAccountFragment"
+        android:label="fragment_user_menu_information_account"
+        tools:layout="@layout/fragment_user_menu_information_account" >
+        <action
+            android:id="@+id/action_userMenuInformationAccountFragment_to_logInFragment"
+            app:destination="@id/logInFragment" />
+    </fragment>
 
 
 </navigation>
