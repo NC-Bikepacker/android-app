@@ -13,13 +13,15 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.squareup.picasso.Picasso;
 
+import java.text.DecimalFormat;
 import java.util.List;
-import java.util.Objects;
+import java.util.Optional;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -31,6 +33,7 @@ import ru.netcracker.bikepacker.model.ImageModel;
 import ru.netcracker.bikepacker.model.TrackModel;
 import ru.netcracker.bikepacker.service.GpxFileManager;
 import ru.netcracker.bikepacker.service.ImageConverter;
+import ru.netcracker.bikepacker.view.MainNavigationActivity;
 import ru.netcracker.bikepacker.view.OpenTrackFragment;
 
 public class TracksRecyclerAdapter extends RecyclerView.Adapter<TracksRecyclerAdapter.UserMenuRecyclerViewHolder> {
@@ -78,6 +81,17 @@ public class TracksRecyclerAdapter extends RecyclerView.Adapter<TracksRecyclerAd
         holder.setFragmentManager(fragmentManager);
         holder.timeTextViewUserMenu.setText(getConvertTravelTime(track));
 
+        DecimalFormat decimalFormat = new DecimalFormat("#.#");
+        Double distanceInKm;
+        Double avgSpeed;
+        distanceInKm = track.getTrackDistance()==null? 1700.0 : track.getTrackDistance();
+        avgSpeed = track.getTrackAvgSpeed()==null? 1.3 : track.getTrackAvgSpeed();
+        distanceInKm = distanceInKm/1000;
+        avgSpeed = avgSpeed*3.6;
+        if(track.getTrackDate()!=null){holder.dateUserMenuItem.setText(String.valueOf(track.getTrackDate()));}
+        holder.distanceTextViewUserMenu.setText(decimalFormat.format(distanceInKm));
+        holder.avgSpeedTextViewUserMenu.setText(decimalFormat.format(avgSpeed));
+
         retrofitManager.getJSONApi()
                 .getTrackImage(userAccountManager.getCookie(), tracks.get(position).getTrackId())
                 .enqueue(new Callback<ImageModel>() {
@@ -116,7 +130,6 @@ public class TracksRecyclerAdapter extends RecyclerView.Adapter<TracksRecyclerAd
                 exportGpxButton;
         TextView firstAndLastnameUserMenuItem,
                 dateUserMenuItem,
-                trackNameTextView,
                 distanceTextViewUserMenu,
                 avgSpeedTextViewUserMenu,
                 timeTextViewUserMenu;
@@ -156,10 +169,11 @@ public class TracksRecyclerAdapter extends RecyclerView.Adapter<TracksRecyclerAd
                 openFragment.setTrack(track);
                 openFragment.openTrack();
 
-                fragmentManager.beginTransaction()
-                        .hide(Objects.requireNonNull(fragmentManager.findFragmentByTag("track_menu")))
-                        .show(Objects.requireNonNull(openFragment))
-                        .commit();
+                Optional<Fragment> activeFragment = Optional.ofNullable(MainNavigationActivity.Companion.getActiveFragment());
+                activeFragment.ifPresent(fragment -> fragmentManager.beginTransaction()
+                        .hide(fragment)
+                        .show(openFragment)
+                        .commit());
             });
         }
     }

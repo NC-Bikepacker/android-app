@@ -78,7 +78,6 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
     implementation "androidx.core:core-ktx:1.7.0"
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    implementation 'androidx.core:core-splashscreen:1.0.0-rc01'
 
     implementation group: 'de.hdodenhof', name: 'circleimageview', version: '3.1.0'
     //noinspection GradleCompatible

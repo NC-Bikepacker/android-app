@@ -361,8 +361,10 @@ class MainNavigationActivity : AppCompatActivity() {
             }
 
             R.id.navigation_tracks -> {
+                supportFragmentManager.beginTransaction().detach(trackMenuFragment).commit()
                 if (activeFragment !is TrackMenuFragment) {
                     supportFragmentManager.beginTransaction().hide(activeFragment!!)
+                        .attach(trackMenuFragment)
                         .show(trackMenuFragment)
                         .commit()
                 } else {
