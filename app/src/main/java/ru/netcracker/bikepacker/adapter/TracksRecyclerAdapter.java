@@ -70,11 +70,14 @@ public class TracksRecyclerAdapter extends RecyclerView.Adapter<TracksRecyclerAd
     public void onBindViewHolder(@NonNull UserMenuRecyclerViewHolder holder, int position) {
         TrackModel track = tracks.get(position);
 
-        Picasso.get()
-                .load(track.getUser().getUserPicLink())
-                .placeholder(R.drawable.ic_userpic)
-                .error(R.drawable.ic_userpic)
-                .into(holder.userPicItemUserMenu);
+        String userpic = Optional.ofNullable(track.getUser().getUserPicLink()).orElse("no picture");
+        if(!userpic.isEmpty()){
+            Picasso.get()
+                    .load(userpic)
+                    .placeholder(R.drawable.ic_userpic)
+                    .error(R.drawable.ic_userpic)
+                    .into(holder.userPicItemUserMenu);
+        }
 
         holder.firstAndLastnameUserMenuItem.setText(String.format("%s %s", tracks.get(position).getUser().getFirstname(), tracks.get(position).getUser().getLastname()));
         holder.setTrack(track);

@@ -124,7 +124,9 @@ public class ConfirmEmailFragment extends Fragment {
                     public void onResponse(@NonNull Call<UserModel> call, @NonNull Response<UserModel> response) {
                         if(response.isSuccessful() && response.body()!=null){
                             if(response.body().isAccountVerification()){
-                                SessionManager.getInstance(getContext()).getSessionUser().setAccountVerification(true);
+                                SessionManager.getInstance(getContext()).setSessionUserEmailConfirm(true);
+                                UserAccountManager.getInstance(getContext()).getUser().setAccountVerification(true);
+                                UserModel user = SessionManager.getInstance(getContext()).getSessionUser();
                                 NavHostFragment.findNavController(ConfirmEmailFragment.this).navigate(R.id.action_confirmEmailFragment_to_mainNavigationActivity);
                             }
                             else {

@@ -352,6 +352,8 @@ class MainNavigationActivity : AppCompatActivity() {
             }
 
             R.id.navigation_account -> {
+                supportFragmentManager.beginTransaction().detach(userMenuFragment).commit()
+                supportFragmentManager.beginTransaction().attach(userMenuFragment).commit()
                 if (activeFragment !is UserMenuInformationAccountFragment) {
                     supportFragmentManager.beginTransaction().hide(activeFragment!!)
                         .show(userMenuFragment)
@@ -362,9 +364,9 @@ class MainNavigationActivity : AppCompatActivity() {
 
             R.id.navigation_tracks -> {
                 supportFragmentManager.beginTransaction().detach(trackMenuFragment).commit()
+                supportFragmentManager.beginTransaction().attach(trackMenuFragment).commit()
                 if (activeFragment !is TrackMenuFragment) {
                     supportFragmentManager.beginTransaction().hide(activeFragment!!)
-                        .attach(trackMenuFragment)
                         .show(trackMenuFragment)
                         .commit()
                 } else {

@@ -19,6 +19,7 @@ import androidx.navigation.ui.NavigationUI;
 import ru.netcracker.bikepacker.R;
 import ru.netcracker.bikepacker.databinding.ActivityMainBinding;
 import ru.netcracker.bikepacker.manager.SessionManager;
+import ru.netcracker.bikepacker.model.UserModel;
 
 public class StartingAppActivity extends AppCompatActivity {
 
@@ -49,7 +50,9 @@ public class StartingAppActivity extends AppCompatActivity {
         if (sessionManager.isEmpty()) {
             navController.navigate(R.id.action_fragmentLoadingScreen_to_logInFragment);
         }
+
         else if(!sessionManager.getSessionUser().isAccountVerification()){
+            UserModel user = sessionManager.getSessionUser();
             navController.navigate(R.id.confirmEmailFragment);
         }
         else {
