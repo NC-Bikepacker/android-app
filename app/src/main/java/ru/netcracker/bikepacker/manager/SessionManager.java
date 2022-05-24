@@ -131,9 +131,15 @@ public final class SessionManager {
         return sharedPreferences.getString(SESSION_USER_ID, null);
     }
 
+    public synchronized void setSessionUserEmailConfirm(boolean confirm){
+        editor.putString(SESSION_USER_EMAIL_CONFIRM, Boolean.toString(confirm)).commit();
+    }
+
     public synchronized String getSessionUserEmailConfirm() {
         return sharedPreferences.getString(SESSION_USER_EMAIL_CONFIRM, null);
     }
+
+
 
     public synchronized void removeSession() {
         editor.putLong(SESSION_USER_ID, -1)

@@ -3,13 +3,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="match_parent"
+    android:background="@color/white">
 
     <LinearLayout
         android:id="@+id/trackLinearLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/border_bottom"
         android:orientation="vertical"
         android:paddingBottom="40px"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -85,7 +85,7 @@
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:layout_marginStart="14dp"
-                android:background="@color/white"
+                android:background="@color/transparent"
                 android:contentDescription="addImportantTrack"
                 android:scaleType="fitCenter"
                 app:layout_constraintBottom_toBottomOf="@+id/addFavoriteTrackButton"
@@ -299,6 +299,7 @@
                 android:id="@+id/startRouteButton"
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
+                android:background="@color/white"
                 android:text="Start this route"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintDimensionRatio="0.92:1"
@@ -306,7 +307,6 @@
                 app:layout_constraintHorizontal_bias="1.0"
                 app:layout_constraintStart_toStartOf="parent" />
         </androidx.constraintlayout.widget.ConstraintLayout>
-
 
 
     </LinearLayout>

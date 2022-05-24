@@ -142,6 +142,7 @@ public class AccountEditorFragment extends Fragment {
                                     Toast.makeText(getContext(), "Account data has been successfully updated", Toast.LENGTH_SHORT).show();
                                     password.setText("");
                                     confirmPassword.setText("");
+                                    updatePreviewFragment();
                                 }
                                 else {
                                     Log.e("AccountEditorFragment.class", "Не выполнен запрос отправки данных аккаунта клиента");
@@ -177,6 +178,14 @@ public class AccountEditorFragment extends Fragment {
         if(view!=null){
             InputMethodManager inputMethodManager = (InputMethodManager) requireContext().getSystemService(Context.INPUT_METHOD_SERVICE);
             inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        }
+    }
+    private void updatePreviewFragment(){
+        FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
+        Fragment fragment = fragmentManager.findFragmentByTag("user_menu");
+        if(fragment!=null){
+            fragmentManager.beginTransaction().detach(fragment);
+            fragmentManager.beginTransaction().attach(fragment);
         }
     }
 }

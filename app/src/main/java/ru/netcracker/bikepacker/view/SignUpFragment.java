@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -133,7 +134,7 @@ public class SignUpFragment extends Fragment {
                     signUpModel.setUsername(username);
                     signUpModel.setPassword(pass);
                     signUpModel.setRoles(new RoleEntity(2L, "ROLE_USER"));
-                    signUpModel.setAvatarImageUrl("");
+                    signUpModel.setAvatarImageUrl("no picture");
 
                     RetrofitManager.getInstance(context).getJSONApi().signUp(signUpModel).enqueue(new Callback<Void>() {
 
@@ -157,6 +158,8 @@ public class SignUpFragment extends Fragment {
                         }
                     });
                 }
+                //скрыть клавиатуру
+                hideSoftInput(view);
             }
         });
     }
@@ -165,5 +168,11 @@ public class SignUpFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
         fragmentSignUpBinding = null;
+    }
+    private void hideSoftInput(View view){
+        if(view!=null){
+            InputMethodManager inputMethodManager = (InputMethodManager) requireContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+            inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        }
     }
 }

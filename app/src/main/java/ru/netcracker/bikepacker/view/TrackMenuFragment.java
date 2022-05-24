@@ -1,7 +1,9 @@
 package ru.netcracker.bikepacker.view;
 
+import android.content.Context;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager2.widget.ViewPager2;
 
@@ -75,4 +77,6 @@ public class TrackMenuFragment extends Fragment {
         tabLayoutMediator.attach();
         return viewTrackMenu;
     }
+
+
 }

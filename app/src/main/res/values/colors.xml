@@ -15,5 +15,5 @@
     <color name="red_off">#FF3636</color>
     <color name="red_on">#C61616</color>
     <color name="tabIconColor">#5D3EA8</color>
-    <color name="transparent">#FF000000</color>
+    <color name="transparent">#00000000</color>
 </resources>
